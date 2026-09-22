@@ -256,6 +256,29 @@ select { cursor: pointer; }
   overflow-y: auto;
 }
 
+.reference-list {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.reference-item {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.reference-item:last-child { border-bottom: none; }
+
+.reference-item.hanging {
+  padding-left: 28px;
+  text-indent: -28px;
+}
+
 @media (max-width: 600px) {
   .hero h1 { font-size: 32px; letter-spacing: -1px; }
   .hero { padding: 40px 0 30px; }
@@ -710,7 +733,75 @@ select { cursor: pointer; }
   </div>
 </div>
 
-<div id="view-reference" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Reference Formatter</h1><p>Coming soon.</p></header></div></div>
+<div id="view-reference" class="hidden">
+  <div class="container-narrow">
+    <header class="tool-header">
+      <button class="back-link" onclick="showHome()">← All tools</button>
+      <h1>Reference List Formatter</h1>
+      <p>Clean, alphabetize, and format citations with proper hanging indents.</p>
+    </header>
+
+    <div class="card">
+      <label>Paste Raw Citations (one per line)</label>
+      <textarea id="refInput" style="min-height:160px;" placeholder="Paste your references here, one per line, in any order...
+
+Example:
+Zuboff, S. (2019). The age of surveillance capitalism.
+Acemoglu, D., & Robinson, J. A. (2012). Why nations fail.
+Kahneman, D. (2011). Thinking, fast and slow."></textarea>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
+        <div>
+          <label>Sort Order</label>
+          <select id="refSort">
+            <option value="alpha" selected>Alphabetical (A → Z)</option>
+            <option value="reverse">Reverse Alphabetical (Z → A)</option>
+            <option value="none">Keep Original Order</option>
+          </select>
+        </div>
+        <div>
+          <label>Hanging Indent</label>
+          <select id="refHanging">
+            <option value="on" selected>On (academic style)</option>
+            <option value="off">Off (flush left)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="refFormat()">Format References</button>
+        <button class="btn btn-secondary" onclick="refLoadSample()">Load Sample</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="result-label" style="margin:0">Formatted References</div>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" id="refCopyBtn" onclick="refCopy()">Copy All</button>
+      </div>
+      <div class="reference-list" id="refOutput">
+        <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Paste your citations and click "Format References" to begin.</div>
+      </div>
+      <div class="result-grid">
+        <div class="result-cell">
+          <span class="result-cell-label">Sources</span>
+          <span class="result-cell-value" id="refCount">0</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Sort</span>
+          <span class="result-cell-value" id="refSortDisplay">A → Z</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Indent</span>
+          <span class="result-cell-value" id="refIndentDisplay">Hanging</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">Free student tools. Made for students.</footer>
+  </div>
+</div>
+
 <div id="view-schedule" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Study Schedule Builder</h1><p>Coming soon.</p></header></div></div>
 <div id="view-flashcard" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Flashcard Maker</h1><p>Coming soon.</p></header></div></div>
 <div id="view-plagiarism" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Plagiarism Checker</h1><p>Coming soon.</p></header></div></div>
@@ -1405,7 +1496,6 @@ function eoGenerate() {
   outline += 'Structure: ' + numParas + ' body paragraph' + (numParas !== 1 ? 's' : '') + '\n\n';
   outline += '────────────────────────────────────────\n\n';
 
-  // Introduction
   outline += 'I. INTRODUCTION\n\n';
   outline += '   A. Hook\n';
   outline += '      ' + intro.hook + '\n';
@@ -1416,7 +1506,6 @@ function eoGenerate() {
   outline += '      ' + intro.thesis + '\n\n';
   outline += '────────────────────────────────────────\n\n';
 
-  // Body paragraphs
   const romanNumerals = ['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
   for (let i = 0; i < numParas; i++) {
     const tmpl = bodyPool[i] || { title: 'Additional Point ' + (i + 1), prompt: 'Develop a supporting point.' };
@@ -1434,7 +1523,6 @@ function eoGenerate() {
     outline += '────────────────────────────────────────\n\n';
   }
 
-  // Conclusion
   outline += romanNumerals[numParas] + '. CONCLUSION\n\n';
   outline += '   A. Restate Thesis (in new words)\n';
   outline += '      Remind the reader of your central claim — but do not copy-paste.\n\n';
@@ -1458,6 +1546,80 @@ function eoCopy() {
 
 document.addEventListener('DOMContentLoaded', function() {
   eoGenerate();
+});
+
+/* ============ REFERENCE LIST FORMATTER ============ */
+function refFormat() {
+  const input = document.getElementById('refInput').value || '';
+  const sortMode = document.getElementById('refSort').value;
+  const hanging = document.getElementById('refHanging').value === 'on';
+
+  // Split by newlines, trim, filter empty
+  let refs = input.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+
+  // Remove common leading bullet/number markers
+  refs = refs.map(r => r.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '').trim());
+
+  // Sort
+  if (sortMode === 'alpha') {
+    refs.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+  } else if (sortMode === 'reverse') {
+    refs.sort((a, b) => b.localeCompare(a, 'en', { sensitivity: 'base' }));
+  }
+
+  // Render
+  const output = document.getElementById('refOutput');
+  if (refs.length === 0) {
+    output.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">No references found. Paste your citations above.</div>';
+  } else {
+    output.innerHTML = refs.map(r => 
+      '<div class="reference-item' + (hanging ? ' hanging' : '') + '">' + escapeHtml(r) + '</div>'
+    ).join('');
+  }
+
+  // Update stats
+  document.getElementById('refCount').textContent = refs.length;
+  document.getElementById('refSortDisplay').textContent = 
+    sortMode === 'alpha' ? 'A → Z' : sortMode === 'reverse' ? 'Z → A' : 'Original';
+  document.getElementById('refIndentDisplay').textContent = hanging ? 'Hanging' : 'Flush';
+}
+
+function refLoadSample() {
+  document.getElementById('refInput').value = 
+    'Zuboff, S. (2019). The age of surveillance capitalism. PublicAffairs.\n' +
+    'Acemoglu, D., & Robinson, J. A. (2012). Why nations fail. Crown Currency.\n' +
+    'Kahneman, D. (2011). Thinking, fast and slow. Farrar, Straus and Giroux.\n' +
+    'Bostrom, N. (2014). Superintelligence: Paths, dangers, strategies. Oxford University Press.\n' +
+    'Harari, Y. N. (2016). Homo Deus: A brief history of tomorrow. Harper.\n' +
+    'Miller, E. T., & Alvarez, C. R. (2024). Cognitive scaffolding in self-directed digital study platforms. Journal of Educational Technology Systems, 52(3), 312-329.';
+  refFormat();
+}
+
+function refCopy() {
+  const items = document.querySelectorAll('#refOutput .reference-item');
+  if (items.length === 0) return;
+  const text = Array.from(items).map(i => i.textContent).join('\n\n');
+  navigator.clipboard.writeText(text);
+  const btn = document.getElementById('refCopyBtn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const refInput = document.getElementById('refInput');
+  const refSort = document.getElementById('refSort');
+  const refHanging = document.getElementById('refHanging');
+
+  if (refInput) refInput.addEventListener('input', refFormat);
+  if (refSort) refSort.addEventListener('change', refFormat);
+  if (refHanging) refHanging.addEventListener('change', refFormat);
 });
 </script>
 
