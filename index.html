@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudyTools — Free Academic Tools for Students</title>
+<title>StudyTools - Free Academic Tools for Students</title>
 <meta name="description" content="Free online tools for students worldwide. GPA calculator, study timer, citation generator, and more. No sign-up required.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,8 +21,11 @@
   --accent: #000000;
   --accent-text: #ffffff;
   --success: #059669;
+  --success-bg: #ecfdf5;
   --warning: #d97706;
+  --warning-bg: #fffbeb;
   --danger: #dc2626;
+  --danger-bg: #fef2f2;
   --radius: 12px;
   --radius-sm: 8px;
   --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -39,6 +42,9 @@ html.dark {
   --border: #2b2d31;
   --accent: #ffffff;
   --accent-text: #000000;
+  --success-bg: rgba(5,150,105,0.1);
+  --warning-bg: rgba(217,119,6,0.1);
+  --danger-bg: rgba(220,38,38,0.1);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -280,7 +286,6 @@ select { cursor: pointer; }
   text-indent: -28px;
 }
 
-/* Schedule Builder */
 .schedule-item {
   display: grid;
   grid-template-columns: 100px 90px 1fr 2fr 40px;
@@ -375,7 +380,6 @@ select { cursor: pointer; }
   margin-top: 2px;
 }
 
-/* Flashcard Maker */
 .flashcard-viewer {
   perspective: 1200px;
   margin-bottom: 20px;
@@ -469,6 +473,147 @@ select { cursor: pointer; }
 .fc-card-item .fc-back {
   color: var(--text-muted);
   font-size: 12px;
+}
+
+.plag-score-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto 20px;
+  position: relative;
+}
+.plag-score-inner {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.plag-score-num {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.plag-score-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.plag-flag {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  border-left: 3px solid;
+}
+.plag-flag.info {
+  background: var(--bg-subtle);
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+.plag-flag.warning {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+  color: var(--text);
+}
+.plag-flag.danger {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--text);
+}
+.plag-flag.success {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--text);
+}
+.plag-flag strong {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+.plag-flag .flag-detail {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.plag-highlight {
+  background: rgba(217,119,6,0.15);
+  border-bottom: 2px solid var(--warning);
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+.plag-highlight.danger {
+  background: rgba(220,38,38,0.15);
+  border-bottom-color: var(--danger);
+}
+
+.analysis-output {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text);
+  background: var(--bg-subtle);
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  max-height: 400px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.metric-row {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-row .metric-name { color: var(--text); }
+.metric-row .metric-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-align: right;
+  color: var(--text);
+}
+.metric-bar {
+  height: 6px;
+  background: var(--bg-subtle);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.info-box {
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--accent);
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
@@ -621,7 +766,7 @@ select { cursor: pointer; }
         </div>
         <div class="result-cell">
           <span class="result-cell-label">Status</span>
-          <span class="result-cell-value" id="gpaStatus">—</span>
+          <span class="result-cell-value" id="gpaStatus">--</span>
         </div>
       </div>
     </div>
@@ -854,7 +999,7 @@ select { cursor: pointer; }
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div class="result-label" style="margin:0">Required Exam Score</div>
-        <span class="difficulty-pill" id="gcDifficulty" style="background:var(--bg-subtle); color:var(--text-muted);">—</span>
+        <span class="difficulty-pill" id="gcDifficulty" style="background:var(--bg-subtle); color:var(--text-muted);">--</span>
       </div>
 
       <div class="result-value" id="gcNeeded" style="margin-top:12px">0.0%</div>
@@ -875,7 +1020,7 @@ select { cursor: pointer; }
         </div>
         <div class="result-cell">
           <span class="result-cell-label">Letter Grade</span>
-          <span class="result-cell-value" id="gcLetter">—</span>
+          <span class="result-cell-value" id="gcLetter">--</span>
         </div>
       </div>
     </div>
@@ -903,10 +1048,10 @@ select { cursor: pointer; }
           <option value="analytical">Analytical</option>
           <option value="expository">Expository</option>
           <option value="persuasive">Persuasive</option>
-          <option value="compare">Compare & Contrast</option>
+          <option value="compare">Compare and Contrast</option>
           <option value="narrative">Narrative</option>
           <option value="descriptive">Descriptive</option>
-          <option value="cause-effect">Cause & Effect</option>
+          <option value="cause-effect">Cause and Effect</option>
           <option value="definition">Definition</option>
           <option value="process">Process / How-To</option>
         </select>
@@ -950,8 +1095,8 @@ select { cursor: pointer; }
         <div>
           <label>Sort Order</label>
           <select id="refSort">
-            <option value="alpha" selected>Alphabetical (A → Z)</option>
-            <option value="reverse">Reverse Alphabetical (Z → A)</option>
+            <option value="alpha" selected>Alphabetical (A to Z)</option>
+            <option value="reverse">Reverse Alphabetical (Z to A)</option>
             <option value="none">Keep Original Order</option>
           </select>
         </div>
@@ -985,7 +1130,7 @@ select { cursor: pointer; }
         </div>
         <div class="result-cell">
           <span class="result-cell-label">Sort</span>
-          <span class="result-cell-value" id="refSortDisplay">A → Z</span>
+          <span class="result-cell-value" id="refSortDisplay">A to Z</span>
         </div>
         <div class="result-cell">
           <span class="result-cell-label">Indent</span>
@@ -1147,7 +1292,90 @@ select { cursor: pointer; }
   </div>
 </div>
 
-<div id="view-plagiarism" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Plagiarism Checker</h1><p>Coming soon.</p></header></div></div>
+<div id="view-plagiarism" class="hidden">
+  <div class="container-wide">
+    <header class="tool-header">
+      <button class="back-link" onclick="showHome()">← All tools</button>
+      <h1>Plagiarism and Originality Checker</h1>
+      <p>Analyze your draft for AI-generated patterns, repetition, and citation gaps. Runs entirely in your browser.</p>
+    </header>
+
+    <div class="card">
+      <div class="info-box">
+        <strong style="color:var(--text);">How this works:</strong> Unlike Turnitin, this tool does not compare against a web database (that requires a paid API). Instead, it analyzes your text for <strong>AI-generated patterns</strong>, <strong>repetitive phrasing</strong>, <strong>citation gaps</strong>, and <strong>stylistic anomalies</strong> using statistical methods. It runs 100% in your browser. Your text never leaves your device.
+      </div>
+
+      <label>Paste Your Draft (up to 10,000 words)</label>
+      <textarea id="plagInput" style="min-height:200px;" placeholder="Paste your essay, article, or paper here for analysis..."></textarea>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="plagAnalyze()">🔍 Analyze Text</button>
+        <button class="btn btn-secondary" onclick="plagLoadSample()">Load Sample</button>
+        <button class="btn btn-secondary" onclick="plagClear()">Clear</button>
+      </div>
+
+      <div id="plagMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--bg-subtle); border-radius:8px; font-size:13px;"></div>
+    </div>
+
+    <div id="plagResults" class="hidden">
+      <div class="card">
+        <div class="result-label">Originality Score</div>
+        <div class="plag-score-circle" id="plagCircle">
+          <div class="plag-score-inner">
+            <div class="plag-score-num" id="plagScoreNum">-</div>
+            <div class="plag-score-label">Originality</div>
+          </div>
+        </div>
+        <div class="result-sub" id="plagScoreSub" style="text-align:center;">Analysis complete</div>
+
+        <div class="result-grid">
+          <div class="result-cell">
+            <span class="result-cell-label">Words</span>
+            <span class="result-cell-value" id="plagWordCount">0</span>
+          </div>
+          <div class="result-cell">
+            <span class="result-cell-label">Sentences</span>
+            <span class="result-cell-value" id="plagSentenceCount">0</span>
+          </div>
+          <div class="result-cell">
+            <span class="result-cell-label">AI Risk</span>
+            <span class="result-cell-value" id="plagAIRisk">-</span>
+          </div>
+          <div class="result-cell">
+            <span class="result-cell-label">Repetition</span>
+            <span class="result-cell-value" id="plagRepRisk">-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="result-label">Detailed Metrics</div>
+        <div id="plagMetrics"></div>
+      </div>
+
+      <div class="card">
+        <div class="result-label">Flags and Findings</div>
+        <div id="plagFlags"></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div class="result-label" style="margin:0;">Annotated Text</div>
+          <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">Highlighted passages need review</span>
+        </div>
+        <div class="analysis-output" id="plagAnnotated"></div>
+      </div>
+
+      <div class="card">
+        <div class="info-box" style="border-left:3px solid var(--text-dim);">
+          <strong style="color:var(--text);">What this tool cannot do:</strong> It cannot detect text copied from books, paywalled journals, or private databases. For a full plagiarism check, use your institution's Turnitin, Ouriginal, or a paid API service like Copyscape. This tool is designed to catch AI-generated content, self-plagiarism signals, and citation problems before you submit.
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">Free student tools. Made for students.</footer>
+  </div>
+</div>
 
 <script>
 const VIEWS = ['home','gpa','timer','citation','wordcount','grade','essay','reference','schedule','flashcard','plagiarism'];
@@ -1169,7 +1397,13 @@ if (localStorage.getItem('theme') === 'dark') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
-/* ============ GPA CALCULATOR ============ */
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* GPA CALCULATOR */
 const GPA_SYSTEMS = {
   us: { label:'Your GPA', sub:'Out of 4.00', count:6, grades:[
     {label:'A (90-100%)',value:4.0},{label:'B (80-89%)',value:3.0},{label:'C (70-79%)',value:2.0},
@@ -1228,9 +1462,7 @@ function gpaRender() {
     nameInput.type = 'text';
     nameInput.value = sub.name;
     nameInput.placeholder = 'Subject';
-    nameInput.addEventListener('input', (e) => {
-      gpaSubjects[i].name = e.target.value;
-    });
+    nameInput.addEventListener('input', (e) => { gpaSubjects[i].name = e.target.value; });
 
     const gradeSelect = document.createElement('select');
     sys.grades.forEach((g, gi) => {
@@ -1251,9 +1483,7 @@ function gpaRender() {
     percentInput.max = '100';
     percentInput.placeholder = '%';
     percentInput.value = sub.percent || '';
-    percentInput.addEventListener('input', (e) => {
-      gpaSubjects[i].percent = e.target.value;
-    });
+    percentInput.addEventListener('input', (e) => { gpaSubjects[i].percent = e.target.value; });
 
     const removeBtn = document.createElement('button');
     removeBtn.className = 'icon-btn';
@@ -1270,11 +1500,7 @@ function gpaRender() {
 }
 
 function gpaAddSubject() {
-  gpaSubjects.push({
-    name: 'Subject ' + (gpaSubjects.length + 1),
-    gradeIndex: 0,
-    percent: ''
-  });
+  gpaSubjects.push({ name: 'Subject ' + (gpaSubjects.length + 1), gradeIndex: 0, percent: '' });
   gpaRender();
 }
 
@@ -1303,7 +1529,7 @@ function gpaCalculate() {
   document.getElementById('gpaCount').textContent = gpaSubjects.length;
   document.getElementById('gpaAvg').textContent = Math.round((avg / sys.grades[0].value) * 100) + '%';
 
-  let status = '—';
+  let status = '--';
   if (gpaSystem === 'sa') {
     status = avg >= 6 ? 'Excellent' : avg >= 5 ? 'Good' : avg >= 4 ? 'Pass' : 'At Risk';
   } else if (gpaSystem === 'ph') {
@@ -1317,7 +1543,7 @@ function gpaCalculate() {
 gpaSubjects = gpaDefaultSubjects(GPA_SYSTEMS.us.count);
 gpaRender();
 
-/* ============ STUDY TIMER ============ */
+/* STUDY TIMER */
 let timerMode = 'work';
 let timerRunning = false;
 let timerInterval = null;
@@ -1418,7 +1644,7 @@ function timerBeep() {
 
 timerUpdateDisplay();
 
-/* ============ CITATION GENERATOR ============ */
+/* CITATION GENERATOR */
 function citRender() {
   const style = document.getElementById('citStyle').value;
   const author = document.getElementById('citAuthor').value;
@@ -1457,13 +1683,13 @@ function citCopy(e) {
   navigator.clipboard.writeText(document.getElementById('citOutput').textContent);
   const btn = e.target;
   const orig = btn.textContent;
-  btn.textContent = '✓ Copied!';
+  btn.textContent = 'Copied!';
   setTimeout(() => btn.textContent = orig, 1500);
 }
 
 citRender();
 
-/* ============ WORD COUNT TO PAGES ============ */
+/* WORD COUNT TO PAGES */
 let wcMode = 'count';
 
 function wcSetMode(mode) {
@@ -1548,7 +1774,7 @@ document.addEventListener('DOMContentLoaded', function() {
   wcCalculate();
 });
 
-/* ============ GRADE PERCENTAGE CALCULATOR ============ */
+/* GRADE PERCENTAGE CALCULATOR */
 function gcSetTarget(val) {
   document.getElementById('gcTarget').value = val;
   gcCalculate();
@@ -1614,7 +1840,7 @@ function gcCalculate() {
   if (needed <= 0) {
     sub.textContent = 'You have already secured your target grade';
   } else if (needed > 100) {
-    sub.textContent = 'Impossible without extra credit — consider a lower target';
+    sub.textContent = 'Impossible without extra credit. Consider a lower target.';
   } else {
     sub.textContent = 'needed on the final exam to reach ' + target + '%';
   }
@@ -1632,7 +1858,7 @@ document.addEventListener('DOMContentLoaded', function() {
   gcCalculate();
 });
 
-/* ============ ESSAY OUTLINE GENERATOR ============ */
+/* ESSAY OUTLINE GENERATOR */
 const EO_TYPE_INTROS = {
   argumentative: {
     hook: 'Open with a compelling statistic, question, or scenario related to:',
@@ -1657,7 +1883,7 @@ const EO_TYPE_INTROS = {
   compare: {
     hook: 'Introduce both subjects being compared.',
     context: 'Explain why this comparison matters and what is at stake.',
-    thesis: 'State your verdict — which is stronger, or what the key similarity/difference is.'
+    thesis: 'State your verdict: which is stronger, or what the key similarity or difference is.'
   },
   narrative: {
     hook: 'Open in the middle of the action or with a vivid sensory detail.',
@@ -1665,14 +1891,14 @@ const EO_TYPE_INTROS = {
     thesis: 'Signal the central theme or lesson your narrative will explore.'
   },
   descriptive: {
-    hook: 'Open with a strong sensory image — sight, sound, smell, texture.',
+    hook: 'Open with a strong sensory image: sight, sound, smell, texture.',
     context: 'Set the scene and introduce what you will describe.',
     thesis: 'Signal the dominant impression or mood you want the reader to feel.'
   },
   'cause-effect': {
     hook: 'Open with a striking consequence or a surprising cause.',
     context: 'Establish which cause or effect you will focus on and why.',
-    thesis: 'State the key causal relationship — what leads to what, and how strongly.'
+    thesis: 'State the key causal relationship: what leads to what, and how strongly.'
   },
   definition: {
     hook: 'Open with a common misconception or an unusual use of the term.',
@@ -1690,7 +1916,7 @@ const EO_BODY_TEMPLATES = {
   argumentative: [
     { title: 'Primary Argument', prompt: 'Establish your strongest point. What is the most compelling evidence?' },
     { title: 'Supporting Evidence', prompt: 'Build on the first argument. What additional evidence strengthens your case?' },
-    { title: 'Counter-Argument & Rebuttal', prompt: 'Acknowledge the opposing view. Why does your argument still hold?' },
+    { title: 'Counter-Argument and Rebuttal', prompt: 'Acknowledge the opposing view. Why does your argument still hold?' },
     { title: 'Deeper Analysis', prompt: 'Explore nuance. What complexities or edge cases deserve attention?' },
     { title: 'Broader Implications', prompt: 'Zoom out. What are the wider consequences or applications?' },
     { title: 'Historical Precedent', prompt: 'What similar cases from history support your argument?' },
@@ -1702,19 +1928,19 @@ const EO_BODY_TEMPLATES = {
   persuasive: [
     { title: 'Emotional Appeal', prompt: 'What human story or image makes this real and urgent?' },
     { title: 'Logical Argument', prompt: 'What statistics, studies, or hard evidence prove your point?' },
-    { title: 'Credibility & Authority', prompt: 'What experts, institutions, or personal experience back you up?' },
+    { title: 'Credibility and Authority', prompt: 'What experts, institutions, or personal experience back you up?' },
     { title: 'Anticipate Objections', prompt: 'What will skeptics say? Answer them head-on.' },
     { title: 'Call to Action', prompt: 'What specifically should the reader do?' },
     { title: 'Urgency', prompt: 'Why must this be addressed now and not later?' },
     { title: 'Shared Values', prompt: 'What values does your audience hold that align with this?' },
     { title: 'Personal Stake', prompt: 'Why does this matter to you personally?' },
-    { title: 'Vision of the Future', prompt: 'What does the world look like if we act — or don\'t?' },
+    { title: 'Vision of the Future', prompt: 'What does the world look like if we act, or if we do not?' },
     { title: 'Final Push', prompt: 'The strongest emotional or logical close.' }
   ],
   analytical: [
     { title: 'Foundational Component', prompt: 'What is the first key part or perspective of this topic?' },
     { title: 'Secondary Component', prompt: 'What is the next layer or angle worth examining?' },
-    { title: 'Relationships & Connections', prompt: 'How do the components relate to one another?' },
+    { title: 'Relationships and Connections', prompt: 'How do the components relate to one another?' },
     { title: 'Patterns', prompt: 'What recurring themes or patterns emerge?' },
     { title: 'Contradictions', prompt: 'Where do the components conflict or break down?' },
     { title: 'Contextual Factors', prompt: 'How does context shape the meaning?' },
@@ -1724,7 +1950,7 @@ const EO_BODY_TEMPLATES = {
     { title: 'Synthesis', prompt: 'What emerges when you put all the pieces together?' }
   ],
   expository: [
-    { title: 'Definition & Scope', prompt: 'What is the term or concept, precisely?' },
+    { title: 'Definition and Scope', prompt: 'What is the term or concept, precisely?' },
     { title: 'Historical Background', prompt: 'Where did this come from? How has it evolved?' },
     { title: 'Key Characteristics', prompt: 'What are the defining features?' },
     { title: 'Categories or Types', prompt: 'What are the main variations or subtypes?' },
@@ -1756,7 +1982,7 @@ const EO_BODY_TEMPLATES = {
     { title: 'Escalation', prompt: 'What raises the stakes even higher?' },
     { title: 'Climax', prompt: 'What is the emotional or dramatic peak?' },
     { title: 'Falling Action', prompt: 'What happens immediately after the climax?' },
-    { title: 'Reflection', prompt: 'What did the character (or you) learn?' },
+    { title: 'Reflection', prompt: 'What did the character, or you, learn?' },
     { title: 'Resolution', prompt: 'How does the story close? What has changed?' }
   ],
   descriptive: [
@@ -1764,9 +1990,9 @@ const EO_BODY_TEMPLATES = {
     { title: 'Visual Details', prompt: 'What do you see? Colors, shapes, light.' },
     { title: 'Auditory Details', prompt: 'What do you hear? Sounds, silence, rhythm.' },
     { title: 'Tactile Details', prompt: 'What do you feel? Texture, temperature, pressure.' },
-    { title: 'Olfactory & Gustatory', prompt: 'What do you smell or taste?' },
-    { title: 'Movement & Energy', prompt: 'What is dynamic? What changes moment to moment?' },
-    { title: 'Mood & Atmosphere', prompt: 'What emotional tone pervades the scene?' },
+    { title: 'Olfactory and Gustatory', prompt: 'What do you smell or taste?' },
+    { title: 'Movement and Energy', prompt: 'What is dynamic? What changes moment to moment?' },
+    { title: 'Mood and Atmosphere', prompt: 'What emotional tone pervades the scene?' },
     { title: 'Relationship to Subject', prompt: 'How do you relate to what is being described?' },
     { title: 'Shift in Focus', prompt: 'What detail becomes suddenly important?' },
     { title: 'Closing Impression', prompt: 'What image lingers after you stop looking?' }
@@ -1781,12 +2007,12 @@ const EO_BODY_TEMPLATES = {
     { title: 'Unintended Consequences', prompt: 'What unexpected outcomes occurred?' },
     { title: 'Chain Reactions', prompt: 'What cascading effects are still unfolding?' },
     { title: 'Counterfactual', prompt: 'What would have happened without the cause?' },
-    { title: 'Lessons & Prevention', prompt: 'What can be learned or prevented going forward?' }
+    { title: 'Lessons and Prevention', prompt: 'What can be learned or prevented going forward?' }
   ],
   definition: [
     { title: 'Common Definition', prompt: 'What is the standard or dictionary definition?' },
-    { title: 'Etymology & Origin', prompt: 'Where does the term come from historically?' },
-    { title: 'What It Is Not', prompt: 'What is commonly confused with this but isn\'t it?' },
+    { title: 'Etymology and Origin', prompt: 'Where does the term come from historically?' },
+    { title: 'What It Is Not', prompt: 'What is commonly confused with this but is not it?' },
     { title: 'Key Criteria', prompt: 'What are the necessary and sufficient conditions?' },
     { title: 'Examples', prompt: 'What are clear, illustrative examples?' },
     { title: 'Borderline Cases', prompt: 'What cases are ambiguous or debatable?' },
@@ -1821,10 +2047,10 @@ function eoGenerate() {
     analytical: 'Analytical',
     expository: 'Expository',
     persuasive: 'Persuasive',
-    compare: 'Compare & Contrast',
+    compare: 'Compare and Contrast',
     narrative: 'Narrative',
     descriptive: 'Descriptive',
-    'cause-effect': 'Cause & Effect',
+    'cause-effect': 'Cause and Effect',
     definition: 'Definition',
     process: 'Process / How-To'
   }[type] || 'Essay';
@@ -1833,11 +2059,11 @@ function eoGenerate() {
   const bodyPool = EO_BODY_TEMPLATES[type] || EO_BODY_TEMPLATES.argumentative;
 
   let outline = 'ESSAY OUTLINE\n';
-  outline += '════════════════════════════════════════\n\n';
+  outline += '========================================\n\n';
   outline += 'Topic: ' + topic + '\n';
   outline += 'Type: ' + typeLabel + '\n';
   outline += 'Structure: ' + numParas + ' body paragraph' + (numParas !== 1 ? 's' : '') + '\n\n';
-  outline += '────────────────────────────────────────\n\n';
+  outline += '----------------------------------------\n\n';
 
   outline += 'I. INTRODUCTION\n\n';
   outline += '   A. Hook\n';
@@ -1847,7 +2073,7 @@ function eoGenerate() {
   outline += '      ' + intro.context + '\n\n';
   outline += '   C. Thesis Statement\n';
   outline += '      ' + intro.thesis + '\n\n';
-  outline += '────────────────────────────────────────\n\n';
+  outline += '----------------------------------------\n\n';
 
   const romanNumerals = ['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
   for (let i = 0; i < numParas; i++) {
@@ -1857,18 +2083,18 @@ function eoGenerate() {
     outline += '      ' + tmpl.prompt + '\n\n';
     outline += '   B. Evidence\n';
     outline += '      Cite a specific source, statistic, quote, or example.\n';
-    outline += '      (Author, Year) — remember to add your citation here.\n\n';
+    outline += '      (Author, Year) - remember to add your citation here.\n\n';
     outline += '   C. Analysis\n';
     outline += '      Explain HOW the evidence supports your thesis.\n';
-    outline += '      Do not just summarize — interpret.\n\n';
+    outline += '      Do not just summarize. Interpret.\n\n';
     outline += '   D. Transition\n';
     outline += '      Bridge to the next paragraph with a linking sentence.\n\n';
-    outline += '────────────────────────────────────────\n\n';
+    outline += '----------------------------------------\n\n';
   }
 
   outline += romanNumerals[numParas] + '. CONCLUSION\n\n';
   outline += '   A. Restate Thesis (in new words)\n';
-  outline += '      Remind the reader of your central claim — but do not copy-paste.\n\n';
+  outline += '      Remind the reader of your central claim, but do not copy-paste.\n\n';
   outline += '   B. Synthesize Key Points\n';
   outline += '      Tie together your body paragraphs into a unified argument.\n\n';
   outline += '   C. Closing Thought\n';
@@ -1883,7 +2109,7 @@ function eoCopy() {
   navigator.clipboard.writeText(text);
   const btn = document.getElementById('eoCopyBtn');
   const orig = btn.textContent;
-  btn.textContent = '✓ Copied!';
+  btn.textContent = 'Copied!';
   setTimeout(() => btn.textContent = orig, 1500);
 }
 
@@ -1891,7 +2117,7 @@ document.addEventListener('DOMContentLoaded', function() {
   eoGenerate();
 });
 
-/* ============ REFERENCE LIST FORMATTER ============ */
+/* REFERENCE LIST FORMATTER */
 function refFormat() {
   const input = document.getElementById('refInput').value || '';
   const sortMode = document.getElementById('refSort').value;
@@ -1917,7 +2143,7 @@ function refFormat() {
 
   document.getElementById('refCount').textContent = refs.length;
   document.getElementById('refSortDisplay').textContent = 
-    sortMode === 'alpha' ? 'A → Z' : sortMode === 'reverse' ? 'Z → A' : 'Original';
+    sortMode === 'alpha' ? 'A to Z' : sortMode === 'reverse' ? 'Z to A' : 'Original';
   document.getElementById('refIndentDisplay').textContent = hanging ? 'Hanging' : 'Flush';
 }
 
@@ -1939,14 +2165,8 @@ function refCopy() {
   navigator.clipboard.writeText(text);
   const btn = document.getElementById('refCopyBtn');
   const orig = btn.textContent;
-  btn.textContent = '✓ Copied!';
+  btn.textContent = 'Copied!';
   setTimeout(() => btn.textContent = orig, 1500);
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1959,7 +2179,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (refHanging) refHanging.addEventListener('change', refFormat);
 });
 
-/* ============ STUDY SCHEDULE BUILDER ============ */
+/* STUDY SCHEDULE BUILDER */
 let scheduleBlocks = [];
 
 function schAdd() {
@@ -1991,7 +2211,7 @@ function schAdd() {
   document.getElementById('schTopic').value = '';
 
   if (msgEl) {
-    msgEl.textContent = '✓ Added "' + subject + '" for ' + day;
+    msgEl.textContent = 'Added "' + subject + '" for ' + day;
     msgEl.style.display = 'block';
     msgEl.style.color = 'var(--success)';
     setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
@@ -2071,7 +2291,7 @@ function schRender() {
     ).join('');
     return '<div class="week-day">' +
       '<div class="week-day-name">' + day.slice(0, 3) + '</div>' +
-      (blocksHtml || '<div style="text-align:center; color:var(--text-dim); font-size:10px; padding-top:20px;">—</div>') +
+      (blocksHtml || '<div style="text-align:center; color:var(--text-dim); font-size:10px; padding-top:20px;">-</div>') +
     '</div>';
   }).join('');
 }
@@ -2080,7 +2300,7 @@ document.addEventListener('DOMContentLoaded', function() {
   schRender();
 });
 
-/* ============ FLASHCARD MAKER ============ */
+/* FLASHCARD MAKER */
 let flashcards = [];
 let fcCurrentIndex = 0;
 let fcFlipped = false;
@@ -2115,7 +2335,7 @@ function fcAdd() {
   document.getElementById('fcBack').value = '';
 
   if (msgEl) {
-    msgEl.textContent = '✓ Card added! Total: ' + flashcards.length;
+    msgEl.textContent = 'Card added. Total: ' + flashcards.length;
     msgEl.style.display = 'block';
     msgEl.style.color = 'var(--success)';
     setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
@@ -2256,6 +2476,260 @@ function fcRender() {
 document.addEventListener('DOMContentLoaded', function() {
   fcRender();
 });
+
+/* PLAGIARISM CHECKER */
+function plagClear() {
+  document.getElementById('plagInput').value = '';
+  document.getElementById('plagResults').classList.add('hidden');
+}
+
+function plagLoadSample() {
+  document.getElementById('plagInput').value = 
+    'The cognitive load theory originally formulated by John Sweller posits that instructional design should minimize extraneous cognitive processing while maximizing germane processing. This foundational principle has shaped modern educational psychology and continues to inform the design of digital learning environments.\n\n' +
+    'Research has consistently demonstrated that working memory capacity is limited, and that overloading it impairs learning outcomes. The implications for instructional design are profound. The implications for instructional design are significant. The implications for instructional design are substantial.\n\n' +
+    '"Working memory is the limited capacity system that allows for the temporary storage and manipulation of information necessary for complex cognitive tasks."\n\n' +
+    'Furthermore, empirical investigations have revealed that spaced repetition enhances long-term retention more effectively than massed practice. Additionally, empirical studies have shown that spaced repetition improves long-term retention more effectively than massed practice. Moreover, empirical research has demonstrated that spaced repetition augments long-term retention more effectively than massed practice.';
+  plagAnalyze();
+}
+
+function plagAnalyze() {
+  const text = document.getElementById('plagInput').value.trim();
+  const msgEl = document.getElementById('plagMsg');
+
+  if (!text || text.split(/\s+/).length < 10) {
+    msgEl.textContent = 'Please enter at least 10 words for analysis.';
+    msgEl.style.display = 'block';
+    msgEl.style.color = 'var(--danger)';
+    return;
+  }
+  msgEl.style.display = 'none';
+
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 3);
+  const wordCount = words.length;
+  const sentenceCount = sentences.length;
+  const paragraphs = text.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+
+  const phrases = [];
+  for (let n = 3; n <= 6; n++) {
+    for (let i = 0; i <= words.length - n; i++) {
+      phrases.push(words.slice(i, i + n).join(' ').toLowerCase().replace(/[^a-z\s]/g, ''));
+    }
+  }
+  const phraseCounts = {};
+  phrases.forEach(p => {
+    if (p.trim()) phraseCounts[p] = (phraseCounts[p] || 0) + 1;
+  });
+  const repeatedPhrases = Object.entries(phraseCounts)
+    .filter(([p, c]) => c >= 2)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+
+  const repetitionScore = Math.min(100, repeatedPhrases.length * 8);
+
+  const sentenceLengths = sentences.map(s => s.split(/\s+/).length);
+  const avgSentLen = sentenceLengths.reduce((a, b) => a + b, 0) / (sentenceLengths.length || 1);
+  const variance = sentenceLengths.reduce((sum, l) => sum + Math.pow(l - avgSentLen, 2), 0) / (sentenceLengths.length || 1);
+  const stdDev = Math.sqrt(variance);
+  const burstiness = avgSentLen > 0 ? stdDev / avgSentLen : 0;
+
+  const aiSentenceRisk = burstiness < 0.4 ? 'High' : burstiness < 0.6 ? 'Moderate' : 'Low';
+  const aiSentenceScore = burstiness < 0.4 ? 75 : burstiness < 0.6 ? 45 : 15;
+
+  const uniqueWords = new Set(words.map(w => w.toLowerCase().replace(/[^a-z]/g, '')).filter(w => w));
+  const lexicalDiversity = uniqueWords.size / (wordCount || 1);
+  const lowDiversity = lexicalDiversity < 0.4;
+
+  const openers = sentences.map(s => s.split(/\s+/).slice(0, 2).join(' ').toLowerCase());
+  const openerCounts = {};
+  openers.forEach(o => { if (o) openerCounts[o] = (openerCounts[o] || 0) + 1; });
+  const repeatedOpeners = Object.entries(openerCounts).filter(([o, c]) => c >= 2);
+
+  const quotedSegments = text.match(/"[^"]{30,}"/g) || [];
+  const citationPattern = /\([A-Z][a-zA-Z]+(?:\s*(?:&|and)\s*[A-Z][a-zA-Z]+)?,?\s*\d{4}\)|\[\d+\]|\b[A-Z][a-z]+\s+\(\d{4}\)/g;
+  const citationMatches = text.match(citationPattern) || [];
+  const uncitedQuotes = quotedSegments.filter(q => {
+    const quoteIndex = text.indexOf(q);
+    const contextAfter = text.slice(quoteIndex + q.length, quoteIndex + q.length + 100);
+    return !citationPattern.test(contextAfter);
+  });
+
+  const paraLengths = paragraphs.map(p => p.split(/\s+/).length);
+  const paraVariance = paraLengths.length > 1
+    ? paraLengths.reduce((sum, l) => {
+        const mean = paraLengths.reduce((a, b) => a + b, 0) / paraLengths.length;
+        return sum + Math.pow(l - mean, 2);
+      }, 0) / paraLengths.length
+    : 0;
+  const uniformParagraphs = paragraphs.length >= 3 && Math.sqrt(paraVariance) < 15;
+
+  const aiPhrases = [
+    'furthermore', 'moreover', 'additionally', 'in conclusion', 'in summary',
+    'it is important to note', 'it is worth noting', 'in essence', 'ultimately',
+    'consequently', 'nevertheless', 'nonetheless', 'in other words', 'that being said',
+    'on the other hand', 'as a result', 'in addition', 'for instance', 'for example'
+  ];
+  const lowerText = text.toLowerCase();
+  const aiTransitionHits = aiPhrases.filter(p => lowerText.includes(p));
+  const aiTransitionDensity = (aiTransitionHits.length / (sentenceCount || 1)) * 100;
+  const highTransitionDensity = aiTransitionDensity > 8;
+
+  let riskPoints = 0;
+  let maxPoints = 0;
+
+  maxPoints += 20;
+  riskPoints += Math.min(20, repetitionScore / 4);
+
+  maxPoints += 20;
+  riskPoints += aiSentenceScore * 0.2;
+
+  maxPoints += 10;
+  riskPoints += lowDiversity ? 8 : 2;
+
+  maxPoints += 10;
+  riskPoints += Math.min(10, repeatedOpeners.length * 4);
+
+  maxPoints += 15;
+  riskPoints += Math.min(15, uncitedQuotes.length * 10);
+
+  maxPoints += 10;
+  riskPoints += uniformParagraphs ? 8 : 2;
+
+  maxPoints += 15;
+  riskPoints += highTransitionDensity ? 12 : Math.min(8, aiTransitionHits.length);
+
+  const riskPercent = Math.min(100, Math.round((riskPoints / maxPoints) * 100));
+  const originality = Math.max(0, 100 - riskPercent);
+
+  const circle = document.getElementById('plagCircle');
+  const scoreColor = originality >= 80 ? 'var(--success)' : originality >= 60 ? 'var(--warning)' : 'var(--danger)';
+  circle.style.background = 'conic-gradient(' + scoreColor + ' ' + (originality * 3.6) + 'deg, var(--bg-subtle) 0deg)';
+  circle.style.padding = '15px';
+
+  document.getElementById('plagScoreNum').textContent = originality + '%';
+  document.getElementById('plagScoreNum').style.color = scoreColor;
+
+  const subEl = document.getElementById('plagScoreSub');
+  if (originality >= 80) {
+    subEl.textContent = 'High originality detected. Minor review recommended.';
+  } else if (originality >= 60) {
+    subEl.textContent = 'Moderate concerns found. Review flagged passages.';
+  } else {
+    subEl.textContent = 'Significant flags detected. Rewrite flagged sections.';
+  }
+
+  document.getElementById('plagWordCount').textContent = wordCount.toLocaleString();
+  document.getElementById('plagSentenceCount').textContent = sentenceCount;
+  document.getElementById('plagAIRisk').textContent = aiSentenceRisk;
+  document.getElementById('plagRepRisk').textContent = repetitionScore > 50 ? 'High' : repetitionScore > 25 ? 'Moderate' : 'Low';
+
+  const metricsEl = document.getElementById('plagMetrics');
+  const metrics = [
+    { name: 'Lexical Diversity (unique vs total words)', value: lexicalDiversity.toFixed(2), pct: Math.min(100, lexicalDiversity * 150), good: !lowDiversity },
+    { name: 'Sentence Burstiness (human writing ~0.6+)', value: burstiness.toFixed(2), pct: Math.min(100, burstiness * 100), good: burstiness >= 0.5 },
+    { name: 'Repetition Score (lower is better)', value: repetitionScore + '%', pct: repetitionScore, good: repetitionScore < 30 },
+    { name: 'AI Transition Density', value: aiTransitionDensity.toFixed(1) + '%', pct: Math.min(100, aiTransitionDensity * 5), good: !highTransitionDensity },
+    { name: 'Paragraph Uniformity', value: uniformParagraphs ? 'Suspiciously uniform' : 'Natural variation', pct: uniformParagraphs ? 80 : 20, good: !uniformParagraphs },
+    { name: 'Citations Found', value: citationMatches.length + ' matches', pct: Math.min(100, citationMatches.length * 20), good: citationMatches.length > 0 }
+  ];
+
+  let metricsHtml = '';
+  metrics.forEach(m => {
+    const color = m.good ? 'var(--success)' : 'var(--warning)';
+    metricsHtml += '<div class="metric-row">' +
+      '<div>' +
+        '<div class="metric-name">' + escapeHtml(m.name) + '</div>' +
+        '<div class="metric-bar"><div class="metric-bar-fill" style="width:' + m.pct + '%; background:' + color + ';"></div></div>' +
+      '</div>' +
+      '<div class="metric-value">' + escapeHtml(m.value) + '</div>' +
+    '</div>';
+  });
+  metricsEl.innerHTML = metricsHtml;
+
+  const flagsEl = document.getElementById('plagFlags');
+  let flagsHtml = '';
+
+  if (repeatedPhrases.length > 0) {
+    flagsHtml += '<div class="plag-flag warning">' +
+      '<strong>Repetitive phrasing detected (' + repeatedPhrases.length + ' repeated n-grams)</strong>' +
+      'Found the same multi-word phrases appearing multiple times.' +
+      '<div class="flag-detail">Examples: "' + repeatedPhrases.slice(0, 3).map(p => escapeHtml(p[0])).join('", "') + '"</div>' +
+    '</div>';
+  }
+
+  if (aiSentenceScore > 50) {
+    flagsHtml += '<div class="plag-flag danger">' +
+      '<strong>AI-generated text signal: Low burstiness</strong>' +
+      'Your sentences have unusually uniform length (variance: ' + burstiness.toFixed(2) + '). Human writing tends to vary sentence length dramatically. AI text often has low burstiness.' +
+    '</div>';
+  } else if (aiSentenceScore > 30) {
+    flagsHtml += '<div class="plag-flag warning">' +
+      '<strong>Moderate AI risk: Sentence lengths are somewhat uniform</strong>' +
+      'Consider varying sentence structure. Mix short punchy sentences with longer complex ones.' +
+    '</div>';
+  }
+
+  if (lowDiversity) {
+    flagsHtml += '<div class="plag-flag warning">' +
+      '<strong>Low vocabulary diversity (' + (lexicalDiversity * 100).toFixed(0) + '% unique words)</strong>' +
+      'You are reusing the same words frequently. Try varying your vocabulary.' +
+    '</div>';
+  }
+
+  if (repeatedOpeners.length > 0) {
+    flagsHtml += '<div class="plag-flag warning">' +
+      '<strong>Repeated sentence openers</strong>' +
+      'Multiple sentences start with the same words: "' + repeatedOpeners.slice(0, 3).map(o => escapeHtml(o[0])).join('", "') + '"' +
+    '</div>';
+  }
+
+  if (uncitedQuotes.length > 0) {
+    flagsHtml += '<div class="plag-flag danger">' +
+      '<strong>' + uncitedQuotes.length + ' quotation(s) without citation</strong>' +
+      'You have quoted material but no citation follows within 100 characters. Every direct quote needs a source.' +
+      '<div class="flag-detail">First uncited quote: "' + escapeHtml(uncitedQuotes[0].slice(0, 80)) + '..."</div>' +
+    '</div>';
+  }
+
+  if (highTransitionDensity) {
+    flagsHtml += '<div class="plag-flag warning">' +
+      '<strong>High density of academic transition phrases</strong>' +
+      'Found ' + aiTransitionHits.length + ' transition phrases like "furthermore," "moreover," "additionally." AI text tends to overuse these.' +
+    '</div>';
+  }
+
+  if (uniformParagraphs) {
+    flagsHtml += '<div class="plag-flag warning">' +
+      '<strong>Paragraphs are uniformly sized</strong>' +
+      'All your paragraphs have similar word counts. Human writers naturally vary paragraph length.' +
+    '</div>';
+  }
+
+  if (flagsHtml === '') {
+    flagsHtml = '<div class="plag-flag success">' +
+      '<strong>No major flags detected</strong>' +
+      'Your text shows natural human variation in sentence length, vocabulary diversity, and structure. Still review it manually before submitting.' +
+    '</div>';
+  }
+  flagsEl.innerHTML = flagsHtml;
+
+  let annotated = escapeHtml(text);
+  repeatedPhrases.forEach(([phrase, count]) => {
+    if (phrase.length < 10) return;
+    const regex = new RegExp('(' + phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    annotated = annotated.replace(regex, '<span class="plag-highlight">$1</span>');
+  });
+  uncitedQuotes.forEach(q => {
+    const escaped = escapeHtml(q);
+    annotated = annotated.replace(escaped, '<span class="plag-highlight danger">' + escaped + '</span>');
+  });
+  document.getElementById('plagAnnotated').innerHTML = annotated;
+
+  document.getElementById('plagResults').classList.remove('hidden');
+  setTimeout(() => {
+    document.getElementById('plagResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
 </script>
 
 </body>
