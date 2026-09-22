@@ -20,6 +20,9 @@
   --border: #e5e5e5;
   --accent: #000000;
   --accent-text: #ffffff;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
   --radius: 12px;
   --radius-sm: 8px;
   --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -223,6 +226,21 @@ select { cursor: pointer; }
 .timer-status {
   font-family: var(--font-mono); font-size: 12px; text-transform: uppercase;
   letter-spacing: 1px; color: var(--text-muted); margin-top: 12px;
+}
+
+.progress-bar {
+  width: 100%; height: 8px; background: var(--bg-subtle);
+  border-radius: 100px; overflow: hidden; margin-top: 16px;
+}
+.progress-fill {
+  height: 100%; background: var(--accent); border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.difficulty-pill {
+  display: inline-block; padding: 4px 12px; border-radius: 100px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
 
 @media (max-width: 600px) {
@@ -481,8 +499,154 @@ select { cursor: pointer; }
   </div>
 </div>
 
-<div id="view-wordcount" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Word Count to Pages</h1><p>Coming soon.</p></header></div></div>
-<div id="view-grade" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Grade Calculator</h1><p>Coming soon.</p></header></div></div>
+<div id="view-wordcount" class="hidden">
+  <div class="container-narrow">
+    <header class="tool-header">
+      <button class="back-link" onclick="showHome()">← All tools</button>
+      <h1>Word Count to Pages</h1>
+      <p>Convert word counts to estimated printed pages based on spacing and font.</p>
+    </header>
+
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" id="wcTabCount" onclick="wcSetMode('count')">Enter Word Count</button>
+        <button class="tab" id="wcTabText" onclick="wcSetMode('text')">Paste Text</button>
+      </div>
+
+      <div id="wcCountInput">
+        <label>Word Count</label>
+        <input type="number" id="wcWords" min="0" max="100000" value="1000">
+        <input type="range" id="wcSlider" min="0" max="10000" step="50" value="1000" style="width:100%; margin-top:12px; accent-color: var(--accent); cursor:pointer;">
+      </div>
+
+      <div id="wcTextInput" class="hidden">
+        <label>Paste Your Text</label>
+        <textarea id="wcText" placeholder="Paste or type your essay, article, or draft here..." style="min-height:180px;"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div>
+          <label>Line Spacing</label>
+          <select id="wcSpacing">
+            <option value="double" selected>Double (2.0)</option>
+            <option value="1.5">1.5 Spaced</option>
+            <option value="single">Single (1.0)</option>
+          </select>
+        </div>
+        <div>
+          <label>Font</label>
+          <select id="wcFont">
+            <option value="times" selected>Times New Roman</option>
+            <option value="arial">Arial</option>
+            <option value="calibri">Calibri</option>
+            <option value="courier">Courier New</option>
+          </select>
+        </div>
+        <div>
+          <label>Font Size</label>
+          <select id="wcSize">
+            <option value="12" selected>12 pt</option>
+            <option value="11">11 pt</option>
+            <option value="10">10 pt</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Estimated Output</div>
+      <div class="result-value" id="wcPages">0.0</div>
+      <div class="result-sub" id="wcSub">pages (double-spaced, 12pt Times New Roman)</div>
+
+      <div class="result-grid">
+        <div class="result-cell">
+          <span class="result-cell-label">Words</span>
+          <span class="result-cell-value" id="wcWordCount">0</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Characters</span>
+          <span class="result-cell-value" id="wcCharCount">0</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Reading</span>
+          <span class="result-cell-value" id="wcReadTime">0 min</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Speaking</span>
+          <span class="result-cell-value" id="wcSpeakTime">0 min</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">Free student tools. Made for students.</footer>
+  </div>
+</div>
+
+<div id="view-grade" class="hidden">
+  <div class="container-narrow">
+    <header class="tool-header">
+      <button class="back-link" onclick="showHome()">← All tools</button>
+      <h1>Grade Percentage Calculator</h1>
+      <p>Compute final exam scores needed to reach your target grade.</p>
+    </header>
+
+    <div class="card">
+      <label>Current Course Grade (%)</label>
+      <input type="number" id="gcCurrent" min="0" max="150" step="0.5" value="86.5">
+
+      <div style="margin-top:16px">
+        <label>Final Exam Weight (%)</label>
+        <input type="number" id="gcWeight" min="1" max="100" step="1" value="30">
+      </div>
+
+      <div style="margin-top:16px">
+        <label>Target Final Grade (%)</label>
+        <input type="number" id="gcTarget" min="0" max="100" step="1" value="90">
+        <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(93)">A (93%)</button>
+          <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(90)">A- (90%)</button>
+          <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(87)">B+ (87%)</button>
+          <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(83)">B (83%)</button>
+          <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(80)">B- (80%)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="result-label" style="margin:0">Required Exam Score</div>
+        <span class="difficulty-pill" id="gcDifficulty" style="background:var(--bg-subtle); color:var(--text-muted);">—</span>
+      </div>
+
+      <div class="result-value" id="gcNeeded" style="margin-top:12px">0.0%</div>
+      <div class="result-sub" id="gcSub">needed on final exam</div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="gcProgress" style="width:0%"></div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-cell">
+          <span class="result-cell-label">Points Secured</span>
+          <span class="result-cell-value" id="gcSecured">0%</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Exam Weight</span>
+          <span class="result-cell-value" id="gcWeightDisplay">30%</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Letter Grade</span>
+          <span class="result-cell-value" id="gcLetter">—</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">Free student tools. Made for students.</footer>
+  </div>
+</div>
+
 <div id="view-essay" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Essay Outline Generator</h1><p>Coming soon.</p></header></div></div>
 <div id="view-reference" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Reference Formatter</h1><p>Coming soon.</p></header></div></div>
 <div id="view-schedule" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Study Schedule Builder</h1><p>Coming soon.</p></header></div></div>
@@ -802,6 +966,176 @@ function citCopy(e) {
 }
 
 citRender();
+
+/* ============ WORD COUNT TO PAGES ============ */
+let wcMode = 'count';
+
+function wcSetMode(mode) {
+  wcMode = mode;
+  const tabCount = document.getElementById('wcTabCount');
+  const tabText = document.getElementById('wcTabText');
+  const countInput = document.getElementById('wcCountInput');
+  const textInput = document.getElementById('wcTextInput');
+
+  if (mode === 'count') {
+    tabCount.classList.add('active');
+    tabText.classList.remove('active');
+    countInput.classList.remove('hidden');
+    textInput.classList.add('hidden');
+  } else {
+    tabText.classList.add('active');
+    tabCount.classList.remove('active');
+    textInput.classList.remove('hidden');
+    countInput.classList.add('hidden');
+  }
+  wcCalculate();
+}
+
+function wcCalculate() {
+  const textarea = document.getElementById('wcText');
+  const rawText = textarea.value || '';
+  const textWords = rawText.trim() ? rawText.trim().split(/\s+/).length : 0;
+
+  const numberInput = document.getElementById('wcWords');
+  const numberWords = parseInt(numberInput.value) || 0;
+
+  const sysWords = wcMode === 'count' ? numberWords : textWords;
+  const chars = wcMode === 'text' ? rawText.length : sysWords * 6;
+
+  if (wcMode === 'count') {
+    document.getElementById('wcSlider').value = Math.min(10000, sysWords);
+  }
+
+  const spacing = document.getElementById('wcSpacing').value;
+  const font = document.getElementById('wcFont').value;
+  const size = parseInt(document.getElementById('wcSize').value);
+
+  const baseWordsPerPage = spacing === 'double' ? 250 : spacing === '1.5' ? 350 : 500;
+  const fontAdj = font === 'arial' ? 0.95 : font === 'courier' ? 0.8 : font === 'calibri' ? 1.05 : 1.0;
+  const sizeAdj = size === 10 ? 1.15 : size === 11 ? 1.08 : 1.0;
+  const wordsPerPage = baseWordsPerPage * fontAdj * sizeAdj;
+
+  const pages = sysWords > 0 ? sysWords / wordsPerPage : 0;
+
+  document.getElementById('wcPages').textContent = pages.toFixed(1);
+  document.getElementById('wcWordCount').textContent = sysWords.toLocaleString();
+  document.getElementById('wcCharCount').textContent = chars.toLocaleString();
+  document.getElementById('wcReadTime').textContent = Math.max(1, Math.ceil(sysWords / 225)) + ' min';
+  document.getElementById('wcSpeakTime').textContent = Math.max(1, Math.ceil(sysWords / 130)) + ' min';
+
+  const spacingLabel = spacing === 'double' ? 'double-spaced' : spacing === '1.5' ? '1.5-spaced' : 'single-spaced';
+  const fontLabel = document.getElementById('wcFont').selectedOptions[0].textContent;
+  document.getElementById('wcSub').textContent =
+    sysWords > 0 ? 'pages (' + spacingLabel + ', ' + size + 'pt ' + fontLabel + ')' : 'Enter a word count to see the estimate';
+}
+
+// Attach listeners AFTER DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  const wcWords = document.getElementById('wcWords');
+  const wcSlider = document.getElementById('wcSlider');
+  const wcText = document.getElementById('wcText');
+  const wcSpacing = document.getElementById('wcSpacing');
+  const wcFont = document.getElementById('wcFont');
+  const wcSize = document.getElementById('wcSize');
+
+  if (wcWords) wcWords.addEventListener('input', wcCalculate);
+  if (wcText) wcText.addEventListener('input', wcCalculate);
+  if (wcSpacing) wcSpacing.addEventListener('change', wcCalculate);
+  if (wcFont) wcFont.addEventListener('change', wcCalculate);
+  if (wcSize) wcSize.addEventListener('change', wcCalculate);
+  if (wcSlider) {
+    wcSlider.addEventListener('input', function() {
+      document.getElementById('wcWords').value = this.value;
+      wcCalculate();
+    });
+  }
+
+  wcCalculate();
+});
+
+/* ============ GRADE PERCENTAGE CALCULATOR ============ */
+function gcSetTarget(val) {
+  document.getElementById('gcTarget').value = val;
+  gcCalculate();
+}
+
+function gcGetLetter(percent) {
+  if (percent >= 93) return 'A';
+  if (percent >= 90) return 'A-';
+  if (percent >= 87) return 'B+';
+  if (percent >= 83) return 'B';
+  if (percent >= 80) return 'B-';
+  if (percent >= 77) return 'C+';
+  if (percent >= 73) return 'C';
+  if (percent >= 70) return 'C-';
+  if (percent >= 67) return 'D+';
+  if (percent >= 60) return 'D';
+  return 'F';
+}
+
+function gcCalculate() {
+  const current = parseFloat(document.getElementById('gcCurrent').value) || 0;
+  const weight = parseFloat(document.getElementById('gcWeight').value) || 0;
+  const target = parseFloat(document.getElementById('gcTarget').value) || 0;
+
+  const weightDec = weight / 100;
+  const currentPortion = current * (1 - weightDec);
+  const needed = weightDec > 0 ? (target - currentPortion) / weightDec : 0;
+
+  document.getElementById('gcNeeded').textContent = needed.toFixed(1) + '%';
+  document.getElementById('gcSecured').textContent = currentPortion.toFixed(1) + '%';
+  document.getElementById('gcWeightDisplay').textContent = weight + '%';
+  document.getElementById('gcLetter').textContent = gcGetLetter(target);
+
+  const progressPct = Math.min(100, Math.max(0, needed));
+  document.getElementById('gcProgress').style.width = progressPct + '%';
+
+  const pill = document.getElementById('gcDifficulty');
+  let label, bg, color;
+  if (needed <= 0) {
+    label = 'Already Secured';
+    bg = 'rgba(5,150,105,0.1)'; color = 'var(--success)';
+  } else if (needed <= 60) {
+    label = 'Very Achievable';
+    bg = 'rgba(5,150,105,0.1)'; color = 'var(--success)';
+  } else if (needed <= 85) {
+    label = 'Realistic';
+    bg = 'rgba(5,150,105,0.1)'; color = 'var(--success)';
+  } else if (needed <= 95) {
+    label = 'Challenging';
+    bg = 'rgba(217,119,6,0.1)'; color = 'var(--warning)';
+  } else if (needed <= 100) {
+    label = 'Very Hard';
+    bg = 'rgba(217,119,6,0.1)'; color = 'var(--warning)';
+  } else {
+    label = 'Extra Credit Needed';
+    bg = 'rgba(220,38,38,0.1)'; color = 'var(--danger)';
+  }
+  pill.textContent = label;
+  pill.style.background = bg;
+  pill.style.color = color;
+
+  const sub = document.getElementById('gcSub');
+  if (needed <= 0) {
+    sub.textContent = 'You have already secured your target grade';
+  } else if (needed > 100) {
+    sub.textContent = 'Impossible without extra credit — consider a lower target';
+  } else {
+    sub.textContent = 'needed on the final exam to reach ' + target + '%';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const gcCurrent = document.getElementById('gcCurrent');
+  const gcWeight = document.getElementById('gcWeight');
+  const gcTarget = document.getElementById('gcTarget');
+
+  if (gcCurrent) gcCurrent.addEventListener('input', gcCalculate);
+  if (gcWeight) gcWeight.addEventListener('input', gcCalculate);
+  if (gcTarget) gcTarget.addEventListener('input', gcCalculate);
+
+  gcCalculate();
+});
 </script>
 
 </body>
