@@ -243,6 +243,19 @@ select { cursor: pointer; }
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 
+.outline-box {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: var(--text);
+  max-height: 520px;
+  overflow-y: auto;
+}
+
 @media (max-width: 600px) {
   .hero h1 { font-size: 32px; letter-spacing: -1px; }
   .hero { padding: 40px 0 30px; }
@@ -647,7 +660,56 @@ select { cursor: pointer; }
   </div>
 </div>
 
-<div id="view-essay" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Essay Outline Generator</h1><p>Coming soon.</p></header></div></div>
+<div id="view-essay" class="hidden">
+  <div class="container-narrow">
+    <header class="tool-header">
+      <button class="back-link" onclick="showHome()">← All tools</button>
+      <h1>Essay Outline Generator</h1>
+      <p>Generate structured arguments, thesis frameworks, and paragraph outlines.</p>
+    </header>
+
+    <div class="card">
+      <label>Essay Topic / Prompt</label>
+      <input type="text" id="eoTopic" value="The ethical implications of artificial intelligence in higher education">
+
+      <div style="margin-top:16px">
+        <label>Essay Type</label>
+        <select id="eoType">
+          <option value="argumentative" selected>Argumentative</option>
+          <option value="analytical">Analytical</option>
+          <option value="expository">Expository</option>
+          <option value="persuasive">Persuasive</option>
+          <option value="compare">Compare & Contrast</option>
+          <option value="narrative">Narrative</option>
+          <option value="descriptive">Descriptive</option>
+          <option value="cause-effect">Cause & Effect</option>
+          <option value="definition">Definition</option>
+          <option value="process">Process / How-To</option>
+        </select>
+      </div>
+
+      <div style="margin-top:16px">
+        <label>Body Paragraphs (1 - 10)</label>
+        <input type="number" id="eoParagraphs" min="1" max="10" value="3">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="eoGenerate()">Generate Outline</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="result-label" style="margin:0">Your Outline</div>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" id="eoCopyBtn" onclick="eoCopy()">Copy Outline</button>
+      </div>
+      <div class="outline-box" id="eoOutput">Click "Generate Outline" above to create your structured essay outline.</div>
+    </div>
+
+    <footer class="footer">Free student tools. Made for students.</footer>
+  </div>
+</div>
+
 <div id="view-reference" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Reference Formatter</h1><p>Coming soon.</p></header></div></div>
 <div id="view-schedule" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Study Schedule Builder</h1><p>Coming soon.</p></header></div></div>
 <div id="view-flashcard" class="hidden"><div class="container-narrow"><header class="tool-header"><button class="back-link" onclick="showHome()">← All tools</button><h1>Flashcard Maker</h1><p>Coming soon.</p></header></div></div>
@@ -1029,7 +1091,6 @@ function wcCalculate() {
     sysWords > 0 ? 'pages (' + spacingLabel + ', ' + size + 'pt ' + fontLabel + ')' : 'Enter a word count to see the estimate';
 }
 
-// Attach listeners AFTER DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
   const wcWords = document.getElementById('wcWords');
   const wcSlider = document.getElementById('wcSlider');
@@ -1135,6 +1196,268 @@ document.addEventListener('DOMContentLoaded', function() {
   if (gcTarget) gcTarget.addEventListener('input', gcCalculate);
 
   gcCalculate();
+});
+
+/* ============ ESSAY OUTLINE GENERATOR ============ */
+const EO_TYPE_INTROS = {
+  argumentative: {
+    hook: 'Open with a compelling statistic, question, or scenario related to:',
+    context: 'Provide the essential history and current relevance of this issue.\n      Why does this matter right now?',
+    thesis: 'State your position clearly and confidently. Example framework:\n      "Although [counter-argument], [your position] because [reason 1],\n       [reason 2], and [reason 3]."'
+  },
+  persuasive: {
+    hook: 'Open with an emotionally resonant story, bold claim, or provocative question about:',
+    context: 'Establish why the reader should care about this issue now.\n      What is at stake?',
+    thesis: 'State your position and the specific action you want the reader to take.\n      Be direct and compelling.'
+  },
+  analytical: {
+    hook: 'Open with an intriguing observation about:',
+    context: 'Establish the framework or lens through which you will analyze.',
+    thesis: 'Present your central analytical claim about the components of this topic.'
+  },
+  expository: {
+    hook: 'Grab attention with a surprising fact or vivid example related to:',
+    context: 'Define key terms and set the scope of your explanation.\n      What will the reader understand by the end?',
+    thesis: 'State clearly what the reader will understand after reading this essay.'
+  },
+  compare: {
+    hook: 'Introduce both subjects being compared.',
+    context: 'Explain why this comparison matters and what is at stake.',
+    thesis: 'State your verdict — which is stronger, or what the key similarity/difference is.'
+  },
+  narrative: {
+    hook: 'Open in the middle of the action or with a vivid sensory detail.',
+    context: 'Establish the setting, characters, and stakes of your story.',
+    thesis: 'Signal the central theme or lesson your narrative will explore.'
+  },
+  descriptive: {
+    hook: 'Open with a strong sensory image — sight, sound, smell, texture.',
+    context: 'Set the scene and introduce what you will describe.',
+    thesis: 'Signal the dominant impression or mood you want the reader to feel.'
+  },
+  'cause-effect': {
+    hook: 'Open with a striking consequence or a surprising cause.',
+    context: 'Establish which cause or effect you will focus on and why.',
+    thesis: 'State the key causal relationship — what leads to what, and how strongly.'
+  },
+  definition: {
+    hook: 'Open with a common misconception or an unusual use of the term.',
+    context: 'Introduce the term and why a precise definition matters.',
+    thesis: 'State your own definition and the criteria that distinguish it.'
+  },
+  process: {
+    hook: 'Open with the end result or why this process matters.',
+    context: 'List any prerequisites, tools, or background knowledge needed.',
+    thesis: 'Signal the number of steps and the outcome the reader will achieve.'
+  }
+};
+
+const EO_BODY_TEMPLATES = {
+  argumentative: [
+    { title: 'Primary Argument', prompt: 'Establish your strongest point. What is the most compelling evidence?' },
+    { title: 'Supporting Evidence', prompt: 'Build on the first argument. What additional evidence strengthens your case?' },
+    { title: 'Counter-Argument & Rebuttal', prompt: 'Acknowledge the opposing view. Why does your argument still hold?' },
+    { title: 'Deeper Analysis', prompt: 'Explore nuance. What complexities or edge cases deserve attention?' },
+    { title: 'Broader Implications', prompt: 'Zoom out. What are the wider consequences or applications?' },
+    { title: 'Historical Precedent', prompt: 'What similar cases from history support your argument?' },
+    { title: 'Expert Testimony', prompt: 'What do leading scholars or authorities say on this?' },
+    { title: 'Ethical Dimension', prompt: 'What ethical principles are at stake?' },
+    { title: 'Practical Feasibility', prompt: 'Is your position actually achievable? Address implementation.' },
+    { title: 'Long-Term Consequences', prompt: 'What happens 10, 50, or 100 years from now?' }
+  ],
+  persuasive: [
+    { title: 'Emotional Appeal', prompt: 'What human story or image makes this real and urgent?' },
+    { title: 'Logical Argument', prompt: 'What statistics, studies, or hard evidence prove your point?' },
+    { title: 'Credibility & Authority', prompt: 'What experts, institutions, or personal experience back you up?' },
+    { title: 'Anticipate Objections', prompt: 'What will skeptics say? Answer them head-on.' },
+    { title: 'Call to Action', prompt: 'What specifically should the reader do?' },
+    { title: 'Urgency', prompt: 'Why must this be addressed now and not later?' },
+    { title: 'Shared Values', prompt: 'What values does your audience hold that align with this?' },
+    { title: 'Personal Stake', prompt: 'Why does this matter to you personally?' },
+    { title: 'Vision of the Future', prompt: 'What does the world look like if we act — or don\'t?' },
+    { title: 'Final Push', prompt: 'The strongest emotional or logical close.' }
+  ],
+  analytical: [
+    { title: 'Foundational Component', prompt: 'What is the first key part or perspective of this topic?' },
+    { title: 'Secondary Component', prompt: 'What is the next layer or angle worth examining?' },
+    { title: 'Relationships & Connections', prompt: 'How do the components relate to one another?' },
+    { title: 'Patterns', prompt: 'What recurring themes or patterns emerge?' },
+    { title: 'Contradictions', prompt: 'Where do the components conflict or break down?' },
+    { title: 'Contextual Factors', prompt: 'How does context shape the meaning?' },
+    { title: 'Comparative Lens', prompt: 'How does this compare to similar cases?' },
+    { title: 'Theoretical Framework', prompt: 'What theory or model explains this best?' },
+    { title: 'Limitations', prompt: 'What are the boundaries of this analysis?' },
+    { title: 'Synthesis', prompt: 'What emerges when you put all the pieces together?' }
+  ],
+  expository: [
+    { title: 'Definition & Scope', prompt: 'What is the term or concept, precisely?' },
+    { title: 'Historical Background', prompt: 'Where did this come from? How has it evolved?' },
+    { title: 'Key Characteristics', prompt: 'What are the defining features?' },
+    { title: 'Categories or Types', prompt: 'What are the main variations or subtypes?' },
+    { title: 'Mechanisms', prompt: 'How does this actually work or function?' },
+    { title: 'Examples', prompt: 'What are clear, concrete examples?' },
+    { title: 'Common Misconceptions', prompt: 'What do people often get wrong?' },
+    { title: 'Applications', prompt: 'Where is this used in the real world?' },
+    { title: 'Related Concepts', prompt: 'What other ideas connect to this?' },
+    { title: 'Summary of Understanding', prompt: 'What should the reader now understand?' }
+  ],
+  compare: [
+    { title: 'First Similarity', prompt: 'What is the strongest similarity between the two subjects?' },
+    { title: 'Second Similarity', prompt: 'What is another important shared trait?' },
+    { title: 'First Difference', prompt: 'What is the most significant difference?' },
+    { title: 'Second Difference', prompt: 'What is another key contrast?' },
+    { title: 'Context for Comparison', prompt: 'Under what conditions does each subject perform best?' },
+    { title: 'Advantages of A', prompt: 'Where does the first subject clearly win?' },
+    { title: 'Advantages of B', prompt: 'Where does the second subject clearly win?' },
+    { title: 'Trade-offs', prompt: 'What does each subject sacrifice for its strengths?' },
+    { title: 'Real-World Implications', prompt: 'What does this comparison mean for practitioners?' },
+    { title: 'Verdict', prompt: 'Which is better, and under what circumstances?' }
+  ],
+  narrative: [
+    { title: 'Setup', prompt: 'Where and when does the story begin? Who is present?' },
+    { title: 'Inciting Incident', prompt: 'What event disrupts the ordinary and starts the arc?' },
+    { title: 'Rising Action', prompt: 'What complications or challenges emerge?' },
+    { title: 'First Turning Point', prompt: 'What changes the direction of the story?' },
+    { title: 'Midpoint', prompt: 'What is the central crisis or revelation?' },
+    { title: 'Escalation', prompt: 'What raises the stakes even higher?' },
+    { title: 'Climax', prompt: 'What is the emotional or dramatic peak?' },
+    { title: 'Falling Action', prompt: 'What happens immediately after the climax?' },
+    { title: 'Reflection', prompt: 'What did the character (or you) learn?' },
+    { title: 'Resolution', prompt: 'How does the story close? What has changed?' }
+  ],
+  descriptive: [
+    { title: 'First Impression', prompt: 'What is the dominant sensory impression?' },
+    { title: 'Visual Details', prompt: 'What do you see? Colors, shapes, light.' },
+    { title: 'Auditory Details', prompt: 'What do you hear? Sounds, silence, rhythm.' },
+    { title: 'Tactile Details', prompt: 'What do you feel? Texture, temperature, pressure.' },
+    { title: 'Olfactory & Gustatory', prompt: 'What do you smell or taste?' },
+    { title: 'Movement & Energy', prompt: 'What is dynamic? What changes moment to moment?' },
+    { title: 'Mood & Atmosphere', prompt: 'What emotional tone pervades the scene?' },
+    { title: 'Relationship to Subject', prompt: 'How do you relate to what is being described?' },
+    { title: 'Shift in Focus', prompt: 'What detail becomes suddenly important?' },
+    { title: 'Closing Impression', prompt: 'What image lingers after you stop looking?' }
+  ],
+  'cause-effect': [
+    { title: 'Immediate Cause', prompt: 'What is the direct cause of the effect?' },
+    { title: 'Underlying Cause', prompt: 'What deeper, structural cause is at play?' },
+    { title: 'Contributing Factors', prompt: 'What other conditions made this possible?' },
+    { title: 'Immediate Effect', prompt: 'What happened first as a result?' },
+    { title: 'Secondary Effects', prompt: 'What followed from the first effect?' },
+    { title: 'Long-Term Effects', prompt: 'What consequences emerged over time?' },
+    { title: 'Unintended Consequences', prompt: 'What unexpected outcomes occurred?' },
+    { title: 'Chain Reactions', prompt: 'What cascading effects are still unfolding?' },
+    { title: 'Counterfactual', prompt: 'What would have happened without the cause?' },
+    { title: 'Lessons & Prevention', prompt: 'What can be learned or prevented going forward?' }
+  ],
+  definition: [
+    { title: 'Common Definition', prompt: 'What is the standard or dictionary definition?' },
+    { title: 'Etymology & Origin', prompt: 'Where does the term come from historically?' },
+    { title: 'What It Is Not', prompt: 'What is commonly confused with this but isn\'t it?' },
+    { title: 'Key Criteria', prompt: 'What are the necessary and sufficient conditions?' },
+    { title: 'Examples', prompt: 'What are clear, illustrative examples?' },
+    { title: 'Borderline Cases', prompt: 'What cases are ambiguous or debatable?' },
+    { title: 'Variations', prompt: 'How does the definition shift across contexts?' },
+    { title: 'Competing Definitions', prompt: 'What alternative definitions exist and why?' },
+    { title: 'Implications', prompt: 'What follows from your definition?' },
+    { title: 'Refined Definition', prompt: 'What is your final, considered definition?' }
+  ],
+  process: [
+    { title: 'Overview', prompt: 'What is the end goal of this process?' },
+    { title: 'Prerequisites', prompt: 'What materials, skills, or conditions are needed?' },
+    { title: 'Step 1', prompt: 'What is the first action? Describe it precisely.' },
+    { title: 'Step 2', prompt: 'What comes next? Any pitfalls to avoid?' },
+    { title: 'Step 3', prompt: 'Continue the sequence with clear instructions.' },
+    { title: 'Step 4', prompt: 'What is a crucial intermediate step?' },
+    { title: 'Step 5', prompt: 'Any branching paths or decisions here?' },
+    { title: 'Step 6', prompt: 'The near-final action before completion.' },
+    { title: 'Troubleshooting', prompt: 'What commonly goes wrong and how to fix it?' },
+    { title: 'Final Result', prompt: 'What does success look like? How to verify it?' }
+  ]
+};
+
+function eoGenerate() {
+  const topic = document.getElementById('eoTopic').value.trim() || 'Your essay topic';
+  const type = document.getElementById('eoType').value;
+  let numParas = parseInt(document.getElementById('eoParagraphs').value) || 3;
+  if (numParas < 1) numParas = 1;
+  if (numParas > 10) numParas = 10;
+
+  const typeLabel = {
+    argumentative: 'Argumentative',
+    analytical: 'Analytical',
+    expository: 'Expository',
+    persuasive: 'Persuasive',
+    compare: 'Compare & Contrast',
+    narrative: 'Narrative',
+    descriptive: 'Descriptive',
+    'cause-effect': 'Cause & Effect',
+    definition: 'Definition',
+    process: 'Process / How-To'
+  }[type] || 'Essay';
+
+  const intro = EO_TYPE_INTROS[type] || EO_TYPE_INTROS.argumentative;
+  const bodyPool = EO_BODY_TEMPLATES[type] || EO_BODY_TEMPLATES.argumentative;
+
+  let outline = 'ESSAY OUTLINE\n';
+  outline += '════════════════════════════════════════\n\n';
+  outline += 'Topic: ' + topic + '\n';
+  outline += 'Type: ' + typeLabel + '\n';
+  outline += 'Structure: ' + numParas + ' body paragraph' + (numParas !== 1 ? 's' : '') + '\n\n';
+  outline += '────────────────────────────────────────\n\n';
+
+  // Introduction
+  outline += 'I. INTRODUCTION\n\n';
+  outline += '   A. Hook\n';
+  outline += '      ' + intro.hook + '\n';
+  outline += '      "' + topic + '"\n\n';
+  outline += '   B. Background Context\n';
+  outline += '      ' + intro.context + '\n\n';
+  outline += '   C. Thesis Statement\n';
+  outline += '      ' + intro.thesis + '\n\n';
+  outline += '────────────────────────────────────────\n\n';
+
+  // Body paragraphs
+  const romanNumerals = ['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+  for (let i = 0; i < numParas; i++) {
+    const tmpl = bodyPool[i] || { title: 'Additional Point ' + (i + 1), prompt: 'Develop a supporting point.' };
+    outline += romanNumerals[i] + '. BODY PARAGRAPH ' + (i + 1) + ': ' + tmpl.title + '\n\n';
+    outline += '   A. Topic Sentence\n';
+    outline += '      ' + tmpl.prompt + '\n\n';
+    outline += '   B. Evidence\n';
+    outline += '      Cite a specific source, statistic, quote, or example.\n';
+    outline += '      (Author, Year) — remember to add your citation here.\n\n';
+    outline += '   C. Analysis\n';
+    outline += '      Explain HOW the evidence supports your thesis.\n';
+    outline += '      Do not just summarize — interpret.\n\n';
+    outline += '   D. Transition\n';
+    outline += '      Bridge to the next paragraph with a linking sentence.\n\n';
+    outline += '────────────────────────────────────────\n\n';
+  }
+
+  // Conclusion
+  outline += romanNumerals[numParas] + '. CONCLUSION\n\n';
+  outline += '   A. Restate Thesis (in new words)\n';
+  outline += '      Remind the reader of your central claim — but do not copy-paste.\n\n';
+  outline += '   B. Synthesize Key Points\n';
+  outline += '      Tie together your body paragraphs into a unified argument.\n\n';
+  outline += '   C. Closing Thought\n';
+  outline += '      End with a broader implication, a call to action, or a question\n';
+  outline += '      that lingers in the reader\'s mind.\n';
+
+  document.getElementById('eoOutput').textContent = outline;
+}
+
+function eoCopy() {
+  const text = document.getElementById('eoOutput').textContent;
+  navigator.clipboard.writeText(text);
+  const btn = document.getElementById('eoCopyBtn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  eoGenerate();
 });
 </script>
 
