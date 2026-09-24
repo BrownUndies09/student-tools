@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter - Free Length, Weight, Temperature Converter</title>
+<meta name="description" content="Convert length, weight, temperature, volume, area, speed, and time units. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Unit Converter</h1>
+    <p>Convert length, weight, temperature, volume, area, speed, and time.</p>
+  </header>
+
+  <div class="card">
+    <label>Category</label>
+    <select id="convCategory" onchange="convChangeCategory()">
+      <option value="length">Length</option>
+      <option value="weight">Weight / Mass</option>
+      <option value="temperature">Temperature</option>
+      <option value="volume">Volume</option>
+      <option value="area">Area</option>
+      <option value="speed">Speed</option>
+      <option value="time">Time</option>
+      <option value="data">Digital Storage</option>
+    </select>
+
+    <div class="divider"></div>
+
+    <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:end;">
+      <div>
+        <label>From</label>
+        <input type="number" id="convFromValue" value="1" step="any" oninput="convCalculate()">
+        <select id="convFromUnit" style="margin-top:8px;" onchange="convCalculate()"></select>
+      </div>
+      <div style="padding-bottom:16px;">
+        <button class="btn btn-secondary" onclick="convSwap()" title="Swap units" style="padding:12px 14px;">⇄</button>
+      </div>
+      <div>
+        <label>To</label>
+        <input type="number" id="convToValue" value="0" step="any" readonly style="background:var(--glass-subtle, var(--glass-strong));">
+        <select id="convToUnit" style="margin-top:8px;" onchange="convCalculate()"></select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="convCopy(event)">Copy Result</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Result</div>
+    <div id="convResultText" style="font-size:18px; font-weight:600; line-height:1.4; word-break:break-word;">1 unit = 1 unit</div>
+    <div class="result-sub" id="convResultSub">Enter a value to convert</div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Common Conversions</div>
+    <div id="convCommon"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+const CONV_CATEGORIES = {
+  length: {
+    base: 'meter',
+    units: {
+      millimeter: { label: 'Millimeter (mm)', factor: 0.001 },
+      centimeter: { label: 'Centimeter (cm)', factor: 0.01 },
+      meter: { label: 'Meter (m)', factor: 1 },
+      kilometer: { label: 'Kilometer (km)', factor: 1000 },
+      inch: { label: 'Inch (in)', factor: 0.0254 },
+      foot: { label: 'Foot (ft)', factor: 0.3048 },
+      yard: { label: 'Yard (yd)', factor: 0.9144 },
+      mile: { label: 'Mile (mi)', factor: 1609.344 },
+      nauticalmile: { label: 'Nautical Mile (nmi)', factor: 1852 }
+    }
+  },
+  weight: {
+    base: 'kilogram',
+    units: {
+      milligram: { label: 'Milligram (mg)', factor: 0.000001 },
+      gram: { label: 'Gram (g)', factor: 0.001 },
+      kilogram: { label: 'Kilogram (kg)', factor: 1 },
+      tonne: { label: 'Metric Tonne (t)', factor: 1000 },
+      ounce: { label: 'Ounce (oz)', factor: 0.0283495 },
+      pound: { label: 'Pound (lb)', factor: 0.453592 },
+      stone: { label: 'Stone (st)', factor: 6.35029 }
+    }
+  },
+  temperature: {
+    base: 'celsius',
+    special: true,
+    units: {
+      celsius: { label: 'Celsius (°C)' },
+      fahrenheit: { label: 'Fahrenheit (°F)' },
+      kelvin: { label: 'Kelvin (K)' }
+    }
+  },
+  volume: {
+    base: 'liter',
+    units: {
+      milliliter: { label: 'Milliliter (mL)', factor: 0.001 },
+      liter: { label: 'Liter (L)', factor: 1 },
+      cubicmeter: { label: 'Cubic Meter (m³)', factor: 1000 },
+      teaspoon: { label: 'Teaspoon (tsp)', factor: 0.00492892 },
+      tablespoon: { label: 'Tablespoon (tbsp)', factor: 0.0147868 },
+      cup: { label: 'Cup (US)', factor: 0.236588 },
+      pint: { label: 'Pint (US)', factor: 0.473176 },
+      quart: { label: 'Quart (US)', factor: 0.946353 },
+      gallon: { label: 'Gallon (US)', factor: 3.78541 },
+      fluidounce: { label: 'Fluid Ounce (US)', factor: 0.0295735 }
+    }
+  },
+  area: {
+    base: 'squaremeter',
+    units: {
+      squaremeter: { label: 'Square Meter (m²)', factor: 1 },
+      squarekilometer: { label: 'Square Kilometer (km²)', factor: 1000000 },
+      squarefoot: { label: 'Square Foot (ft²)', factor: 0.092903 },
+      squareinch: { label: 'Square Inch (in²)', factor: 0.00064516 },
+      acre: { label: 'Acre', factor: 4046.86 },
+      hectare: { label: 'Hectare (ha)', factor: 10000 }
+    }
+  },
+  speed: {
+    base: 'meterpersecond',
+    units: {
+      meterpersecond: { label: 'Meter/second (m/s)', factor: 1 },
+      kilometerperhour: { label: 'Kilometer/hour (km/h)', factor: 0.277778 },
+      mileperhour: { label: 'Mile/hour (mph)', factor: 0.44704 },
+      knot: { label: 'Knot (kn)', factor: 0.514444 },
+      footpersecond: { label: 'Foot/second (ft/s)', factor: 0.3048 }
+    }
+  },
+  time: {
+    base: 'second',
+    units: {
+      millisecond: { label: 'Millisecond (ms)', factor: 0.001 },
+      second: { label: 'Second (s)', factor: 1 },
+      minute: { label: 'Minute (min)', factor: 60 },
+      hour: { label: 'Hour (h)', factor: 3600 },
+      day: { label: 'Day', factor: 86400 },
+      week: { label: 'Week', factor: 604800 },
+      month: { label: 'Month (30 days)', factor: 2592000 },
+      year: { label: 'Year (365 days)', factor: 31536000 }
+    }
+  },
+  data: {
+    base: 'byte',
+    units: {
+      bit: { label: 'Bit (b)', factor: 0.125 },
+      byte: { label: 'Byte (B)', factor: 1 },
+      kilobyte: { label: 'Kilobyte (KB)', factor: 1000 },
+      megabyte: { label: 'Megabyte (MB)', factor: 1000000 },
+      gigabyte: { label: 'Gigabyte (GB)', factor: 1000000000 },
+      terabyte: { label: 'Terabyte (TB)', factor: 1000000000000 },
+      kibibyte: { label: 'Kibibyte (KiB)', factor: 1024 },
+      mebibyte: { label: 'Mebibyte (MiB)', factor: 1048576 },
+      gibibyte: { label: 'Gibibyte (GiB)', factor: 1073741824 }
+    }
+  }
+};
+
+let convCurrentCategory = 'length';
+
+function convChangeCategory() {
+  convCurrentCategory = document.getElementById('convCategory').value;
+  const cat = CONV_CATEGORIES[convCurrentCategory];
+  const fromSel = document.getElementById('convFromUnit');
+  const toSel = document.getElementById('convToUnit');
+  fromSel.innerHTML = '';
+  toSel.innerHTML = '';
+  const keys = Object.keys(cat.units);
+  keys.forEach(k => {
+    const opt1 = document.createElement('option');
+    opt1.value = k;
+    opt1.textContent = cat.units[k].label;
+    fromSel.appendChild(opt1);
+    const opt2 = document.createElement('option');
+    opt2.value = k;
+    opt2.textContent = cat.units[k].label;
+    toSel.appendChild(opt2);
+  });
+  fromSel.selectedIndex = 0;
+  toSel.selectedIndex = Math.min(1, keys.length - 1);
+  convCalculate();
+}
+
+function convTemperatureToCelsius(value, unit) {
+  if (unit === 'celsius') return value;
+  if (unit === 'fahrenheit') return (value - 32) * 5 / 9;
+  if (unit === 'kelvin') return value - 273.15;
+  return value;
+}
+
+function convTemperatureFromCelsius(celsius, unit) {
+  if (unit === 'celsius') return celsius;
+  if (unit === 'fahrenheit') return celsius * 9 / 5 + 32;
+  if (unit === 'kelvin') return celsius + 273.15;
+  return celsius;
+}
+
+function convCalculate() {
+  const cat = CONV_CATEGORIES[convCurrentCategory];
+  const fromValue = parseFloat(document.getElementById('convFromValue').value) || 0;
+  const fromUnit = document.getElementById('convFromUnit').value;
+  const toUnit = document.getElementById('convToUnit').value;
+  let result = 0;
+
+  if (cat.special && convCurrentCategory === 'temperature') {
+    const celsius = convTemperatureToCelsius(fromValue, fromUnit);
+    result = convTemperatureFromCelsius(celsius, toUnit);
+  } else {
+    const baseValue = fromValue * cat.units[fromUnit].factor;
+    result = baseValue / cat.units[toUnit].factor;
+  }
+
+  const toInput = document.getElementById('convToValue');
+  toInput.value = parseFloat(result.toFixed(6));
+
+  const fromLabel = cat.units[fromUnit].label;
+  const toLabel = cat.units[toUnit].label;
+
+  document.getElementById('convResultText').textContent = result.toLocaleString(undefined, { maximumFractionDigits: 6 }) + ' ' + toLabel;
+  document.getElementById('convResultSub').textContent = fromValue.toLocaleString() + ' ' + fromLabel + ' equals ' + result.toLocaleString(undefined, { maximumFractionDigits: 6 }) + ' ' + toLabel;
+
+  convRenderCommon();
+}
+
+function convRenderCommon() {
+  const cat = CONV_CATEGORIES[convCurrentCategory];
+  const fromValue = parseFloat(document.getElementById('convFromValue').value) || 0;
+  const fromUnit = document.getElementById('convFromUnit').value;
+  const commonEl = document.getElementById('convCommon');
+
+  if (fromValue === 0) {
+    commonEl.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-muted); font-size:13px;">Enter a value to see common conversions</div>';
+    return;
+  }
+
+  let html = '';
+  const keys = Object.keys(cat.units).filter(k => k !== fromUnit).slice(0, 6);
+  keys.forEach(k => {
+    let result;
+    if (cat.special && convCurrentCategory === 'temperature') {
+      const celsius = convTemperatureToCelsius(fromValue, fromUnit);
+      result = convTemperatureFromCelsius(celsius, k);
+    } else {
+      const baseValue = fromValue * cat.units[fromUnit].factor;
+      result = baseValue / cat.units[k].factor;
+    }
+    html += '<div class="weak-card-item" style="display:flex; justify-content:space-between;">' +
+      '<span class="wc-front" style="color:var(--text-muted); font-size:12px;">' + cat.units[k].label + '</span>' +
+      '<span class="wc-metric" style="color:var(--text); font-weight:600;">' + result.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</span>' +
+    '</div>';
+  });
+  commonEl.innerHTML = html;
+}
+
+function convSwap() {
+  const fromSel = document.getElementById('convFromUnit');
+  const toSel = document.getElementById('convToUnit');
+  const tmp = fromSel.value;
+  fromSel.value = toSel.value;
+  toSel.value = tmp;
+  convCalculate();
+}
+
+function convCopy(e) {
+  const text = document.getElementById('convResultText').textContent;
+  copyToClipboard(text, e.target);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  convChangeCategory();
+});
+</script>
+</body>
+</html>

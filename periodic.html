@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Periodic Table - Free Interactive Chemistry Tool</title>
+<meta name="description" content="Interactive periodic table with all 118 elements. Click any element for atomic mass, category, and electron configuration. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .pt-search {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .pt-search:focus { outline: none; border-color: var(--accent); }
+
+  .pt-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .pt-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pt-legend-item:hover { border-color: var(--accent); }
+  .pt-legend-item.active { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+  .pt-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pt-wrapper {
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+  }
+  .pt-table {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(38px, 1fr));
+    grid-auto-rows: minmax(38px, 1fr);
+    gap: 3px;
+    min-width: 760px;
+  }
+  .pt-cell {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    padding: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .pt-cell:hover {
+    transform: scale(1.12);
+    z-index: 10;
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .pt-cell .num {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 7px;
+    color: var(--text-dim);
+  }
+  .pt-cell .sym {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 4px;
+    color: var(--text);
+  }
+  .pt-cell .name {
+    font-size: 7px;
+    color: var(--text-muted);
+    line-height: 1;
+    margin-top: 2px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pt-cell .mass {
+    font-size: 7px;
+    color: var(--text-dim);
+    line-height: 1;
+    margin-top: 1px;
+  }
+  .pt-cell.spacer {
+    background: transparent;
+    border: none;
+    cursor: default;
+    pointer-events: none;
+  }
+  .pt-cell.spacer:hover { transform: none; box-shadow: none; }
+  .pt-cell.highlighted {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  /* Element detail panel */
+  .pt-detail {
+    display: none;
+    margin-top: 20px;
+  }
+  .pt-detail.show { display: block; }
+  .pt-detail-card {
+    padding: 24px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .pt-detail-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .pt-detail-symbol {
+    width: 90px;
+    height: 90px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-family: var(--font-mono);
+  }
+  .pt-detail-symbol .ds-sym {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .pt-detail-symbol .ds-num {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+  .pt-detail-meta { flex: 1; min-width: 200px; }
+  .pt-detail-meta h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    margin-bottom: 4px;
+  }
+  .pt-detail-meta .pt-cat {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .pt-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .pt-stat {
+    padding: 12px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+  }
+  .pt-stat-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .pt-stat-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    word-break: break-word;
+  }
+  .pt-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pt-close-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .pt-table { grid-template-columns: repeat(18, 32px); grid-auto-rows: 32px; }
+    .pt-cell .sym { font-size: 10px; }
+    .pt-cell .name, .pt-cell .mass { display: none; }
+    .pt-detail-symbol { width: 70px; height: 70px; }
+    .pt-detail-symbol .ds-sym { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Periodic Table</h1>
+    <p>All 118 elements. Click any element for full details.</p>
+  </header>
+
+  <div class="card">
+    <input type="text" id="ptSearch" class="pt-search" placeholder="Search by name, symbol, or atomic number..." oninput="ptSearch()">
+    <div class="pt-legend" id="ptLegend"></div>
+    <div class="pt-wrapper">
+      <div class="pt-table" id="ptTable"></div>
+    </div>
+  </div>
+
+  <div class="pt-detail" id="ptDetail">
+    <div class="pt-detail-card" id="ptDetailCard"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+const PT_CATEGORIES = {
+  'alkali-metal': { name: 'Alkali Metal', color: '#f97316' },
+  'alkaline-earth': { name: 'Alkaline Earth', color: '#eab308' },
+  'transition-metal': { name: 'Transition Metal', color: '#06b6d4' },
+  'post-transition': { name: 'Post-Transition', color: '#3b82f6' },
+  'metalloid': { name: 'Metalloid', color: '#84cc16' },
+  'nonmetal': { name: 'Nonmetal', color: '#10b981' },
+  'halogen': { name: 'Halogen', color: '#8b5cf6' },
+  'noble-gas': { name: 'Noble Gas', color: '#ec4899' },
+  'lanthanide': { name: 'Lanthanide', color: '#f43f5e' },
+  'actinide': { name: 'Actinide', color: '#a855f7' },
+  'unknown': { name: 'Unknown', color: '#6b7280' }
+};
+
+const PT_ELEMENTS = [
+  { n:1, sym:'H', name:'Hydrogen', mass:1.008, cat:'nonmetal', config:'1s1', group:1, period:1 },
+  { n:2, sym:'He', name:'Helium', mass:4.0026, cat:'noble-gas', config:'1s2', group:18, period:1 },
+  { n:3, sym:'Li', name:'Lithium', mass:6.94, cat:'alkali-metal', config:'[He] 2s1', group:1, period:2 },
+  { n:4, sym:'Be', name:'Beryllium', mass:9.0122, cat:'alkaline-earth', config:'[He] 2s2', group:2, period:2 },
+  { n:5, sym:'B', name:'Boron', mass:10.81, cat:'metalloid', config:'[He] 2s2 2p1', group:13, period:2 },
+  { n:6, sym:'C', name:'Carbon', mass:12.011, cat:'nonmetal', config:'[He] 2s2 2p2', group:14, period:2 },
+  { n:7, sym:'N', name:'Nitrogen', mass:14.007, cat:'nonmetal', config:'[He] 2s2 2p3', group:15, period:2 },
+  { n:8, sym:'O', name:'Oxygen', mass:15.999, cat:'nonmetal', config:'[He] 2s2 2p4', group:16, period:2 },
+  { n:9, sym:'F', name:'Fluorine', mass:18.998, cat:'halogen', config:'[He] 2s2 2p5', group:17, period:2 },
+  { n:10, sym:'Ne', name:'Neon', mass:20.180, cat:'noble-gas', config:'[He] 2s2 2p6', group:18, period:2 },
+  { n:11, sym:'Na', name:'Sodium', mass:22.990, cat:'alkali-metal', config:'[Ne] 3s1', group:1, period:3 },
+  { n:12, sym:'Mg', name:'Magnesium', mass:24.305, cat:'alkaline-earth', config:'[Ne] 3s2', group:2, period:3 },
+  { n:13, sym:'Al', name:'Aluminium', mass:26.982, cat:'post-transition', config:'[Ne] 3s2 3p1', group:13, period:3 },
+  { n:14, sym:'Si', name:'Silicon', mass:28.085, cat:'metalloid', config:'[Ne] 3s2 3p2', group:14, period:3 },
+  { n:15, sym:'P', name:'Phosphorus', mass:30.974, cat:'nonmetal', config:'[Ne] 3s2 3p3', group:15, period:3 },
+  { n:16, sym:'S', name:'Sulfur', mass:32.06, cat:'nonmetal', config:'[Ne] 3s2 3p4', group:16, period:3 },
+  { n:17, sym:'Cl', name:'Chlorine', mass:35.45, cat:'halogen', config:'[Ne] 3s2 3p5', group:17, period:3 },
+  { n:18, sym:'Ar', name:'Argon', mass:39.948, cat:'noble-gas', config:'[Ne] 3s2 3p6', group:18, period:3 },
+  { n:19, sym:'K', name:'Potassium', mass:39.098, cat:'alkali-metal', config:'[Ar] 4s1', group:1, period:4 },
+  { n:20, sym:'Ca', name:'Calcium', mass:40.078, cat:'alkaline-earth', config:'[Ar] 4s2', group:2, period:4 },
+  { n:21, sym:'Sc', name:'Scandium', mass:44.956, cat:'transition-metal', config:'[Ar] 3d1 4s2', group:3, period:4 },
+  { n:22, sym:'Ti', name:'Titanium', mass:47.867, cat:'transition-metal', config:'[Ar] 3d2 4s2', group:4, period:4 },
+  { n:23, sym:'V', name:'Vanadium', mass:50.942, cat:'transition-metal', config:'[Ar] 3d3 4s2', group:5, period:4 },
+  { n:24, sym:'Cr', name:'Chromium', mass:51.996, cat:'transition-metal', config:'[Ar] 3d5 4s1', group:6, period:4 },
+  { n:25, sym:'Mn', name:'Manganese', mass:54.938, cat:'transition-metal', config:'[Ar] 3d5 4s2', group:7, period:4 },
+  { n:26, sym:'Fe', name:'Iron', mass:55.845, cat:'transition-metal', config:'[Ar] 3d6 4s2', group:8, period:4 },
+  { n:27, sym:'Co', name:'Cobalt', mass:58.933, cat:'transition-metal', config:'[Ar] 3d7 4s2', group:9, period:4 },
+  { n:28, sym:'Ni', name:'Nickel', mass:58.693, cat:'transition-metal', config:'[Ar] 3d8 4s2', group:10, period:4 },
+  { n:29, sym:'Cu', name:'Copper', mass:63.546, cat:'transition-metal', config:'[Ar] 3d10 4s1', group:11, period:4 },
+  { n:30, sym:'Zn', name:'Zinc', mass:65.38, cat:'transition-metal', config:'[Ar] 3d10 4s2', group:12, period:4 },
+  { n:31, sym:'Ga', name:'Gallium', mass:69.723, cat:'post-transition', config:'[Ar] 3d10 4s2 4p1', group:13, period:4 },
+  { n:32, sym:'Ge', name:'Germanium', mass:72.630, cat:'metalloid', config:'[Ar] 3d10 4s2 4p2', group:14, period:4 },
+  { n:33, sym:'As', name:'Arsenic', mass:74.922, cat:'metalloid', config:'[Ar] 3d10 4s2 4p3', group:15, period:4 },
+  { n:34, sym:'Se', name:'Selenium', mass:78.971, cat:'nonmetal', config:'[Ar] 3d10 4s2 4p4', group:16, period:4 },
+  { n:35, sym:'Br', name:'Bromine', mass:79.904, cat:'halogen', config:'[Ar] 3d10 4s2 4p5', group:17, period:4 },
+  { n:36, sym:'Kr', name:'Krypton', mass:83.798, cat:'noble-gas', config:'[Ar] 3d10 4s2 4p6', group:18, period:4 },
+  { n:37, sym:'Rb', name:'Rubidium', mass:85.468, cat:'alkali-metal', config:'[Kr] 5s1', group:1, period:5 },
+  { n:38, sym:'Sr', name:'Strontium', mass:87.62, cat:'alkaline-earth', config:'[Kr] 5s2', group:2, period:5 },
+  { n:39, sym:'Y', name:'Yttrium', mass:88.906, cat:'transition-metal', config:'[Kr] 4d1 5s2', group:3, period:5 },
+  { n:40, sym:'Zr', name:'Zirconium', mass:91.224, cat:'transition-metal', config:'[Kr] 4d2 5s2', group:4, period:5 },
+  { n:41, sym:'Nb', name:'Niobium', mass:92.906, cat:'transition-metal', config:'[Kr] 4d4 5s1', group:5, period:5 },
+  { n:42, sym:'Mo', name:'Molybdenum', mass:95.95, cat:'transition-metal', config:'[Kr] 4d5 5s1', group:6, period:5 },
+  { n:43, sym:'Tc', name:'Technetium', mass:98, cat:'transition-metal', config:'[Kr] 4d5 5s2', group:7, period:5 },
+  { n:44, sym:'Ru', name:'Ruthenium', mass:101.07, cat:'transition-metal', config:'[Kr] 4d7 5s1', group:8, period:5 },
+  { n:45, sym:'Rh', name:'Rhodium', mass:102.91, cat:'transition-metal', config:'[Kr] 4d8 5s1', group:9, period:5 },
+  { n:46, sym:'Pd', name:'Palladium', mass:106.42, cat:'transition-metal', config:'[Kr] 4d10', group:10, period:5 },
+  { n:47, sym:'Ag', name:'Silver', mass:107.87, cat:'transition-metal', config:'[Kr] 4d10 5s1', group:11, period:5 },
+  { n:48, sym:'Cd', name:'Cadmium', mass:112.41, cat:'transition-metal', config:'[Kr] 4d10 5s2', group:12, period:5 },
+  { n:49, sym:'In', name:'Indium', mass:114.82, cat:'post-transition', config:'[Kr] 4d10 5s2 5p1', group:13, period:5 },
+  { n:50, sym:'Sn', name:'Tin', mass:118.71, cat:'post-transition', config:'[Kr] 4d10 5s2 5p2', group:14, period:5 },
+  { n:51, sym:'Sb', name:'Antimony', mass:121.76, cat:'metalloid', config:'[Kr] 4d10 5s2 5p3', group:15, period:5 },
+  { n:52, sym:'Te', name:'Tellurium', mass:127.60, cat:'metalloid', config:'[Kr] 4d10 5s2 5p4', group:16, period:5 },
+  { n:53, sym:'I', name:'Iodine', mass:126.90, cat:'halogen', config:'[Kr] 4d10 5s2 5p5', group:17, period:5 },
+  { n:54, sym:'Xe', name:'Xenon', mass:131.29, cat:'noble-gas', config:'[Kr] 4d10 5s2 5p6', group:18, period:5 },
+  { n:55, sym:'Cs', name:'Caesium', mass:132.91, cat:'alkali-metal', config:'[Xe] 6s1', group:1, period:6 },
+  { n:56, sym:'Ba', name:'Barium', mass:137.33, cat:'alkaline-earth', config:'[Xe] 6s2', group:2, period:6 },
+  { n:57, sym:'La', name:'Lanthanum', mass:138.91, cat:'lanthanide', config:'[Xe] 5d1 6s2', group:3, period:6 },
+  { n:58, sym:'Ce', name:'Cerium', mass:140.12, cat:'lanthanide', config:'[Xe] 4f1 5d1 6s2', group:3, period:6 },
+  { n:59, sym:'Pr', name:'Praseodymium', mass:140.91, cat:'lanthanide', config:'[Xe] 4f3 6s2', group:3, period:6 },
+  { n:60, sym:'Nd', name:'Neodymium', mass:144.24, cat:'lanthanide', config:'[Xe] 4f4 6s2', group:3, period:6 },
+  { n:61, sym:'Pm', name:'Promethium', mass:145, cat:'lanthanide', config:'[Xe] 4f5 6s2', group:3, period:6 },
+  { n:62, sym:'Sm', name:'Samarium', mass:150.36, cat:'lanthanide', config:'[Xe] 4f6 6s2', group:3, period:6 },
+  { n:63, sym:'Eu', name:'Europium', mass:151.96, cat:'lanthanide', config:'[Xe] 4f7 6s2', group:3, period:6 },
+  { n:64, sym:'Gd', name:'Gadolinium', mass:157.25, cat:'lanthanide', config:'[Xe] 4f7 5d1 6s2', group:3, period:6 },
+  { n:65, sym:'Tb', name:'Terbium', mass:158.93, cat:'lanthanide', config:'[Xe] 4f9 6s2', group:3, period:6 },
+  { n:66, sym:'Dy', name:'Dysprosium', mass:162.50, cat:'lanthanide', config:'[Xe] 4f10 6s2', group:3, period:6 },
+  { n:67, sym:'Ho', name:'Holmium', mass:164.93, cat:'lanthanide', config:'[Xe] 4f11 6s2', group:3, period:6 },
+  { n:68, sym:'Er', name:'Erbium', mass:167.26, cat:'lanthanide', config:'[Xe] 4f12 6s2', group:3, period:6 },
+  { n:69, sym:'Tm', name:'Thulium', mass:168.93, cat:'lanthanide', config:'[Xe] 4f13 6s2', group:3, period:6 },
+  { n:70, sym:'Yb', name:'Ytterbium', mass:173.05, cat:'lanthanide', config:'[Xe] 4f14 6s2', group:3, period:6 },
+  { n:71, sym:'Lu', name:'Lutetium', mass:174.97, cat:'lanthanide', config:'[Xe] 4f14 5d1 6s2', group:3, period:6 },
+  { n:72, sym:'Hf', name:'Hafnium', mass:178.49, cat:'transition-metal', config:'[Xe] 4f14 5d2 6s2', group:4, period:6 },
+  { n:73, sym:'Ta', name:'Tantalum', mass:180.95, cat:'transition-metal', config:'[Xe] 4f14 5d3 6s2', group:5, period:6 },
+  { n:74, sym:'W', name:'Tungsten', mass:183.84, cat:'transition-metal', config:'[Xe] 4f14 5d4 6s2', group:6, period:6 },
+  { n:75, sym:'Re', name:'Rhenium', mass:186.21, cat:'transition-metal', config:'[Xe] 4f14 5d5 6s2', group:7, period:6 },
+  { n:76, sym:'Os', name:'Osmium', mass:190.23, cat:'transition-metal', config:'[Xe] 4f14 5d6 6s2', group:8, period:6 },
+  { n:77, sym:'Ir', name:'Iridium', mass:192.22, cat:'transition-metal', config:'[Xe] 4f14 5d7 6s2', group:9, period:6 },
+  { n:78, sym:'Pt', name:'Platinum', mass:195.08, cat:'transition-metal', config:'[Xe] 4f14 5d9 6s1', group:10, period:6 },
+  { n:79, sym:'Au', name:'Gold', mass:196.97, cat:'transition-metal', config:'[Xe] 4f14 5d10 6s1', group:11, period:6 },
+  { n:80, sym:'Hg', name:'Mercury', mass:200.59, cat:'transition-metal', config:'[Xe] 4f14 5d10 6s2', group:12, period:6 },
+  { n:81, sym:'Tl', name:'Thallium', mass:204.38, cat:'post-transition', config:'[Xe] 4f14 5d10 6s2 6p1', group:13, period:6 },
+  { n:82, sym:'Pb', name:'Lead', mass:207.2, cat:'post-transition', config:'[Xe] 4f14 5d10 6s2 6p2', group:14, period:6 },
+  { n:83, sym:'Bi', name:'Bismuth', mass:208.98, cat:'post-transition', config:'[Xe] 4f14 5d10 6s2 6p3', group:15, period:6 },
+  { n:84, sym:'Po', name:'Polonium', mass:209, cat:'post-transition', config:'[Xe] 4f14 5d10 6s2 6p4', group:16, period:6 },
+  { n:85, sym:'At', name:'Astatine', mass:210, cat:'halogen', config:'[Xe] 4f14 5d10 6s2 6p5', group:17, period:6 },
+  { n:86, sym:'Rn', name:'Radon', mass:222, cat:'noble-gas', config:'[Xe] 4f14 5d10 6s2 6p6', group:18, period:6 },
+  { n:87, sym:'Fr', name:'Francium', mass:223, cat:'alkali-metal', config:'[Rn] 7s1', group:1, period:7 },
+  { n:88, sym:'Ra', name:'Radium', mass:226, cat:'alkaline-earth', config:'[Rn] 7s2', group:2, period:7 },
+  { n:89, sym:'Ac', name:'Actinium', mass:227, cat:'actinide', config:'[Rn] 6d1 7s2', group:3, period:7 },
+  { n:90, sym:'Th', name:'Thorium', mass:232.04, cat:'actinide', config:'[Rn] 6d2 7s2', group:3, period:7 },
+  { n:91, sym:'Pa', name:'Protactinium', mass:231.04, cat:'actinide', config:'[Rn] 5f2 6d1 7s2', group:3, period:7 },
+  { n:92, sym:'U', name:'Uranium', mass:238.03, cat:'actinide', config:'[Rn] 5f3 6d1 7s2', group:3, period:7 },
+  { n:93, sym:'Np', name:'Neptunium', mass:237, cat:'actinide', config:'[Rn] 5f4 6d1 7s2', group:3, period:7 },
+  { n:94, sym:'Pu', name:'Plutonium', mass:244, cat:'actinide', config:'[Rn] 5f6 7s2', group:3, period:7 },
+  { n:95, sym:'Am', name:'Americium', mass:243, cat:'actinide', config:'[Rn] 5f7 7s2', group:3, period:7 },
+  { n:96, sym:'Cm', name:'Curium', mass:247, cat:'actinide', config:'[Rn] 5f7 6d1 7s2', group:3, period:7 },
+  { n:97, sym:'Bk', name:'Berkelium', mass:247, cat:'actinide', config:'[Rn] 5f9 7s2', group:3, period:7 },
+  { n:98, sym:'Cf', name:'Californium', mass:251, cat:'actinide', config:'[Rn] 5f10 7s2', group:3, period:7 },
+  { n:99, sym:'Es', name:'Einsteinium', mass:252, cat:'actinide', config:'[Rn] 5f11 7s2', group:3, period:7 },
+  { n:100, sym:'Fm', name:'Fermium', mass:257, cat:'actinide', config:'[Rn] 5f12 7s2', group:3, period:7 },
+  { n:101, sym:'Md', name:'Mendelevium', mass:258, cat:'actinide', config:'[Rn] 5f13 7s2', group:3, period:7 },
+  { n:102, sym:'No', name:'Nobelium', mass:259, cat:'actinide', config:'[Rn] 5f14 7s2', group:3, period:7 },
+  { n:103, sym:'Lr', name:'Lawrencium', mass:266, cat:'actinide', config:'[Rn] 5f14 7s2 7p1', group:3, period:7 },
+  { n:104, sym:'Rf', name:'Rutherfordium', mass:267, cat:'transition-metal', config:'[Rn] 5f14 6d2 7s2', group:4, period:7 },
+  { n:105, sym:'Db', name:'Dubnium', mass:268, cat:'transition-metal', config:'[Rn] 5f14 6d3 7s2', group:5, period:7 },
+  { n:106, sym:'Sg', name:'Seaborgium', mass:269, cat:'transition-metal', config:'[Rn] 5f14 6d4 7s2', group:6, period:7 },
+  { n:107, sym:'Bh', name:'Bohrium', mass:270, cat:'transition-metal', config:'[Rn] 5f14 6d5 7s2', group:7, period:7 },
+  { n:108, sym:'Hs', name:'Hassium', mass:269, cat:'transition-metal', config:'[Rn] 5f14 6d6 7s2', group:8, period:7 },
+  { n:109, sym:'Mt', name:'Meitnerium', mass:278, cat:'unknown', config:'[Rn] 5f14 6d7 7s2', group:9, period:7 },
+  { n:110, sym:'Ds', name:'Darmstadtium', mass:281, cat:'unknown', config:'[Rn] 5f14 6d8 7s2', group:10, period:7 },
+  { n:111, sym:'Rg', name:'Roentgenium', mass:282, cat:'unknown', config:'[Rn] 5f14 6d9 7s2', group:11, period:7 },
+  { n:112, sym:'Cn', name:'Copernicium', mass:285, cat:'unknown', config:'[Rn] 5f14 6d10 7s2', group:12, period:7 },
+  { n:113, sym:'Nh', name:'Nihonium', mass:286, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p1', group:13, period:7 },
+  { n:114, sym:'Fl', name:'Flerovium', mass:289, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p2', group:14, period:7 },
+  { n:115, sym:'Mc', name:'Moscovium', mass:290, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p3', group:15, period:7 },
+  { n:116, sym:'Lv', name:'Livermorium', mass:293, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p4', group:16, period:7 },
+  { n:117, sym:'Ts', name:'Tennessine', mass:294, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p5', group:17, period:7 },
+  { n:118, sym:'Og', name:'Oganesson', mass:294, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p6', group:18, period:7 }
+];
+
+let ptActiveFilter = 'all';
+let ptSearchTerm = '';
+
+function ptRenderLegend() {
+  const el = document.getElementById('ptLegend');
+  let html = '<div class="pt-legend-item active" data-filter="all" onclick="ptSetFilter(\'all\')">All</div>';
+  Object.keys(PT_CATEGORIES).forEach(key => {
+    const cat = PT_CATEGORIES[key];
+    html += '<div class="pt-legend-item" data-filter="' + key + '" onclick="ptSetFilter(\'' + key + '\')">' +
+      '<span class="pt-legend-dot" style="background:' + cat.color + ';"></span>' + cat.name +
+    '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function ptSetFilter(filter) {
+  ptActiveFilter = filter;
+  document.querySelectorAll('.pt-legend-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-filter') === filter);
+  });
+  ptRenderTable();
+}
+
+function ptSearch() {
+  ptSearchTerm = document.getElementById('ptSearch').value.trim().toLowerCase();
+  ptRenderTable();
+}
+
+function ptMatchesFilter(elem) {
+  if (ptActiveFilter !== 'all' && elem.cat !== ptActiveFilter) return false;
+  if (ptSearchTerm) {
+    const numMatch = elem.n.toString() === ptSearchTerm;
+    const symMatch = elem.sym.toLowerCase().includes(ptSearchTerm);
+    const nameMatch = elem.name.toLowerCase().includes(ptSearchTerm);
+    return numMatch || symMatch || nameMatch;
+  }
+  return true;
+}
+
+function ptRenderTable() {
+  const table = document.getElementById('ptTable');
+  let html = '';
+
+  // Build a 7-period x 18-group grid. Some cells are empty.
+  // Period 1: H at col 1, He at col 18
+  // Periods 2-3: full width
+  // Periods 4-5: full width
+  // Period 6: Cs, Ba (cols 1-2), La-Lu (separate row of 15 at bottom), Hf-Rn (cols 4-18)
+  // Period 7: Fr, Ra (cols 1-2), Ac-Lr (separate row of 15 at bottom), Rf-Og (cols 4-18)
+
+  // Use a fixed map for periods 1-7, groups 1-18 (mostly empty for periods 1-3, 6-7)
+  const grid = {};
+  PT_ELEMENTS.forEach(e => {
+    if (e.cat === 'lanthanide' || e.cat === 'actinide') return;
+    const key = e.period + '-' + e.group;
+    grid[key] = e;
+  });
+
+  // Periods 1-7, Groups 1-18
+  for (let p = 1; p <= 7; p++) {
+    for (let g = 1; g <= 18; g++) {
+      const key = p + '-' + g;
+      const elem = grid[key];
+      if (elem) {
+        const cat = PT_CATEGORIES[elem.cat] || PT_CATEGORIES.unknown;
+        const matches = ptMatchesFilter(elem);
+        const highlighted = ptSearchTerm && matches ? ' highlighted' : '';
+        html += '<div class="pt-cell' + highlighted + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
+          '<span class="num">' + elem.n + '</span>' +
+          '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
+          '<span class="name">' + elem.name + '</span>' +
+          '<span class="mass">' + elem.mass + '</span>' +
+        '</div>';
+      } else {
+        html += '<div class="pt-cell spacer"></div>';
+      }
+    }
+  }
+
+  // Lanthanide row (57-71) — 15 elements
+  html += '<div class="pt-cell spacer"></div>'.repeat(2);
+  for (let n = 57; n <= 71; n++) {
+    const elem = PT_ELEMENTS.find(e => e.n === n);
+    if (elem) {
+      const cat = PT_CATEGORIES[elem.cat];
+      const highlighted = ptSearchTerm && ptMatchesFilter(elem) ? ' highlighted' : '';
+      html += '<div class="pt-cell' + highlighted + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
+        '<span class="num">' + elem.n + '</span>' +
+        '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
+        '<span class="name">' + elem.name + '</span>' +
+      '</div>';
+    }
+  }
+  html += '<div class="pt-cell spacer"></div>'.repeat(1);
+
+  // Actinide row (89-103)
+  html += '<div class="pt-cell spacer"></div>'.repeat(2);
+  for (let n = 89; n <= 103; n++) {
+    const elem = PT_ELEMENTS.find(e => e.n === n);
+    if (elem) {
+      const cat = PT_CATEGORIES[elem.cat];
+      const highlighted = ptSearchTerm && ptMatchesFilter(elem) ? ' highlighted' : '';
+      html += '<div class="pt-cell' + highlighted + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
+        '<span class="num">' + elem.n + '</span>' +
+        '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
+        '<span class="name">' + elem.name + '</span>' +
+      '</div>';
+    }
+  }
+
+  table.innerHTML = html;
+}
+
+function ptShowDetail(sym) {
+  const elem = PT_ELEMENTS.find(e => e.sym === sym);
+  if (!elem) return;
+  const cat = PT_CATEGORIES[elem.cat] || PT_CATEGORIES.unknown;
+
+  const card = document.getElementById('ptDetailCard');
+  card.innerHTML =
+    '<button class="pt-close-btn" onclick="ptHideDetail()">×</button>' +
+    '<div class="pt-detail-header">' +
+      '<div class="pt-detail-symbol" style="background:' + cat.color + ';">' +
+        '<div class="ds-sym">' + elem.sym + '</div>' +
+        '<div class="ds-num">' + elem.n + '</div>' +
+      '</div>' +
+      '<div class="pt-detail-meta">' +
+        '<h2>' + elem.name + '</h2>' +
+        '<div class="pt-cat" style="color:' + cat.color + ';">' + cat.name + '</div>' +
+        '<div class="pt-stats">' +
+          '<div class="pt-stat"><span class="pt-stat-label">Atomic Mass</span><span class="pt-stat-value">' + elem.mass + ' u</span></div>' +
+          '<div class="pt-stat"><span class="pt-stat-label">Atomic Number</span><span class="pt-stat-value">' + elem.n + '</span></div>' +
+          '<div class="pt-stat"><span class="pt-stat-label">Group</span><span class="pt-stat-value">' + elem.group + '</span></div>' +
+          '<div class="pt-stat"><span class="pt-stat-label">Period</span><span class="pt-stat-value">' + elem.period + '</span></div>' +
+          '<div class="pt-stat" style="grid-column: span 2;"><span class="pt-stat-label">Electron Configuration</span><span class="pt-stat-value" style="font-family:var(--font-mono); font-size:13px;">' + elem.config + '</span></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  const detail = document.getElementById('ptDetail');
+  detail.classList.add('show');
+  setTimeout(() => { detail.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+}
+
+function ptHideDetail() {
+  document.getElementById('ptDetail').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  ptRenderLegend();
+  ptRenderTable();
+});
+</script>
+</body>
+</html>

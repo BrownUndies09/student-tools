@@ -653,3 +653,53 @@ select { cursor: pointer; }
 .pdf-preview-item {
   padding: 10px 12px; 
 }
+/* Nav spacing for hamburger */
+.nav-inner > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Additional refinements */
+
+:root {
+  --glass-subtle: rgba(255,255,255,0.4);
+}
+html.dark {
+  --glass-subtle: rgba(30,33,42,0.4);
+}
+
+.tabs .tab { cursor: pointer; }
+
+/* Solver compatibility */
+.solver-input,
+.solver-step,
+.solver-answer,
+.solution-box {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Better focus ring for keyboard users */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Print styles for flashcards and references */
+@media print {
+  .nav, .orbs, .sidebar, .sidebar-overlay, .footer,
+  .btn, .btn-row, .import-tabs, .fc-controls {
+    display: none !important;
+  }
+  body { background: white !important; color: black !important; }
+  .card, .flashcard, .reference-item {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+  .reference-item { page-break-inside: avoid; }
+  .flashcard { page-break-after: always; min-height: 200px; }
+}

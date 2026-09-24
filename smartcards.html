@@ -9,8 +9,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
+
+<div id="sidebar-root"></div>
 
 <div class="orbs">
   <div class="orb orb-1"></div>
@@ -21,10 +24,13 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">
-      <span class="nav-logo">S</span>
-      <span>StudyTools</span>
-    </a>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
     <div class="nav-links">
       <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
@@ -38,7 +44,6 @@
     <p id="scSubtitle">Spaced repetition with wrong-answer tracking, answer timing, and exam countdowns.</p>
   </header>
 
-  <!-- DECK LIST VIEW -->
   <div id="scDeckList">
     <div class="card">
       <div class="result-label">Create New Deck</div>
@@ -71,7 +76,6 @@
     </div>
   </div>
 
-  <!-- DECK DETAIL VIEW -->
   <div id="scDeckView" class="hidden">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:start; gap:16px; flex-wrap:wrap;">
@@ -109,7 +113,6 @@
     </div>
   </div>
 
-  <!-- STUDY SESSION VIEW -->
   <div id="scStudyView" class="hidden">
     <div class="card">
       <div class="study-timer-bar">
@@ -144,7 +147,6 @@
     </div>
   </div>
 
-  <!-- STATS VIEW -->
   <div id="scStatsView" class="hidden">
     <div class="card">
       <div class="result-label">Overall Performance</div>
@@ -171,7 +173,6 @@
     </div>
   </div>
 
-  <!-- MANAGE CARDS VIEW -->
   <div id="scManageView" class="hidden">
     <div class="card">
       <div class="import-tabs">
@@ -247,6 +248,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="app.js"></script>
+<script src="sidebar.js"></script>
 <script>
 const SC_STORAGE_KEY = 'studytools_smartcards_v1';
 const SC_MASTERY_THRESHOLD = 3;

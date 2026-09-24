@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Molar Mass Calculator - Free Chemistry Tool</title>
+<meta name="description" content="Calculate the molar mass of any chemical formula. Free, no sign-up required. Supports parentheses, hydrates, and complex compounds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .molar-input {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    padding: 16px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .molar-result {
+    font-size: 52px;
+    font-weight: 600;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: var(--text);
+  }
+  .molar-unit {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .breakdown-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 100px 100px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .breakdown-row.header {
+    background: transparent;
+    border: none;
+    padding: 0 12px 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .breakdown-row .el-symbol {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .breakdown-row .el-name {
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .breakdown-row .el-count {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .breakdown-row .el-weight {
+    font-family: var(--font-mono);
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .breakdown-row .el-total {
+    font-family: var(--font-mono);
+    text-align: right;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .element-pill {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+    margin: 3px;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+  .element-pill:hover {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Molar Mass Calculator</h1>
+    <p>Enter any chemical formula to get its molar mass and element breakdown.</p>
+  </header>
+
+  <div class="card">
+    <label>Chemical Formula</label>
+    <input type="text" id="molarFormula" class="molar-input" value="C6H12O6" placeholder="e.g. H2O, C6H12O6, Ca(OH)2" oninput="molarCalculate()">
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="molarCalculate()">Calculate</button>
+      <button class="btn btn-secondary" onclick="molarClear()">Clear</button>
+    </div>
+
+    <div id="molarMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Molar Mass</div>
+    <div class="molar-result" id="molarValue">180.16</div>
+    <div class="molar-unit" id="molarUnit">g/mol</div>
+
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Elements</span>
+        <span class="result-cell-value" id="molarElCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Total Atoms</span>
+        <span class="result-cell-value" id="molarAtomCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Formula</span>
+        <span class="result-cell-value" id="molarFormulaDisplay" style="font-family:var(--font-mono); font-size:12px;">C6H12O6</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Element Breakdown</div>
+    <div id="molarBreakdown"></div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Common Formulas</div>
+    <div id="molarCommon"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+const ATOMIC_MASSES = {
+  H: 1.008, He: 4.0026, Li: 6.94, Be: 9.0122, B: 10.81, C: 12.011, N: 14.007, O: 15.999,
+  F: 18.998, Ne: 20.180, Na: 22.990, Mg: 24.305, Al: 26.982, Si: 28.085, P: 30.974,
+  S: 32.06, Cl: 35.45, Ar: 39.948, K: 39.098, Ca: 40.078, Sc: 44.956, Ti: 47.867,
+  V: 50.942, Cr: 51.996, Mn: 54.938, Fe: 55.845, Co: 58.933, Ni: 58.693, Cu: 63.546,
+  Zn: 65.38, Ga: 69.723, Ge: 72.630, As: 74.922, Se: 78.971, Br: 79.904, Kr: 83.798,
+  Rb: 85.468, Sr: 87.62, Y: 88.906, Zr: 91.224, Nb: 92.906, Mo: 95.95, Tc: 98, Ru: 101.07,
+  Rh: 102.91, Pd: 106.42, Ag: 107.87, Cd: 112.41, In: 114.82, Sn: 118.71, Sb: 121.76,
+  Te: 127.60, I: 126.90, Xe: 131.29, Cs: 132.91, Ba: 137.33, La: 138.91, Ce: 140.12,
+  Pr: 140.91, Nd: 144.24, Pm: 145, Sm: 150.36, Eu: 151.96, Gd: 157.25, Tb: 158.93,
+  Dy: 162.50, Ho: 164.93, Er: 167.26, Tm: 168.93, Yb: 173.05, Lu: 174.97, Hf: 178.49,
+  Ta: 180.95, W: 183.84, Re: 186.21, Os: 190.23, Ir: 192.22, Pt: 195.08, Au: 196.97,
+  Hg: 200.59, Tl: 204.38, Pb: 207.2, Bi: 208.98, Po: 209, At: 210, Rn: 222, Fr: 223,
+  Ra: 226, Ac: 227, Th: 232.04, Pa: 231.04, U: 238.03, Np: 237, Pu: 244, Am: 243,
+  Cm: 247, Bk: 247, Cf: 251, Es: 252, Fm: 257, Md: 258, No: 259, Lr: 266, Rf: 267,
+  Db: 268, Sg: 269, Bh: 270, Hs: 269, Mt: 278, Ds: 281, Rg: 282, Cn: 285, Nh: 286,
+  Fl: 289, Mc: 290, Lv: 293, Ts: 294, Og: 294
+};
+
+const ELEMENT_NAMES = {
+  H: 'Hydrogen', He: 'Helium', Li: 'Lithium', Be: 'Beryllium', B: 'Boron', C: 'Carbon',
+  N: 'Nitrogen', O: 'Oxygen', F: 'Fluorine', Ne: 'Neon', Na: 'Sodium', Mg: 'Magnesium',
+  Al: 'Aluminium', Si: 'Silicon', P: 'Phosphorus', S: 'Sulfur', Cl: 'Chlorine', Ar: 'Argon',
+  K: 'Potassium', Ca: 'Calcium', Sc: 'Scandium', Ti: 'Titanium', V: 'Vanadium',
+  Cr: 'Chromium', Mn: 'Manganese', Fe: 'Iron', Co: 'Cobalt', Ni: 'Nickel', Cu: 'Copper',
+  Zn: 'Zinc', Ga: 'Gallium', Ge: 'Germanium', As: 'Arsenic', Se: 'Selenium',
+  Br: 'Bromine', Kr: 'Krypton', Rb: 'Rubidium', Sr: 'Strontium', Y: 'Yttrium',
+  Zr: 'Zirconium', Nb: 'Niobium', Mo: 'Molybdenum', Tc: 'Technetium', Ru: 'Ruthenium',
+  Rh: 'Rhodium', Pd: 'Palladium', Ag: 'Silver', Cd: 'Cadmium', In: 'Indium',
+  Sn: 'Tin', Sb: 'Antimony', Te: 'Tellurium', I: 'Iodine', Xe: 'Xenon', Cs: 'Caesium',
+  Ba: 'Barium', La: 'Lanthanum', Ce: 'Cerium', Pr: 'Praseodymium', Nd: 'Neodymium',
+  Pm: 'Promethium', Sm: 'Samarium', Eu: 'Europium', Gd: 'Gadolinium', Tb: 'Terbium',
+  Dy: 'Dysprosium', Ho: 'Holmium', Er: 'Erbium', Tm: 'Thulium', Yb: 'Ytterbium',
+  Lu: 'Lutetium', Hf: 'Hafnium', Ta: 'Tantalum', W: 'Tungsten', Re: 'Rhenium',
+  Os: 'Osmium', Ir: 'Iridium', Pt: 'Platinum', Au: 'Gold', Hg: 'Mercury', Tl: 'Thallium',
+  Pb: 'Lead', Bi: 'Bismuth', Po: 'Polonium', At: 'Astatine', Rn: 'Radon',
+  Fr: 'Francium', Ra: 'Radium', Ac: 'Actinium', Th: 'Thorium', Pa: 'Protactinium',
+  U: 'Uranium', Np: 'Neptunium', Pu: 'Plutonium', Am: 'Americium', Cm: 'Curium',
+  Bk: 'Berkelium', Cf: 'Californium', Es: 'Einsteinium', Fm: 'Fermium',
+  Md: 'Mendelevium', No: 'Nobelium', Lr: 'Lawrencium', Rf: 'Rutherfordium',
+  Db: 'Dubnium', Sg: 'Seaborgium', Bh: 'Bohrium', Hs: 'Hassium', Mt: 'Meitnerium',
+  Ds: 'Darmstadtium', Rg: 'Roentgenium', Cn: 'Copernicium', Nh: 'Nihonium',
+  Fl: 'Flerovium', Mc: 'Moscovium', Lv: 'Livermorium', Ts: 'Tennessine', Og: 'Oganesson'
+};
+
+const COMMON_FORMULAS = [
+  'H2O', 'CO2', 'NaCl', 'C6H12O6', 'H2SO4', 'HCl', 'NaOH',
+  'CaCO3', 'NH3', 'CH4', 'C2H5OH', 'KMnO4', 'H2O2', 'O2', 'N2'
+];
+
+function molarCalculate() {
+  const raw = document.getElementById('molarFormula').value.trim();
+  if (!raw) {
+    document.getElementById('molarValue').textContent = '0.00';
+    document.getElementById('molarBreakdown').innerHTML = '';
+    return;
+  }
+
+  try {
+    const parsed = molarParse(raw);
+    const total = parsed.total;
+
+    document.getElementById('molarValue').textContent = total.toFixed(2);
+    document.getElementById('molarUnit').textContent = 'g/mol';
+    document.getElementById('molarElCount').textContent = Object.keys(parsed.elements).length;
+    document.getElementById('molarAtomCount').textContent = Object.values(parsed.elements).reduce((s, e) => s + e.count, 0);
+    document.getElementById('molarFormulaDisplay').textContent = raw;
+
+    molarRenderBreakdown(parsed);
+  } catch (e) {
+    showMsg('molarMsg', 'Invalid formula: ' + e.message, 'danger');
+  }
+}
+
+function molarParse(formula) {
+  // Handle dot-separated hydrates: CuSO4.5H2O
+  const parts = formula.split('.');
+  const combined = { total: 0, elements: {} };
+  parts.forEach(part => {
+    const result = molarParseSingle(part);
+    combined.total += result.total;
+    Object.keys(result.elements).forEach(sym => {
+      if (!combined.elements[sym]) combined.elements[sym] = { count: 0, weight: 0 };
+      combined.elements[sym].count += result.elements[sym].count;
+      combined.elements[sym].weight += result.elements[sym].weight;
+    });
+  });
+  return combined;
+}
+
+function molarParseSingle(formula) {
+  // Handle coefficient at start (e.g. 5H2O)
+  let coeff = 1;
+  const coeffMatch = formula.match(/^(\d+)/);
+  if (coeffMatch) {
+    coeff = parseInt(coeffMatch[1]);
+    formula = formula.slice(coeffMatch[1].length);
+  }
+
+  const elements = {};
+  let total = 0;
+
+  const stack = [{}];
+  let i = 0;
+
+  while (i < formula.length) {
+    const c = formula[i];
+
+    if (c === '(' || c === '[') {
+      stack.push({});
+      i++;
+    } else if (c === ')' || c === ']') {
+      i++;
+      let mult = 1;
+      const m = formula.slice(i).match(/^(\d+)/);
+      if (m) { mult = parseInt(m[1]); i += m[1].length; }
+      const popped = stack.pop();
+      const top = stack[stack.length - 1];
+      Object.keys(popped).forEach(sym => {
+        top[sym] = (top[sym] || 0) + popped[sym] * mult;
+      });
+    } else if (/[A-Z]/.test(c)) {
+      let sym = c;
+      i++;
+      if (i < formula.length && /[a-z]/.test(formula[i])) {
+        sym += formula[i];
+        i++;
+      }
+      if (!ATOMIC_MASSES[sym]) {
+        throw new Error('Unknown element "' + sym + '"');
+      }
+      let count = 1;
+      const m = formula.slice(i).match(/^(\d+)/);
+      if (m) { count = parseInt(m[1]); i += m[1].length; }
+      const top = stack[stack.length - 1];
+      top[sym] = (top[sym] || 0) + count;
+    } else {
+      throw new Error('Unexpected character "' + c + '"');
+    }
+  }
+
+  const final = stack[0];
+  Object.keys(final).forEach(sym => {
+    const count = final[sym] * coeff;
+    const mass = ATOMIC_MASSES[sym];
+    elements[sym] = { count: count, weight: count * mass };
+    total += count * mass;
+  });
+
+  return { total: total, elements: elements };
+}
+
+function molarRenderBreakdown(parsed) {
+  const el = document.getElementById('molarBreakdown');
+  const entries = Object.entries(parsed.elements).sort((a, b) => b[1].weight - a[1].weight);
+
+  if (entries.length === 0) {
+    el.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-muted); font-size:13px;">No elements found</div>';
+    return;
+  }
+
+  let html = '<div class="breakdown-row header"><div>Element</div><div>Count</div><div>Mass</div><div>Total</div></div>';
+  entries.forEach(([sym, data]) => {
+    const pct = ((data.weight / parsed.total) * 100).toFixed(1);
+    html += '<div class="breakdown-row">' +
+      '<div><span class="el-symbol">' + sym + '</span> <span class="el-name">' + (ELEMENT_NAMES[sym] || '') + '</span></div>' +
+      '<div class="el-count">' + data.count + '</div>' +
+      '<div class="el-weight">' + ATOMIC_MASSES[sym].toFixed(3) + '</div>' +
+      '<div class="el-total">' + data.weight.toFixed(2) + ' <span style="font-size:10px; color:var(--text-muted);">(' + pct + '%)</span></div>' +
+    '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function molarClear() {
+  document.getElementById('molarFormula').value = '';
+  document.getElementById('molarValue').textContent = '0.00';
+  document.getElementById('molarBreakdown').innerHTML = '';
+  document.getElementById('molarElCount').textContent = '0';
+  document.getElementById('molarAtomCount').textContent = '0';
+  document.getElementById('molarFormulaDisplay').textContent = '-';
+}
+
+function molarRenderCommon() {
+  const el = document.getElementById('molarCommon');
+  let html = '';
+  COMMON_FORMULAS.forEach(f => {
+    html += '<span class="element-pill" onclick="molarLoadCommon(\'' + f + '\')">' + f + '</span>';
+  });
+  el.innerHTML = html;
+}
+
+function molarLoadCommon(formula) {
+  document.getElementById('molarFormula').value = formula;
+  molarCalculate();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  molarRenderCommon();
+  molarCalculate();
+});
+</script>
+</body>
+</html>

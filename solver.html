@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equation Solver - Free Linear & Quadratic Calculator</title>
+<meta name="description" content="Solve linear equations, quadratics with steps, and systems of two equations. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .solver-step {
+    padding: 12px 16px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .solver-step .step-num {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    color: var(--accent-text);
+    border-radius: 50%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 600;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .solver-step .step-row {
+    display: flex;
+    align-items: flex-start;
+  }
+  .solver-answer {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--success);
+    font-family: var(--font-mono);
+    margin: 8px 0;
+  }
+  .solver-answer.multi {
+    font-size: 22px;
+  }
+  .solver-input {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    padding: 14px;
+  }
+  .solution-set {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .solution-box {
+    padding: 12px 18px;
+    background: var(--glass-strong);
+    border: 1px solid var(--success);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--success);
+  }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Equation Solver</h1>
+    <p>Solve linear equations, quadratics with steps, and systems of two equations.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="solverSetMode('linear', this)">Linear</button>
+      <button class="tab" onclick="solverSetMode('quadratic', this)">Quadratic</button>
+      <button class="tab" onclick="solverSetMode('system', this)">System</button>
+    </div>
+
+    <div id="solverLinearInput">
+      <label>Linear Equation (solve for x)</label>
+      <input type="text" id="solverLinearEq" class="solver-input" value="2x + 5 = 13" placeholder="e.g. 3x - 7 = 14">
+      <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">Format: ax + b = c or ax - b = c. Decimals allowed.</p>
+    </div>
+
+    <div id="solverQuadraticInput" class="hidden">
+      <label>Coefficients (ax² + bx + c = 0)</label>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <div>
+          <label style="font-size:10px;">a</label>
+          <input type="number" id="solverA" value="1" step="any">
+        </div>
+        <div>
+          <label style="font-size:10px;">b</label>
+          <input type="number" id="solverB" value="-5" step="any">
+        </div>
+        <div>
+          <label style="font-size:10px;">c</label>
+          <input type="number" id="solverC" value="6" step="any">
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">Example: 1, -5, 6 solves x² - 5x + 6 = 0</p>
+    </div>
+
+    <div id="solverSystemInput" class="hidden">
+      <label>Two Equations (solve for x and y)</label>
+      <div style="margin-top:8px;">
+        <label style="font-size:10px;">Equation 1: a₁x + b₁y = c₁</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:4px;">
+          <input type="number" id="sys1a" value="2" step="any" placeholder="a₁">
+          <input type="number" id="sys1b" value="3" step="any" placeholder="b₁">
+          <input type="number" id="sys1c" value="12" step="any" placeholder="c₁">
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <label style="font-size:10px;">Equation 2: a₂x + b₂y = c₂</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:4px;">
+          <input type="number" id="sys2a" value="4" step="any" placeholder="a₂">
+          <input type="number" id="sys2b" value="-1" step="any" placeholder="b₂">
+          <input type="number" id="sys2c" value="10" step="any" placeholder="c₂">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="solverSolve()">Solve</button>
+    </div>
+
+    <div id="solverMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Solution</div>
+    <div id="solverResult">
+      <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter an equation above and click Solve.</div>
+    </div>
+  </div>
+
+  <div class="card" id="solverStepsCard" style="display:none;">
+    <div class="result-label">Step-by-Step</div>
+    <div id="solverSteps"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+let solverMode = 'linear';
+
+function solverSetMode(mode, btn) {
+  solverMode = mode;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('solverLinearInput').classList.toggle('hidden', mode !== 'linear');
+  document.getElementById('solverQuadraticInput').classList.toggle('hidden', mode !== 'quadratic');
+  document.getElementById('solverSystemInput').classList.toggle('hidden', mode !== 'system');
+  document.getElementById('solverResult').innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values above and click Solve.</div>';
+  document.getElementById('solverStepsCard').style.display = 'none';
+  document.getElementById('solverMsg').style.display = 'none';
+}
+
+function solverSolve() {
+  if (solverMode === 'linear') solverLinear();
+  else if (solverMode === 'quadratic') solverQuadratic();
+  else solverSystem();
+}
+
+function solverLinear() {
+  const raw = document.getElementById('solverLinearEq').value.trim().toLowerCase().replace(/\s+/g, '');
+  const resultEl = document.getElementById('solverResult');
+  const stepsEl = document.getElementById('solverSteps');
+
+  const match = raw.match(/^(-?\d*\.?\d*)x([+\-]\d+\.?\d*)?=(-?\d+\.?\d*)$/);
+  if (!match) {
+    showMsg('solverMsg', 'Invalid format. Use ax + b = c (e.g. 2x + 5 = 13).', 'danger');
+    return;
+  }
+
+  let aStr = match[1];
+  let a = aStr === '' || aStr === '+' ? 1 : aStr === '-' ? -1 : parseFloat(aStr);
+  let b = match[2] ? parseFloat(match[2]) : 0;
+  const c = parseFloat(match[3]);
+
+  if (a === 0) {
+    showMsg('solverMsg', 'Coefficient of x cannot be zero.', 'danger');
+    return;
+  }
+
+  const x = (c - b) / a;
+
+  document.getElementById('solverMsg').style.display = 'none';
+  resultEl.innerHTML = '<div class="solver-answer">x = ' + formatNum(x) + '</div>';
+
+  const steps = [];
+  steps.push('Start with: ' + formatEq(a, b, c));
+  if (b !== 0) {
+    steps.push('Subtract ' + formatNum(b) + ' from both sides: ' + formatNum(a) + 'x = ' + formatNum(c) + ' - (' + formatNum(b) + ') = ' + formatNum(c - b));
+  } else {
+    steps.push('No constant term to move. Equation is already ' + formatNum(a) + 'x = ' + formatNum(c));
+  }
+  steps.push('Divide both sides by ' + formatNum(a) + ': x = ' + formatNum(c - b) + ' / ' + formatNum(a));
+  steps.push('x = ' + formatNum(x));
+
+  renderSteps(steps);
+}
+
+function solverQuadratic() {
+  const a = parseFloat(document.getElementById('solverA').value);
+  const b = parseFloat(document.getElementById('solverB').value);
+  const c = parseFloat(document.getElementById('solverC').value);
+  const resultEl = document.getElementById('solverResult');
+
+  if (isNaN(a) || a === 0) {
+    showMsg('solverMsg', 'Coefficient a cannot be zero or empty.', 'danger');
+    return;
+  }
+  if (isNaN(b) || isNaN(c)) {
+    showMsg('solverMsg', 'Please fill in all coefficients (a, b, c).', 'danger');
+    return;
+  }
+
+  document.getElementById('solverMsg').style.display = 'none';
+
+  const disc = b * b - 4 * a * c;
+  const steps = [];
+  steps.push('Equation: ' + formatQuadratic(a, b, c) + ' = 0');
+  steps.push('Identify: a = ' + formatNum(a) + ', b = ' + formatNum(b) + ', c = ' + formatNum(c));
+  steps.push('Discriminant Δ = b² - 4ac = (' + formatNum(b) + ')² - 4(' + formatNum(a) + ')(' + formatNum(c) + ') = ' + formatNum(disc));
+
+  let resultHtml = '';
+  if (disc > 0) {
+    const x1 = (-b + Math.sqrt(disc)) / (2 * a);
+    const x2 = (-b - Math.sqrt(disc)) / (2 * a);
+    steps.push('Δ > 0: two distinct real roots');
+    steps.push('x = (-b ± √Δ) / 2a = (' + formatNum(-b) + ' ± ' + formatNum(Math.sqrt(disc)) + ') / ' + formatNum(2 * a));
+    steps.push('x₁ = ' + formatNum(x1));
+    steps.push('x₂ = ' + formatNum(x2));
+    resultHtml = '<div class="solution-set">' +
+      '<div class="solution-box">x₁ = ' + formatNum(x1) + '</div>' +
+      '<div class="solution-box">x₂ = ' + formatNum(x2) + '</div>' +
+    '</div>';
+  } else if (disc === 0) {
+    const x = -b / (2 * a);
+    steps.push('Δ = 0: one repeated real root');
+    steps.push('x = -b / 2a = ' + formatNum(-b) + ' / ' + formatNum(2 * a) + ' = ' + formatNum(x));
+    resultHtml = '<div class="solution-set">' +
+      '<div class="solution-box">x = ' + formatNum(x) + ' (double root)</div>' +
+    '</div>';
+  } else {
+    const real = -b / (2 * a);
+    const imag = Math.sqrt(-disc) / (2 * a);
+    steps.push('Δ < 0: two complex roots');
+    steps.push('x = (' + formatNum(-b) + ' ± √(' + formatNum(disc) + ')) / ' + formatNum(2 * a));
+    steps.push('x = ' + formatNum(real) + ' ± ' + formatNum(imag) + 'i');
+    resultHtml = '<div class="solution-set">' +
+      '<div class="solution-box">x₁ = ' + formatNum(real) + ' + ' + formatNum(imag) + 'i</div>' +
+      '<div class="solution-box">x₂ = ' + formatNum(real) + ' - ' + formatNum(imag) + 'i</div>' +
+    '</div>';
+  }
+
+  resultEl.innerHTML = resultHtml;
+  renderSteps(steps);
+}
+
+function solverSystem() {
+  const a1 = parseFloat(document.getElementById('sys1a').value);
+  const b1 = parseFloat(document.getElementById('sys1b').value);
+  const c1 = parseFloat(document.getElementById('sys1c').value);
+  const a2 = parseFloat(document.getElementById('sys2a').value);
+  const b2 = parseFloat(document.getElementById('sys2b').value);
+  const c2 = parseFloat(document.getElementById('sys2c').value);
+
+  if ([a1, b1, c1, a2, b2, c2].some(v => isNaN(v))) {
+    showMsg('solverMsg', 'Please fill in all six values.', 'danger');
+    return;
+  }
+
+  document.getElementById('solverMsg').style.display = 'none';
+
+  const det = a1 * b2 - a2 * b1;
+  const steps = [];
+  steps.push('Equation 1: ' + formatNum(a1) + 'x + ' + formatNum(b1) + 'y = ' + formatNum(c1));
+  steps.push('Equation 2: ' + formatNum(a2) + 'x + ' + formatNum(b2) + 'y = ' + formatNum(c2));
+  steps.push('Determinant D = a₁b₂ - a₂b₁ = (' + formatNum(a1) + ')(' + formatNum(b2) + ') - (' + formatNum(a2) + ')(' + formatNum(b1) + ') = ' + formatNum(det));
+
+  if (det === 0) {
+    steps.push('D = 0: the system has no unique solution (parallel or identical lines)');
+    document.getElementById('solverResult').innerHTML = '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">No unique solution. The lines are parallel or identical.</div>';
+    renderSteps(steps);
+    return;
+  }
+
+  const Dx = c1 * b2 - c2 * b1;
+  const Dy = a1 * c2 - a2 * c1;
+  const x = Dx / det;
+  const y = Dy / det;
+
+  steps.push('Dx = c₁b₂ - c₂b₁ = (' + formatNum(c1) + ')(' + formatNum(b2) + ') - (' + formatNum(c2) + ')(' + formatNum(b1) + ') = ' + formatNum(Dx));
+  steps.push('Dy = a₁c₂ - a₂c₁ = (' + formatNum(a1) + ')(' + formatNum(c2) + ') - (' + formatNum(a2) + ')(' + formatNum(c1) + ') = ' + formatNum(Dy));
+  steps.push('x = Dx / D = ' + formatNum(Dx) + ' / ' + formatNum(det) + ' = ' + formatNum(x));
+  steps.push('y = Dy / D = ' + formatNum(Dy) + ' / ' + formatNum(det) + ' = ' + formatNum(y));
+
+  document.getElementById('solverResult').innerHTML =
+    '<div class="solution-set">' +
+      '<div class="solution-box">x = ' + formatNum(x) + '</div>' +
+      '<div class="solution-box">y = ' + formatNum(y) + '</div>' +
+    '</div>';
+  renderSteps(steps);
+}
+
+function renderSteps(steps) {
+  const el = document.getElementById('solverSteps');
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="solver-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  document.getElementById('solverStepsCard').style.display = 'block';
+}
+
+function formatNum(n) {
+  if (Number.isInteger(n)) return n.toString();
+  return parseFloat(n.toFixed(6)).toString();
+}
+
+function formatEq(a, b, c) {
+  let s = (a === 1 ? '' : a === -1 ? '-' : formatNum(a)) + 'x';
+  if (b !== 0) s += (b > 0 ? ' + ' : ' - ') + formatNum(Math.abs(b));
+  s += ' = ' + formatNum(c);
+  return s;
+}
+
+function formatQuadratic(a, b, c) {
+  let s = '';
+  if (a === 1) s = 'x²';
+  else if (a === -1) s = '-x²';
+  else s = formatNum(a) + 'x²';
+  if (b !== 0) s += (b > 0 ? ' + ' : ' - ') + (Math.abs(b) === 1 ? '' : formatNum(Math.abs(b))) + 'x';
+  if (c !== 0) s += (c > 0 ? ' + ' : ' - ') + formatNum(Math.abs(c));
+  return s;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  solverSetMode('linear', document.querySelector('.tabs .tab.active'));
+});
+</script>
+</body>
+</html>

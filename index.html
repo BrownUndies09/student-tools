@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudyTools - Free Academic Tools for Students</title>
-<meta name="description" content="Free online tools for students. GPA calculator, flashcards, study timer, citation generator, and more. No sign-up required.">
+<meta name="description" content="Free online tools for students. GPA calculator, flashcards, study timer, citation generator, unit converter, and more. No sign-up required.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
+
+<div id="sidebar-root"></div>
 
 <div class="orbs">
   <div class="orb orb-1"></div>
@@ -21,10 +24,13 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">
-      <span class="nav-logo">S</span>
-      <span>StudyTools</span>
-    </a>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
     <div class="nav-links">
       <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
@@ -94,6 +100,11 @@
       <h3>Plagiarism Checker</h3>
       <p>Scan written drafts for similarity matching and AI syntax indicators.</p>
     </a>
+    <a href="convert.html" class="tool-card">
+      <span class="tool-card-icon">📐</span>
+      <h3>Unit Converter</h3>
+      <p>Convert length, weight, temperature, volume, area, speed, and digital storage.</p>
+    </a>
   </section>
 
   <footer class="footer">
@@ -105,5 +116,6 @@
 </div>
 
 <script src="app.js"></script>
+<script src="sidebar.js"></script>
 </body>
 </html>

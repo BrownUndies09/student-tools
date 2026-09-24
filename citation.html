@@ -9,8 +9,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
+
+<div id="sidebar-root"></div>
 
 <div class="orbs">
   <div class="orb orb-1"></div>
@@ -21,10 +24,13 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">
-      <span class="nav-logo">S</span>
-      <span>StudyTools</span>
-    </a>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
     <div class="nav-links">
       <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
@@ -98,6 +104,7 @@
 </div>
 
 <script src="app.js"></script>
+<script src="sidebar.js"></script>
 <script>
 function citRender() {
   const style = document.getElementById('citStyle').value;

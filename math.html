@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Keyboard - Free Scientific Symbol Calculator</title>
+<meta name="description" content="Type math symbols physical keyboards can't do. π, σ, √, ∫, Σ, θ, α, β, λ, μ, ≤, ≥, ≠, ∞. Free online math keyboard with live calculation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .math-display {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 22px;
+    min-height: 80px;
+    color: var(--text);
+    word-break: break-all;
+    line-height: 1.4;
+  }
+  .math-display .result {
+    color: var(--success);
+    font-weight: 600;
+    display: block;
+    margin-top: 12px;
+    font-size: 26px;
+  }
+  .math-display .error {
+    color: var(--danger);
+    font-size: 13px;
+    font-weight: 400;
+    display: block;
+    margin-top: 8px;
+  }
+  .math-display .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 22px;
+    background: var(--accent);
+    animation: blink 1s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  .math-keypad {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .math-key {
+    aspect-ratio: 1;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-strong);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--text);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-height: 40px;
+  }
+  .math-key:hover {
+    background: var(--glass);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .math-key:active {
+    transform: translateY(0);
+  }
+  .math-key.wide {
+    grid-column: span 2;
+    aspect-ratio: auto;
+    min-height: 40px;
+  }
+  .math-key.accent {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .math-key.accent:hover {
+    opacity: 0.9;
+  }
+  .math-key.danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+  .math-key.danger:hover {
+    background: var(--danger);
+    color: white;
+  }
+  .math-key.func {
+    background: var(--glass);
+    color: var(--text);
+    font-size: 13px;
+  }
+  .math-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  @media (max-width: 600px) {
+    .math-keypad { grid-template-columns: repeat(5, 1fr); }
+    .math-key.wide { grid-column: span 2; }
+    .math-display { font-size: 18px; }
+    .math-display .result { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Math Keyboard</h1>
+    <p>Type symbols physical keyboards can't do. Live calculation as you type.</p>
+  </header>
+
+  <div class="card">
+    <div class="result-label">Expression</div>
+    <div class="math-display" id="mathDisplay">
+      <span id="mathExpr"></span><span class="cursor"></span>
+      <span class="result" id="mathResult"></span>
+      <span class="error" id="mathError"></span>
+    </div>
+
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="mathBackspace()">⌫ Backspace</button>
+      <button class="btn btn-secondary" onclick="mathClear()">Clear</button>
+      <button class="btn btn-secondary" onclick="mathCopy(event)">Copy Result</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="math-section-label">Numbers</div>
+    <div class="math-keypad">
+      <button class="math-key" onclick="mathInsert('7')">7</button>
+      <button class="math-key" onclick="mathInsert('8')">8</button>
+      <button class="math-key" onclick="mathInsert('9')">9</button>
+      <button class="math-key accent" onclick="mathInsert('÷')">÷</button>
+      <button class="math-key danger wide" onclick="mathClear()">Clear</button>
+      <button class="math-key" onclick="mathInsert('4')">4</button>
+      <button class="math-key" onclick="mathInsert('5')">5</button>
+      <button class="math-key" onclick="mathInsert('6')">6</button>
+      <button class="math-key accent" onclick="mathInsert('×')">×</button>
+      <button class="math-key accent" onclick="mathInsert('-')">−</button>
+      <button class="math-key" onclick="mathInsert('1')">1</button>
+      <button class="math-key" onclick="mathInsert('2')">2</button>
+      <button class="math-key" onclick="mathInsert('3')">3</button>
+      <button class="math-key accent" onclick="mathInsert('+')">+</button>
+      <button class="math-key accent wide" onclick="mathInsert('=')">Calculate</button>
+      <button class="math-key" onclick="mathInsert('0')">0</button>
+      <button class="math-key" onclick="mathInsert('.')">.</button>
+      <button class="math-key" onclick="mathInsert('(')">(</button>
+      <button class="math-key" onclick="mathInsert(')')">)</button>
+      <button class="math-key wide" onclick="mathBackspace()">⌫ Back</button>
+    </div>
+
+    <div class="math-section-label">Powers & Roots</div>
+    <div class="math-keypad">
+      <button class="math-key func" onclick="mathInsert('^')">^</button>
+      <button class="math-key func" onclick="mathInsert('√(')">√</button>
+      <button class="math-key func" onclick="mathInsert('∛(')">∛</button>
+      <button class="math-key func" onclick="mathInsert('x²')">x²</button>
+      <button class="math-key func" onclick="mathInsert('x³')">x³</button>
+      <button class="math-key func" onclick="mathInsert('1/')">1/</button>
+      <button class="math-key func" onclick="mathInsert('abs(')">|x|</button>
+      <button class="math-key func" onclick="mathInsert('ln(')">ln</button>
+      <button class="math-key func" onclick="mathInsert('log(')">log</button>
+      <button class="math-key func" onclick="mathInsert('exp(')">eˣ</button>
+    </div>
+
+    <div class="math-section-label">Constants & Greek</div>
+    <div class="math-keypad">
+      <button class="math-key func" onclick="mathInsert('π')">π</button>
+      <button class="math-key func" onclick="mathInsert('e')">e</button>
+      <button class="math-key func" onclick="mathInsert('∞')">∞</button>
+      <button class="math-key func" onclick="mathInsert('σ')">σ</button>
+      <button class="math-key func" onclick="mathInsert('Σ')">Σ</button>
+      <button class="math-key func" onclick="mathInsert('θ')">θ</button>
+      <button class="math-key func" onclick="mathInsert('α')">α</button>
+      <button class="math-key func" onclick="mathInsert('β')">β</button>
+      <button class="math-key func" onclick="mathInsert('λ')">λ</button>
+      <button class="math-key func" onclick="mathInsert('μ')">μ</button>
+    </div>
+
+    <div class="math-section-label">Comparison & Logic</div>
+    <div class="math-keypad">
+      <button class="math-key func" onclick="mathInsert('≤')">≤</button>
+      <button class="math-key func" onclick="mathInsert('≥')">≥</button>
+      <button class="math-key func" onclick="mathInsert('≠')">≠</button>
+      <button class="math-key func" onclick="mathInsert('≈')">≈</button>
+      <button class="math-key func" onclick="mathInsert('±')">±</button>
+      <button class="math-key func" onclick="mathInsert('∫(')">∫</button>
+      <button class="math-key func" onclick="mathInsert('d/dx')">d/dx</button>
+      <button class="math-key func" onclick="mathInsert('lim(')">lim</button>
+      <button class="math-key func" onclick="mathInsert('mod')">mod</button>
+      <button class="math-key func" onclick="mathInsert('!')">n!</button>
+    </div>
+
+    <div class="math-section-label">Trigonometry</div>
+    <div class="math-keypad">
+      <button class="math-key func" onclick="mathInsert('sin(')">sin</button>
+      <button class="math-key func" onclick="mathInsert('cos(')">cos</button>
+      <button class="math-key func" onclick="mathInsert('tan(')">tan</button>
+      <button class="math-key func" onclick="mathInsert('asin(')">sin⁻¹</button>
+      <button class="math-key func" onclick="mathInsert('acos(')">cos⁻¹</button>
+      <button class="math-key func" onclick="mathInsert('atan(')">tan⁻¹</button>
+      <button class="math-key func" onclick="mathInsert('sinh(')">sinh</button>
+      <button class="math-key func" onclick="mathInsert('cosh(')">cosh</button>
+      <button class="math-key func" onclick="mathInsert('tanh(')">tanh</button>
+      <button class="math-key func" onclick="mathInsert('°')">°</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="info-box">
+      <strong style="color:var(--text);">Tip:</strong> You can also type directly on your physical keyboard. Operators like <code>+ - * / ^</code> work as expected. The calculator auto-detects complete expressions and shows the result live. Press <strong>Enter</strong> to calculate manually.
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+let mathExpression = '';
+
+function mathInsert(symbol) {
+  mathExpression += symbol;
+  mathRender();
+}
+
+function mathBackspace() {
+  mathExpression = mathExpression.slice(0, -1);
+  mathRender();
+}
+
+function mathClear() {
+  mathExpression = '';
+  mathRender();
+}
+
+function mathCopy(e) {
+  const result = document.getElementById('mathResult').textContent.replace('= ', '');
+  if (!result) {
+    copyToClipboard(mathExpression, e.target);
+  } else {
+    copyToClipboard(result, e.target);
+  }
+}
+
+function mathRender() {
+  document.getElementById('mathExpr').textContent = mathExpression;
+  const resultEl = document.getElementById('mathResult');
+  const errorEl = document.getElementById('mathError');
+  resultEl.textContent = '';
+  errorEl.textContent = '';
+
+  if (!mathExpression.trim()) return;
+
+  try {
+    const prepared = mathPrepareForEval(mathExpression);
+    if (!prepared) return;
+    const result = mathEvaluate(prepared);
+    if (result === null || !isFinite(result)) return;
+    resultEl.textContent = '= ' + formatNumber(result);
+  } catch (e) {
+    // silent — user may still be typing
+  }
+}
+
+function mathPrepareForEval(expr) {
+  let s = expr;
+
+  // Replace display symbols with JS operators
+  s = s.replace(/×/g, '*');
+  s = s.replace(/÷/g, '/');
+  s = s.replace(/−/g, '-');
+  s = s.replace(/\^/g, '**');
+
+  // Constants
+  s = s.replace(/π/g, '(Math.PI)');
+  s = s.replace(/(?<![a-zA-Z])e(?![a-zA-Z0-9])/g, '(Math.E)');
+  s = s.replace(/∞/g, 'Infinity');
+
+  // Functions (must come before symbols so we don't break them)
+  s = s.replace(/√\(/g, 'Math.sqrt(');
+  s = s.replace(/∛\(/g, 'Math.cbrt(');
+  s = s.replace(/abs\(/g, 'Math.abs(');
+  s = s.replace(/ln\(/g, 'Math.log(');
+  s = s.replace(/log\(/g, 'Math.log10(');
+  s = s.replace(/exp\(/g, 'Math.exp(');
+  s = s.replace(/sin\(/g, 'Math.sin(');
+  s = s.replace(/cos\(/g, 'Math.cos(');
+  s = s.replace(/tan\(/g, 'Math.tan(');
+  s = s.replace(/asin\(/g, 'Math.asin(');
+  s = s.replace(/acos\(/g, 'Math.acos(');
+  s = s.replace(/atan\(/g, 'Math.atan(');
+  s = s.replace(/sinh\(/g, 'Math.sinh(');
+  s = s.replace(/cosh\(/g, 'Math.cosh(');
+  s = s.replace(/tanh\(/g, 'Math.tanh(');
+
+  // Greek variables → treat as plain letters (ignored for evaluation)
+  s = s.replace(/[σΣθαβλμ]/g, '');
+
+  // Factorial n! → simple placeholder (skip if complex)
+  s = s.replace(/(\d+)!/g, 'factorial($1)');
+
+  // Percentage symbol — skip, not supported in plain eval
+
+  // Strip anything that isn't a safe math character
+  const cleaned = s.replace(/[^0-9+\-*/().,\s]|Math\.[a-zA-Z]+|Infinity|factorial|mod/g, '');
+
+  return cleaned.trim();
+}
+
+function factorial(n) {
+  n = parseInt(n);
+  if (n < 0) return NaN;
+  if (n === 0 || n === 1) return 1;
+  let r = 1;
+  for (let i = 2; i <= n; i++) r *= i;
+  return r;
+}
+
+function mathEvaluate(expr) {
+  // Replace mod with %
+  expr = expr.replace(/\bmod\b/g, '%');
+
+  // Handle factorial
+  expr = expr.replace(/factorial\((\d+)\)/g, (_, n) => factorial(n));
+
+  // Use Function constructor for safe-ish eval after cleaning
+  // Only math characters allowed
+  if (/[^0-9+\-*/().%\s]/.test(expr.replace(/Math\.[a-zA-Z]+/g, '').replace(/Infinity/g, ''))) {
+    return null;
+  }
+
+  try {
+    const fn = new Function('return (' + expr + ')');
+    return fn();
+  } catch (e) {
+    return null;
+  }
+}
+
+function formatNumber(n) {
+  if (!isFinite(n)) return '∞';
+  if (Number.isInteger(n)) return n.toString();
+  if (Math.abs(n) < 0.0001 && n !== 0) return n.toExponential(4);
+  if (Math.abs(n) > 1e10) return n.toExponential(4);
+  return parseFloat(n.toFixed(10)).toString();
+}
+
+// Physical keyboard support
+document.addEventListener('keydown', function (e) {
+  const view = document.body;
+  // Only trigger when not focused on an input
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') return;
+
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    mathRender();
+  } else if (e.key === 'Backspace') {
+    e.preventDefault();
+    mathBackspace();
+  } else if (e.key === 'Escape') {
+    mathClear();
+  } else if (e.key.length === 1 && /[0-9+\-*/().^]/.test(e.key)) {
+    mathInsert(e.key);
+  } else if (e.key === '*') {
+    mathInsert('×');
+  } else if (e.key === '/') {
+    mathInsert('÷');
+  }
+});
+
+mathRender();
+</script>
+</body>
+</html>
