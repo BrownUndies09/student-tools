@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citation Generator - Free APA, MLA, Chicago, Harvard References</title>
+<meta name="description" content="Instantly generate APA, MLA, Chicago, and Harvard citations. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Citation Generator</h1>
+    <p>Instantly generate APA, MLA, Chicago, and Harvard references.</p>
+  </header>
+
+  <div class="card">
+    <label>Citation Style</label>
+    <select id="citStyle" onchange="citRender()">
+      <option value="apa">APA 7th Edition</option>
+      <option value="mla">MLA 9th Edition</option>
+      <option value="chicago">Chicago 17th Edition</option>
+      <option value="harvard">Harvard Referencing</option>
+    </select>
+
+    <div style="margin-top:20px">
+      <label>Author(s)</label>
+      <input type="text" id="citAuthor" value="Miller, E. T., & Alvarez, C. R." oninput="citRender()">
+    </div>
+    <div style="margin-top:16px">
+      <label>Title</label>
+      <input type="text" id="citTitle" value="Cognitive scaffolding in self-directed digital study platforms" oninput="citRender()">
+    </div>
+    <div style="margin-top:16px">
+      <label>Publication</label>
+      <input type="text" id="citPub" value="Journal of Educational Technology Systems" oninput="citRender()">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:16px">
+      <div>
+        <label>Year</label>
+        <input type="text" id="citYear" value="2024" oninput="citRender()">
+      </div>
+      <div>
+        <label>Volume</label>
+        <input type="text" id="citVol" value="52" oninput="citRender()">
+      </div>
+      <div>
+        <label>Pages</label>
+        <input type="text" id="citPages" value="312-329" oninput="citRender()">
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <label>DOI / URL</label>
+      <input type="text" id="citUrl" value="https://doi.org/10.1038/s41586-024-07111-9" oninput="citRender()">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Your Citation</div>
+    <div id="citOutput" style="font-size:15px; line-height:1.7; padding-left:24px; text-indent:-24px; margin-bottom:20px"></div>
+    <div class="result-label">In-Text</div>
+    <div id="citInText" class="text-mono" style="font-size:14px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-block" onclick="citCopy(event)">Copy Citation</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+function citRender() {
+  const style = document.getElementById('citStyle').value;
+  const author = document.getElementById('citAuthor').value;
+  const title = document.getElementById('citTitle').value;
+  const pub = document.getElementById('citPub').value;
+  const year = document.getElementById('citYear').value;
+  const vol = document.getElementById('citVol').value;
+  const pages = document.getElementById('citPages').value;
+  const url = document.getElementById('citUrl').value;
+  const firstAuthor = author.split(',')[0].trim();
+
+  const outputs = {
+    apa: {
+      bib: author + ' (' + year + '). ' + title + '. ' + pub + ', ' + vol + '(3), ' + pages + '. ' + url,
+      inText: '(' + firstAuthor + ' & Alvarez, ' + year + ')'
+    },
+    mla: {
+      bib: firstAuthor + ', et al. "' + title + '." ' + pub + ', vol. ' + vol + ', ' + year + ', pp. ' + pages + '.',
+      inText: '(' + firstAuthor + ' ' + pages.split('-')[0] + ')'
+    },
+    chicago: {
+      bib: author + '. ' + year + '. "' + title + '." ' + pub + ' ' + vol + ' (3): ' + pages + '.',
+      inText: '(' + firstAuthor + ' ' + year + ')'
+    },
+    harvard: {
+      bib: author + ', ' + year + '. ' + title + '. ' + pub + ', ' + vol + '(3), pp.' + pages + '.',
+      inText: '(' + firstAuthor + ', ' + year + ')'
+    }
+  };
+
+  const out = outputs[style];
+  document.getElementById('citOutput').textContent = out.bib;
+  document.getElementById('citInText').textContent = out.inText;
+}
+
+function citCopy(e) {
+  copyToClipboard(document.getElementById('citOutput').textContent, e.target);
+}
+
+citRender();
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade Calculator - Final Exam Score Calculator</title>
+<meta name="description" content="Compute final exam scores needed to reach your target grade. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Grade Percentage Calculator</h1>
+    <p>Compute final exam scores needed to reach your target grade.</p>
+  </header>
+
+  <div class="card">
+    <label>Current Course Grade (%)</label>
+    <input type="number" id="gcCurrent" min="0" max="150" step="0.5" value="86.5">
+
+    <div style="margin-top:16px">
+      <label>Final Exam Weight (%)</label>
+      <input type="number" id="gcWeight" min="1" max="100" step="1" value="30">
+    </div>
+
+    <div style="margin-top:16px">
+      <label>Target Final Grade (%)</label>
+      <input type="number" id="gcTarget" min="0" max="100" step="1" value="90">
+      <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(93)">A (93%)</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(90)">A- (90%)</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(87)">B+ (87%)</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(83)">B (83%)</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="gcSetTarget(80)">B- (80%)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="result-label" style="margin:0">Required Exam Score</div>
+      <span class="difficulty-pill" id="gcDifficulty" style="background:var(--glass-strong); color:var(--text-muted);">--</span>
+    </div>
+
+    <div class="result-value" id="gcNeeded" style="margin-top:12px">0.0%</div>
+    <div class="result-sub" id="gcSub">needed on final exam</div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="gcProgress" style="width:0%"></div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Points Secured</span>
+        <span class="result-cell-value" id="gcSecured">0%</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Exam Weight</span>
+        <span class="result-cell-value" id="gcWeightDisplay">30%</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Letter Grade</span>
+        <span class="result-cell-value" id="gcLetter">--</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+function gcSetTarget(val) {
+  document.getElementById('gcTarget').value = val;
+  gcCalculate();
+}
+
+function gcGetLetter(percent) {
+  if (percent >= 93) return 'A';
+  if (percent >= 90) return 'A-';
+  if (percent >= 87) return 'B+';
+  if (percent >= 83) return 'B';
+  if (percent >= 80) return 'B-';
+  if (percent >= 77) return 'C+';
+  if (percent >= 73) return 'C';
+  if (percent >= 70) return 'C-';
+  if (percent >= 67) return 'D+';
+  if (percent >= 60) return 'D';
+  return 'F';
+}
+
+function gcCalculate() {
+  const current = parseFloat(document.getElementById('gcCurrent').value) || 0;
+  const weight = parseFloat(document.getElementById('gcWeight').value) || 0;
+  const target = parseFloat(document.getElementById('gcTarget').value) || 0;
+
+  const weightDec = weight / 100;
+  const currentPortion = current * (1 - weightDec);
+  const needed = weightDec > 0 ? (target - currentPortion) / weightDec : 0;
+
+  document.getElementById('gcNeeded').textContent = needed.toFixed(1) + '%';
+  document.getElementById('gcSecured').textContent = currentPortion.toFixed(1) + '%';
+  document.getElementById('gcWeightDisplay').textContent = weight + '%';
+  document.getElementById('gcLetter').textContent = gcGetLetter(target);
+
+  const progressPct = Math.min(100, Math.max(0, needed));
+  document.getElementById('gcProgress').style.width = progressPct + '%';
+
+  const pill = document.getElementById('gcDifficulty');
+  let label, bg, color;
+  if (needed <= 0) {
+    label = 'Already Secured'; bg = 'var(--success-bg)'; color = 'var(--success)';
+  } else if (needed <= 60) {
+    label = 'Very Achievable'; bg = 'var(--success-bg)'; color = 'var(--success)';
+  } else if (needed <= 85) {
+    label = 'Realistic'; bg = 'var(--success-bg)'; color = 'var(--success)';
+  } else if (needed <= 95) {
+    label = 'Challenging'; bg = 'var(--warning-bg)'; color = 'var(--warning)';
+  } else if (needed <= 100) {
+    label = 'Very Hard'; bg = 'var(--warning-bg)'; color = 'var(--warning)';
+  } else {
+    label = 'Extra Credit Needed'; bg = 'var(--danger-bg)'; color = 'var(--danger)';
+  }
+  pill.textContent = label;
+  pill.style.background = bg;
+  pill.style.color = color;
+
+  const sub = document.getElementById('gcSub');
+  if (needed <= 0) {
+    sub.textContent = 'You have already secured your target grade';
+  } else if (needed > 100) {
+    sub.textContent = 'Impossible without extra credit. Consider a lower target.';
+  } else {
+    sub.textContent = 'needed on the final exam to reach ' + target + '%';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const gcCurrent = document.getElementById('gcCurrent');
+  const gcWeight = document.getElementById('gcWeight');
+  const gcTarget = document.getElementById('gcTarget');
+  if (gcCurrent) gcCurrent.addEventListener('input', gcCalculate);
+  if (gcWeight) gcWeight.addEventListener('input', gcCalculate);
+  if (gcTarget) gcTarget.addEventListener('input', gcCalculate);
+  gcCalculate();
+});
+</script>
+</body>
+</html>

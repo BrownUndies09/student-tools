@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPA Calculator - Free Weighted GPA & APS Calculator</title>
+<meta name="description" content="Calculate your weighted GPA and APS score. Supports US 4.0 scale, UK honours, South Africa NSC, India CGPA, Australia, Canada, and Philippines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>GPA Calculator</h1>
+    <p>Calculate your weighted GPA and APS score across countries.</p>
+  </header>
+
+  <div class="card">
+    <label>Country / System</label>
+    <select id="gpaCountry" onchange="gpaChangeSystem()">
+      <option value="us">United States (4.0 Scale)</option>
+      <option value="uk">United Kingdom (Honours)</option>
+      <option value="sa">South Africa (NSC / APS)</option>
+      <option value="in">India (CGPA)</option>
+      <option value="au">Australia (GPA)</option>
+      <option value="ca">Canada (GPA)</option>
+      <option value="ph">Philippines (GWA)</option>
+    </select>
+
+    <div class="divider"></div>
+
+    <div class="subject-row header">
+      <div>Subject</div>
+      <div>Grade</div>
+      <div>Percentage</div>
+      <div></div>
+    </div>
+
+    <div id="gpaSubjects"></div>
+
+    <button class="btn btn-secondary" style="margin-top:12px" onclick="gpaAddSubject()">+ Add Subject</button>
+  </div>
+
+  <div class="card">
+    <div class="result-label" id="gpaResultLabel">Your GPA</div>
+    <div class="result-value" id="gpaValue">0.00</div>
+    <div class="result-sub" id="gpaSub">Out of 4.00</div>
+
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Subjects</span>
+        <span class="result-cell-value" id="gpaCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Average</span>
+        <span class="result-cell-value" id="gpaAvg">0%</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Status</span>
+        <span class="result-cell-value" id="gpaStatus">--</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+const GPA_SYSTEMS = {
+  us: { label: 'Your GPA', sub: 'Out of 4.00', count: 6, grades: [
+    { label: 'A (90-100%)', value: 4.0 },
+    { label: 'B (80-89%)', value: 3.0 },
+    { label: 'C (70-79%)', value: 2.0 },
+    { label: 'D (60-69%)', value: 1.0 },
+    { label: 'F (0-59%)', value: 0.0 }
+  ]},
+  uk: { label: 'Your Class', sub: 'UK Honours', count: 6, grades: [
+    { label: 'First (70-100%)', value: 4.0 },
+    { label: '2:1 (60-69%)', value: 3.3 },
+    { label: '2:2 (50-59%)', value: 2.7 },
+    { label: 'Third (40-49%)', value: 2.0 },
+    { label: 'Fail (0-39%)', value: 0.0 }
+  ]},
+  sa: { label: 'Your GPA', sub: 'Out of 7.00 (NSC)', count: 7, grades: [
+    { label: 'Level 7 (80-100%)', value: 7 },
+    { label: 'Level 6 (70-79%)', value: 6 },
+    { label: 'Level 5 (60-69%)', value: 5 },
+    { label: 'Level 4 (50-59%)', value: 4 },
+    { label: 'Level 3 (40-49%)', value: 3 },
+    { label: 'Level 2 (30-39%)', value: 2 },
+    { label: 'Level 1 (0-29%)', value: 1 }
+  ]},
+  in: { label: 'Your CGPA', sub: 'Out of 10.00', count: 6, grades: [
+    { label: 'O (90-100%)', value: 10 },
+    { label: 'A+ (80-89%)', value: 9 },
+    { label: 'A (70-79%)', value: 8 },
+    { label: 'B+ (60-69%)', value: 7 },
+    { label: 'B (50-59%)', value: 6 },
+    { label: 'C (40-49%)', value: 5 },
+    { label: 'F (0-39%)', value: 0 }
+  ]},
+  au: { label: 'Your GPA', sub: 'Out of 7.00', count: 6, grades: [
+    { label: 'HD (85-100%)', value: 7 },
+    { label: 'D (75-84%)', value: 6 },
+    { label: 'C (65-74%)', value: 5 },
+    { label: 'P (50-64%)', value: 4 },
+    { label: 'F (0-49%)', value: 0 }
+  ]},
+  ca: { label: 'Your GPA', sub: 'Out of 4.00', count: 6, grades: [
+    { label: 'A (80-100%)', value: 4.0 },
+    { label: 'B (70-79%)', value: 3.0 },
+    { label: 'C (60-69%)', value: 2.0 },
+    { label: 'D (50-59%)', value: 1.0 },
+    { label: 'F (0-49%)', value: 0.0 }
+  ]},
+  ph: { label: 'Your GWA', sub: '1.0 = highest', count: 6, grades: [
+    { label: '1.0 (96-100%)', value: 1.0 },
+    { label: '1.5 (92-94%)', value: 1.5 },
+    { label: '2.0 (86-88%)', value: 2.0 },
+    { label: '2.5 (80-82%)', value: 2.5 },
+    { label: '3.0 (75-76%)', value: 3.0 },
+    { label: '4.0 (70-74%)', value: 4.0 },
+    { label: '5.0 (Below 70%)', value: 5.0 }
+  ]}
+};
+
+let gpaSystem = 'us';
+let gpaSubjects = [];
+
+function gpaDefaultSubjects(count) {
+  const arr = [];
+  for (let i = 0; i < count; i++) {
+    arr.push({ name: 'Subject ' + (i + 1), gradeIndex: 0, percent: '' });
+  }
+  return arr;
+}
+
+function gpaRender() {
+  const sys = GPA_SYSTEMS[gpaSystem];
+  document.getElementById('gpaResultLabel').textContent = sys.label;
+  document.getElementById('gpaSub').textContent = sys.sub;
+
+  const container = document.getElementById('gpaSubjects');
+  container.innerHTML = '';
+
+  gpaSubjects.forEach((sub, i) => {
+    const row = document.createElement('div');
+    row.className = 'subject-row';
+
+    const nameInput = document.createElement('input');
+    nameInput.className = 'subject-name';
+    nameInput.type = 'text';
+    nameInput.value = sub.name;
+    nameInput.placeholder = 'Subject';
+    nameInput.addEventListener('input', (e) => { gpaSubjects[i].name = e.target.value; });
+
+    const gradeSelect = document.createElement('select');
+    sys.grades.forEach((g, gi) => {
+      const opt = document.createElement('option');
+      opt.value = gi;
+      opt.textContent = g.label;
+      if (sub.gradeIndex === gi) opt.selected = true;
+      gradeSelect.appendChild(opt);
+    });
+    gradeSelect.addEventListener('change', (e) => {
+      gpaSubjects[i].gradeIndex = parseInt(e.target.value);
+      gpaCalculate();
+    });
+
+    const percentInput = document.createElement('input');
+    percentInput.type = 'number';
+    percentInput.min = '0';
+    percentInput.max = '100';
+    percentInput.placeholder = '%';
+    percentInput.value = sub.percent || '';
+    percentInput.addEventListener('input', (e) => { gpaSubjects[i].percent = e.target.value; });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'icon-btn';
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => gpaRemove(i));
+
+    row.appendChild(nameInput);
+    row.appendChild(gradeSelect);
+    row.appendChild(percentInput);
+    row.appendChild(removeBtn);
+    container.appendChild(row);
+  });
+
+  gpaCalculate();
+}
+
+function gpaAddSubject() {
+  gpaSubjects.push({ name: 'Subject ' + (gpaSubjects.length + 1), gradeIndex: 0, percent: '' });
+  gpaRender();
+}
+
+function gpaRemove(i) {
+  if (gpaSubjects.length <= 1) return;
+  gpaSubjects.splice(i, 1);
+  gpaRender();
+}
+
+function gpaChangeSystem() {
+  gpaSystem = document.getElementById('gpaCountry').value;
+  gpaSubjects = gpaDefaultSubjects(GPA_SYSTEMS[gpaSystem].count);
+  gpaRender();
+}
+
+function gpaCalculate() {
+  const sys = GPA_SYSTEMS[gpaSystem];
+  let total = 0;
+  gpaSubjects.forEach(sub => {
+    const g = sys.grades[sub.gradeIndex] || sys.grades[0];
+    total += g.value;
+  });
+  const avg = gpaSubjects.length ? total / gpaSubjects.length : 0;
+
+  document.getElementById('gpaValue').textContent = avg.toFixed(2);
+  document.getElementById('gpaCount').textContent = gpaSubjects.length;
+  document.getElementById('gpaAvg').textContent = Math.round((avg / sys.grades[0].value) * 100) + '%';
+
+  let status = '--';
+  if (gpaSystem === 'sa') {
+    status = avg >= 6 ? 'Excellent' : avg >= 5 ? 'Good' : avg >= 4 ? 'Pass' : 'At Risk';
+  } else if (gpaSystem === 'ph') {
+    status = avg <= 1.5 ? 'Excellent' : avg <= 2.5 ? 'Good' : avg <= 3.0 ? 'Pass' : 'At Risk';
+  } else {
+    status = avg >= 3.5 ? 'Excellent' : avg >= 3.0 ? 'Good' : avg >= 2.0 ? 'Pass' : 'At Risk';
+  }
+  document.getElementById('gpaStatus').textContent = status;
+}
+
+gpaSubjects = gpaDefaultSubjects(GPA_SYSTEMS.us.count);
+gpaRender();
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Count to Pages - Free Essay Page Converter</title>
+<meta name="description" content="Convert word counts to estimated printed pages based on spacing and font. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Word Count to Pages</h1>
+    <p>Convert word counts to estimated printed pages based on spacing and font.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" id="wcTabCount" onclick="wcSetMode('count')">Enter Word Count</button>
+      <button class="tab" id="wcTabText" onclick="wcSetMode('text')">Paste Text</button>
+    </div>
+
+    <div id="wcCountInput">
+      <label>Word Count</label>
+      <input type="number" id="wcWords" min="0" max="100000" value="1000">
+      <input type="range" id="wcSlider" min="0" max="10000" step="50" value="1000" style="width:100%; margin-top:12px; accent-color: var(--accent); cursor:pointer;">
+    </div>
+
+    <div id="wcTextInput" class="hidden">
+      <label>Paste Your Text</label>
+      <textarea id="wcText" placeholder="Paste or type your essay, article, or draft here..." style="min-height:180px;"></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+      <div>
+        <label>Line Spacing</label>
+        <select id="wcSpacing">
+          <option value="double" selected>Double (2.0)</option>
+          <option value="1.5">1.5 Spaced</option>
+          <option value="single">Single (1.0)</option>
+        </select>
+      </div>
+      <div>
+        <label>Font</label>
+        <select id="wcFont">
+          <option value="times" selected>Times New Roman</option>
+          <option value="arial">Arial</option>
+          <option value="calibri">Calibri</option>
+          <option value="courier">Courier New</option>
+        </select>
+      </div>
+      <div>
+        <label>Font Size</label>
+        <select id="wcSize">
+          <option value="12" selected>12 pt</option>
+          <option value="11">11 pt</option>
+          <option value="10">10 pt</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Estimated Output</div>
+    <div class="result-value" id="wcPages">0.0</div>
+    <div class="result-sub" id="wcSub">pages (double-spaced, 12pt Times New Roman)</div>
+
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Words</span>
+        <span class="result-cell-value" id="wcWordCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Characters</span>
+        <span class="result-cell-value" id="wcCharCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Reading</span>
+        <span class="result-cell-value" id="wcReadTime">0 min</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Speaking</span>
+        <span class="result-cell-value" id="wcSpeakTime">0 min</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+let wcMode = 'count';
+
+function wcSetMode(mode) {
+  wcMode = mode;
+  const tabCount = document.getElementById('wcTabCount');
+  const tabText = document.getElementById('wcTabText');
+  const countInput = document.getElementById('wcCountInput');
+  const textInput = document.getElementById('wcTextInput');
+
+  if (mode === 'count') {
+    tabCount.classList.add('active');
+    tabText.classList.remove('active');
+    countInput.classList.remove('hidden');
+    textInput.classList.add('hidden');
+  } else {
+    tabText.classList.add('active');
+    tabCount.classList.remove('active');
+    textInput.classList.remove('hidden');
+    countInput.classList.add('hidden');
+  }
+  wcCalculate();
+}
+
+function wcCalculate() {
+  const textarea = document.getElementById('wcText');
+  const rawText = textarea.value || '';
+  const textWords = rawText.trim() ? rawText.trim().split(/\s+/).length : 0;
+
+  const numberInput = document.getElementById('wcWords');
+  const numberWords = parseInt(numberInput.value) || 0;
+
+  const sysWords = wcMode === 'count' ? numberWords : textWords;
+  const chars = wcMode === 'text' ? rawText.length : sysWords * 6;
+
+  if (wcMode === 'count') {
+    document.getElementById('wcSlider').value = Math.min(10000, sysWords);
+  }
+
+  const spacing = document.getElementById('wcSpacing').value;
+  const font = document.getElementById('wcFont').value;
+  const size = parseInt(document.getElementById('wcSize').value);
+
+  const baseWordsPerPage = spacing === 'double' ? 250 : spacing === '1.5' ? 350 : 500;
+  const fontAdj = font === 'arial' ? 0.95 : font === 'courier' ? 0.8 : font === 'calibri' ? 1.05 : 1.0;
+  const sizeAdj = size === 10 ? 1.15 : size === 11 ? 1.08 : 1.0;
+  const wordsPerPage = baseWordsPerPage * fontAdj * sizeAdj;
+
+  const pages = sysWords > 0 ? sysWords / wordsPerPage : 0;
+
+  document.getElementById('wcPages').textContent = pages.toFixed(1);
+  document.getElementById('wcWordCount').textContent = sysWords.toLocaleString();
+  document.getElementById('wcCharCount').textContent = chars.toLocaleString();
+  document.getElementById('wcReadTime').textContent = Math.max(1, Math.ceil(sysWords / 225)) + ' min';
+  document.getElementById('wcSpeakTime').textContent = Math.max(1, Math.ceil(sysWords / 130)) + ' min';
+
+  const spacingLabel = spacing === 'double' ? 'double-spaced' : spacing === '1.5' ? '1.5-spaced' : 'single-spaced';
+  const fontLabel = document.getElementById('wcFont').selectedOptions[0].textContent;
+  document.getElementById('wcSub').textContent =
+    sysWords > 0
+      ? 'pages (' + spacingLabel + ', ' + size + 'pt ' + fontLabel + ')'
+      : 'Enter a word count to see the estimate';
+}
+
+function wcSyncSlider() {
+  const slider = document.getElementById('wcSlider');
+  document.getElementById('wcWords').value = slider.value;
+  wcCalculate();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const wcWords = document.getElementById('wcWords');
+  const wcSlider = document.getElementById('wcSlider');
+  const wcText = document.getElementById('wcText');
+  const wcSpacing = document.getElementById('wcSpacing');
+  const wcFont = document.getElementById('wcFont');
+  const wcSize = document.getElementById('wcSize');
+
+  if (wcWords) wcWords.addEventListener('input', wcCalculate);
+  if (wcText) wcText.addEventListener('input', wcCalculate);
+  if (wcSpacing) wcSpacing.addEventListener('change', wcCalculate);
+  if (wcFont) wcFont.addEventListener('change', wcCalculate);
+  if (wcSize) wcSize.addEventListener('change', wcCalculate);
+  if (wcSlider) wcSlider.addEventListener('input', wcSyncSlider);
+
+  wcCalculate();
+});
+</script>
+</body>
+</html>

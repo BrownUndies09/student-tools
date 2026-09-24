@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Flashcards - Advanced Spaced Repetition for Students</title>
+<meta name="description" content="Advanced spaced repetition flashcards with wrong-answer tracking, answer timing, exam countdowns, and PDF import.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <button class="back-link" onclick="scShowHome()">← All Decks</button>
+    <h1 id="scTitle">Smart Flashcards</h1>
+    <p id="scSubtitle">Spaced repetition with wrong-answer tracking, answer timing, and exam countdowns.</p>
+  </header>
+
+  <!-- DECK LIST VIEW -->
+  <div id="scDeckList">
+    <div class="card">
+      <div class="result-label">Create New Deck</div>
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;">
+        <div>
+          <label style="font-size:10px;">Deck Name</label>
+          <input type="text" id="scNewDeckName" placeholder="e.g. Biology Chapter 5">
+        </div>
+        <div>
+          <label style="font-size:10px;">Subject</label>
+          <input type="text" id="scNewDeckSubject" placeholder="e.g. Biology">
+        </div>
+        <div>
+          <label style="font-size:10px;">Exam Date (optional)</label>
+          <input type="date" id="scNewDeckExam">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="scCreateDeck()">+ Create Deck</button>
+      </div>
+      <div id="scDeckMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div class="result-label" style="margin:0;">Your Decks</div>
+        <span id="scDeckCount" style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">0 decks</span>
+      </div>
+      <div id="scDecksGrid" class="deck-grid"></div>
+    </div>
+  </div>
+
+  <!-- DECK DETAIL VIEW -->
+  <div id="scDeckView" class="hidden">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; gap:16px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+          <div class="result-label" style="margin-bottom:6px;">Deck</div>
+          <h2 id="scViewDeckName" style="font-size:22px; font-weight:600; letter-spacing:-0.5px; margin-bottom:4px;"></h2>
+          <div id="scViewDeckSubject" style="font-family:var(--font-mono); font-size:11px; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px;"></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="result-label" style="margin-bottom:6px;">Exam Countdown</div>
+          <div id="scViewCountdown" style="font-size:24px; font-weight:700; letter-spacing:-1px;"></div>
+          <div id="scViewExamDate" style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);"></div>
+        </div>
+      </div>
+
+      <div class="progress-bar" style="margin-top:20px;">
+        <div class="progress-fill" id="scViewProgress" style="width:0%; background: var(--success);"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">
+        <span id="scViewProgressLabel">0% mastered</span>
+        <span id="scViewDailyTarget">Daily target: --</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="scShowManage()">+ Add Cards (Manual, Paste, PDF)</button>
+        <button class="btn btn-primary btn-block" onclick="scStartStudy()">Start Study Session</button>
+        <button class="btn btn-secondary" onclick="scShowStats()">View Stats</button>
+        <button class="btn btn-secondary" onclick="scDeleteDeck()">Delete Deck</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Quick Stats</div>
+      <div class="stats-grid" id="scQuickStats"></div>
+    </div>
+  </div>
+
+  <!-- STUDY SESSION VIEW -->
+  <div id="scStudyView" class="hidden">
+    <div class="card">
+      <div class="study-timer-bar">
+        <span id="scStudyDeckLabel">Deck</span>
+        <span class="timer-live" id="scStudyTimer">0.0s</span>
+      </div>
+
+      <div class="flashcard" id="scStudyCard" onclick="scStudyFlip()">
+        <span class="fc-label" id="scStudyLabel">Front</span>
+        <span class="fc-hint" id="scStudyHint">Click or press Space</span>
+        <div class="fc-text" id="scStudyText">Loading...</div>
+        <div class="fc-counter" id="scStudyCounter">0 / 0</div>
+      </div>
+
+      <div id="scStudyButtons" class="study-answer-buttons hidden">
+        <button class="btn btn-wrong" onclick="scStudyAnswer(false)">Got it Wrong</button>
+        <button class="btn btn-right" onclick="scStudyAnswer(true)">Got it Right</button>
+      </div>
+
+      <div id="scStudyFlipPrompt" class="btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary btn-block" onclick="scStudyFlip()">Flip Card</button>
+        <button class="btn btn-secondary" onclick="scExitStudy()">End Session</button>
+      </div>
+    </div>
+
+    <div class="card" id="scSessionSummary" style="display:none;">
+      <div class="result-label">Session Complete</div>
+      <div id="scSessionSummaryContent"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="scBackToDeck()">Back to Deck</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS VIEW -->
+  <div id="scStatsView" class="hidden">
+    <div class="card">
+      <div class="result-label">Overall Performance</div>
+      <div class="stats-grid" id="scFullStats"></div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Weakest Cards (most missed)</div>
+      <div id="scWeakestList"></div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Slowest Cards (longest answer time)</div>
+      <div id="scSlowestList"></div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Mastery Breakdown</div>
+      <div id="scMasteryList"></div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-secondary btn-block" onclick="scBackToDeck()">← Back to Deck</button>
+    </div>
+  </div>
+
+  <!-- MANAGE CARDS VIEW -->
+  <div id="scManageView" class="hidden">
+    <div class="card">
+      <div class="import-tabs">
+        <button class="import-tab active" onclick="scSetImportTab('manual', this)">Manual</button>
+        <button class="import-tab" onclick="scSetImportTab('paste', this)">Bulk Paste</button>
+        <button class="import-tab" onclick="scSetImportTab('pdf', this)">PDF Upload</button>
+      </div>
+
+      <div id="scImportManual">
+        <label>Add Card Manually</label>
+        <div style="margin-top:8px;">
+          <label style="font-size:10px;">Front (Question / Term)</label>
+          <input type="text" id="scManualFront" placeholder="e.g. What is the powerhouse of the cell?">
+        </div>
+        <div style="margin-top:12px;">
+          <label style="font-size:10px;">Back (Answer / Definition)</label>
+          <textarea id="scManualBack" placeholder="e.g. Mitochondria" style="min-height:70px;"></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-block" onclick="scAddManualCard()">+ Add Card</button>
+        </div>
+      </div>
+
+      <div id="scImportPaste" class="hidden">
+        <label>Bulk Paste (one card per line)</label>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Format: <code>Front | Back</code> - one per line. Also accepts tab-separated.</p>
+        <textarea id="scPasteInput" placeholder="What is 2+2? | 4&#10;Capital of France? | Paris" style="min-height:180px;"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-block" onclick="scImportPasted()">Import Cards</button>
+        </div>
+      </div>
+
+      <div id="scImportPdf" class="hidden">
+        <label>Upload PDF (text-based)</label>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Extracts text and attempts to build Q&A pairs. You review and edit before saving.</p>
+        <div class="pdf-drop-zone" id="scPdfZone">
+          <span class="pdf-icon">📄</span>
+          <div class="pdf-label">Drop PDF here or click to choose</div>
+          <div class="pdf-hint">Works best with text-based PDFs (not scanned images)</div>
+          <input type="file" id="scPdfInput" accept=".pdf,application/pdf" style="display:none;">
+        </div>
+        <div id="scPdfProgress" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+        <div id="scPdfPreview" class="pdf-preview-list hidden"></div>
+        <div class="btn-row hidden" id="scPdfConfirmRow">
+          <button class="btn btn-primary btn-block" onclick="scImportPdfCards()">Add All to Deck</button>
+          <button class="btn btn-secondary" onclick="scClearPdfPreview()">Cancel</button>
+        </div>
+      </div>
+
+      <div id="scImportMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="result-label" style="margin:0;">All Cards in Deck</div>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" onclick="scClearAllCards()">Clear Deck</button>
+      </div>
+      <div class="fc-card-list" id="scManageList"></div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-secondary btn-block" onclick="scBackToDeck()">← Back to Deck</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="app.js"></script>
+<script>
+const SC_STORAGE_KEY = 'studytools_smartcards_v1';
+const SC_MASTERY_THRESHOLD = 3;
+let scDecks = [];
+let scActiveDeckId = null;
+let scStudyQueue = [];
+let scStudyIndex = 0;
+let scStudyFlipped = false;
+let scStudyTimerStart = 0;
+let scStudyTimerInterval = null;
+let scSessionStats = { right: 0, wrong: 0, totalTime: 0, cardsReviewed: 0 };
+let scPdfPendingCards = [];
+
+function scLoad() {
+  try {
+    const saved = localStorage.getItem(SC_STORAGE_KEY);
+    if (saved) scDecks = JSON.parse(saved);
+    if (!Array.isArray(scDecks)) scDecks = [];
+  } catch (e) { scDecks = []; }
+}
+
+function scSave() {
+  try { localStorage.setItem(SC_STORAGE_KEY, JSON.stringify(scDecks)); } catch (e) {}
+}
+
+function scActiveDeck() { return scDecks.find(d => d.id === scActiveDeckId); }
+
+function scShowHome() {
+  scActiveDeckId = null;
+  document.getElementById('scDeckList').classList.remove('hidden');
+  document.getElementById('scDeckView').classList.add('hidden');
+  document.getElementById('scStudyView').classList.add('hidden');
+  document.getElementById('scStatsView').classList.add('hidden');
+  document.getElementById('scManageView').classList.add('hidden');
+  document.getElementById('scTitle').textContent = 'Smart Flashcards';
+  document.getElementById('scSubtitle').textContent = 'Spaced repetition with wrong-answer tracking, answer timing, and exam countdowns.';
+  scRenderDecks();
+}
+
+function scRenderDecks() {
+  const grid = document.getElementById('scDecksGrid');
+  const count = document.getElementById('scDeckCount');
+  count.textContent = scDecks.length + ' deck' + (scDecks.length !== 1 ? 's' : '');
+  if (scDecks.length === 0) {
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:14px;">No decks yet. Create one above to get started.</div>';
+    return;
+  }
+  let html = '';
+  scDecks.forEach(d => {
+    const total = d.cards.length;
+    const mastered = d.cards.filter(c => c.mastery >= SC_MASTERY_THRESHOLD).length;
+    const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+    let countdownHtml = '';
+    if (d.examDate) {
+      const days = Math.ceil((new Date(d.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      const cls = days <= 3 ? 'urgent' : days <= 7 ? 'soon' : '';
+      countdownHtml = '<span class="deck-countdown ' + cls + '">' + (days > 0 ? days + ' days' : 'Today') + '</span>';
+    } else {
+      countdownHtml = '<span class="deck-countdown" style="color:var(--text-dim);">No exam date</span>';
+    }
+    html += '<div class="deck-card" data-deck-open="' + d.id + '">' +
+      '<h3>' + escapeHtml(d.name) + '</h3>' +
+      '<div class="deck-subject">' + escapeHtml(d.subject || 'General') + '</div>' +
+      '<div class="deck-progress-bar"><div class="deck-progress-fill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="deck-meta"><span>' + total + ' cards, ' + mastered + ' mastered</span>' + countdownHtml + '</div>' +
+    '</div>';
+  });
+  grid.innerHTML = html;
+  grid.querySelectorAll('[data-deck-open]').forEach(el => {
+    el.addEventListener('click', function () { scOpenDeck(this.getAttribute('data-deck-open')); });
+  });
+}
+
+function scCreateDeck() {
+  try {
+    const nameEl = document.getElementById('scNewDeckName');
+    const subjectEl = document.getElementById('scNewDeckSubject');
+    const examEl = document.getElementById('scNewDeckExam');
+    const name = (nameEl && nameEl.value ? nameEl.value : '').trim();
+    const subject = (subjectEl && subjectEl.value ? subjectEl.value : '').trim() || 'General';
+    const examDate = (examEl && examEl.value) ? examEl.value : null;
+    if (!name) { showMsg('scDeckMsg', 'Please enter a deck name.', 'danger'); return; }
+    const deck = {
+      id: 'deck-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+      name: name, subject: subject, examDate: examDate,
+      cards: [], createdAt: Date.now()
+    };
+    scDecks.push(deck);
+    scSave();
+    if (nameEl) nameEl.value = '';
+    if (subjectEl) subjectEl.value = '';
+    if (examEl) examEl.value = '';
+    showMsg('scDeckMsg', 'Deck "' + name + '" created. Open it to add cards.', 'success');
+    scRenderDecks();
+  } catch (e) {
+    console.error('scCreateDeck error:', e);
+    showMsg('scDeckMsg', 'Error: ' + e.message, 'danger');
+  }
+}
+
+function scOpenDeck(id) {
+  scActiveDeckId = id;
+  document.getElementById('scDeckList').classList.add('hidden');
+  document.getElementById('scDeckView').classList.remove('hidden');
+  document.getElementById('scStudyView').classList.add('hidden');
+  document.getElementById('scStatsView').classList.add('hidden');
+  document.getElementById('scManageView').classList.add('hidden');
+  scRenderDeckView();
+  const d = scActiveDeck();
+  if (d && d.cards.length === 0) scShowManage();
+}
+
+function scRenderDeckView() {
+  const d = scActiveDeck();
+  if (!d) { scShowHome(); return; }
+  document.getElementById('scTitle').textContent = d.name;
+  document.getElementById('scSubtitle').textContent = 'Smart Flashcards';
+  document.getElementById('scViewDeckName').textContent = d.name;
+  document.getElementById('scViewDeckSubject').textContent = d.subject || 'General';
+  const total = d.cards.length;
+  const mastered = d.cards.filter(c => c.mastery >= SC_MASTERY_THRESHOLD).length;
+  const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+  document.getElementById('scViewProgress').style.width = pct + '%';
+  document.getElementById('scViewProgressLabel').textContent = pct + '% mastered (' + mastered + '/' + total + ')';
+  const countdownEl = document.getElementById('scViewCountdown');
+  const examDateEl = document.getElementById('scViewExamDate');
+  if (d.examDate) {
+    const days = Math.ceil((new Date(d.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    countdownEl.textContent = days > 0 ? days + ' day' + (days !== 1 ? 's' : '') : 'Today';
+    countdownEl.style.color = days <= 3 ? 'var(--danger)' : days <= 7 ? 'var(--warning)' : 'var(--text)';
+    examDateEl.textContent = new Date(d.examDate).toLocaleDateString();
+    const remaining = total - mastered;
+    if (days > 0 && remaining > 0) {
+      const perDay = Math.ceil(remaining / days);
+      document.getElementById('scViewDailyTarget').textContent = 'Daily target: ' + perDay + ' card' + (perDay !== 1 ? 's' : '');
+    } else {
+      document.getElementById('scViewDailyTarget').textContent = 'Daily target: --';
+    }
+  } else {
+    countdownEl.textContent = '--';
+    countdownEl.style.color = 'var(--text-muted)';
+    examDateEl.textContent = 'No exam date set';
+    document.getElementById('scViewDailyTarget').textContent = 'Daily target: --';
+  }
+  const totalSeen = d.cards.reduce((s, c) => s + (c.seen || 0), 0);
+  const totalCorrect = d.cards.reduce((s, c) => s + (c.correct || 0), 0);
+  const totalWrong = d.cards.reduce((s, c) => s + (c.wrong || 0), 0);
+  const totalTime = d.cards.reduce((s, c) => s + (c.totalTime || 0), 0);
+  const avgTime = totalSeen > 0 ? (totalTime / totalSeen).toFixed(1) : '0.0';
+  const accuracy = totalSeen > 0 ? Math.round((totalCorrect / totalSeen) * 100) : 0;
+  document.getElementById('scQuickStats').innerHTML =
+    '<div class="stat-card"><div class="stat-value">' + total + '</div><div class="stat-label">Total Cards</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + mastered + '</div><div class="stat-label">Mastered</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + accuracy + '%</div><div class="stat-label">Accuracy</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + avgTime + 's</div><div class="stat-label">Avg Time/Card</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + totalWrong + '</div><div class="stat-label">Wrong Answers</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + totalSeen + '</div><div class="stat-label">Total Reviews</div></div>';
+}
+
+function scBackToDeck() {
+  if (scActiveDeckId && scDecks.find(d => d.id === scActiveDeckId)) scOpenDeck(scActiveDeckId);
+  else scShowHome();
+}
+
+function scDeleteDeck() {
+  if (!scActiveDeckId) return;
+  const d = scActiveDeck();
+  if (!d) return;
+  if (!window.confirm('Delete deck "' + d.name + '" and all its cards?')) return;
+  scDecks = scDecks.filter(x => x.id !== scActiveDeckId);
+  scSave();
+  scShowHome();
+}
+
+function scShowStats() {
+  document.getElementById('scDeckView').classList.add('hidden');
+  document.getElementById('scStatsView').classList.remove('hidden');
+  scRenderStats();
+}
+
+function scRenderStats() {
+  const d = scActiveDeck();
+  if (!d) return;
+  const total = d.cards.length;
+  const mastered = d.cards.filter(c => c.mastery >= SC_MASTERY_THRESHOLD).length;
+  const learning = d.cards.filter(c => c.mastery > 0 && c.mastery < SC_MASTERY_THRESHOLD).length;
+  const fresh = d.cards.filter(c => c.mastery === 0).length;
+  const totalSeen = d.cards.reduce((s, c) => s + (c.seen || 0), 0);
+  const totalCorrect = d.cards.reduce((s, c) => s + (c.correct || 0), 0);
+  const totalWrong = d.cards.reduce((s, c) => s + (c.wrong || 0), 0);
+  const totalTime = d.cards.reduce((s, c) => s + (c.totalTime || 0), 0);
+  const avgTime = totalSeen > 0 ? (totalTime / totalSeen).toFixed(1) : '0.0';
+  const accuracy = totalSeen > 0 ? Math.round((totalCorrect / totalSeen) * 100) : 0;
+  document.getElementById('scFullStats').innerHTML =
+    '<div class="stat-card"><div class="stat-value">' + total + '</div><div class="stat-label">Total Cards</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + mastered + '</div><div class="stat-label">Mastered</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + learning + '</div><div class="stat-label">Learning</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + fresh + '</div><div class="stat-label">New</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + accuracy + '%</div><div class="stat-label">Accuracy</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + avgTime + 's</div><div class="stat-label">Avg Time</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + totalWrong + '</div><div class="stat-label">Total Wrong</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + totalSeen + '</div><div class="stat-label">Total Reviews</div></div>';
+
+  const weakest = [...d.cards].filter(c => c.wrong > 0).sort((a, b) => (b.wrong / (b.seen || 1)) - (a.wrong / (a.seen || 1))).slice(0, 8);
+  document.getElementById('scWeakestList').innerHTML = weakest.length === 0
+    ? '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">No wrong answers yet. Keep studying.</div>'
+    : weakest.map(c => {
+        const rate = Math.round((c.wrong / (c.seen || 1)) * 100);
+        const cls = rate > 50 ? 'danger' : 'warning';
+        return '<div class="weak-card-item"><span class="wc-front">' + escapeHtml(c.front) + '</span><span class="wc-metric ' + cls + '">' + c.wrong + '/' + c.seen + ' wrong (' + rate + '%)</span></div>';
+      }).join('');
+
+  const slowest = [...d.cards].filter(c => c.seen > 0).sort((a, b) => (b.totalTime / (b.seen || 1)) - (a.totalTime / (a.seen || 1))).slice(0, 8);
+  document.getElementById('scSlowestList').innerHTML = slowest.length === 0
+    ? '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">No timing data yet.</div>'
+    : slowest.map(c => {
+        const avg = (c.totalTime / (c.seen || 1)).toFixed(1);
+        const cls = avg > 15 ? 'danger' : avg > 8 ? 'warning' : '';
+        return '<div class="weak-card-item"><span class="wc-front">' + escapeHtml(c.front) + '</span><span class="wc-metric ' + cls + '">' + avg + 's avg</span></div>';
+      }).join('');
+
+  document.getElementById('scMasteryList').innerHTML =
+    '<div class="weak-card-item"><span class="wc-front">Mastered (3+ correct in a row)</span><span class="wc-metric" style="color:var(--success);">' + mastered + '</span></div>' +
+    '<div class="weak-card-item"><span class="wc-front">Learning (1-2 correct in a row)</span><span class="wc-metric" style="color:var(--warning);">' + learning + '</span></div>' +
+    '<div class="weak-card-item"><span class="wc-front">New (never reviewed)</span><span class="wc-metric">' + fresh + '</span></div>';
+}
+
+function scShowManage() {
+  document.getElementById('scDeckView').classList.add('hidden');
+  document.getElementById('scStatsView').classList.add('hidden');
+  document.getElementById('scManageView').classList.remove('hidden');
+  scRenderManageList();
+}
+
+function scSetImportTab(tab, btn) {
+  document.querySelectorAll('#scManageView .import-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('scImportManual').classList.toggle('hidden', tab !== 'manual');
+  document.getElementById('scImportPaste').classList.toggle('hidden', tab !== 'paste');
+  document.getElementById('scImportPdf').classList.toggle('hidden', tab !== 'pdf');
+}
+
+function scAddManualCard() {
+  const front = document.getElementById('scManualFront').value.trim();
+  const back = document.getElementById('scManualBack').value.trim();
+  if (!front || !back) { showMsg('scImportMsg', 'Both front and back are required.', 'danger'); return; }
+  const d = scActiveDeck();
+  if (!d) return;
+  d.cards.push({ id: 'card-' + Date.now() + '-' + Math.floor(Math.random() * 10000), front: front, back: back, seen: 0, correct: 0, wrong: 0, totalTime: 0, mastery: 0, lastReviewed: null });
+  scSave();
+  document.getElementById('scManualFront').value = '';
+  document.getElementById('scManualBack').value = '';
+  showMsg('scImportMsg', 'Card added. Total: ' + d.cards.length, 'success');
+  scRenderManageList();
+}
+
+function scImportPasted() {
+  const raw = document.getElementById('scPasteInput').value || '';
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const d = scActiveDeck();
+  if (!d) return;
+  let added = 0;
+  lines.forEach((line, i) => {
+    let parts = line.split('|');
+    if (parts.length < 2) parts = line.split('\t');
+    if (parts.length >= 2) {
+      const front = parts[0].trim();
+      const back = parts.slice(1).join(' ').trim();
+      if (front && back) {
+        d.cards.push({ id: 'card-' + Date.now() + '-' + Math.floor(Math.random() * 100000) + '-' + i, front: front, back: back, seen: 0, correct: 0, wrong: 0, totalTime: 0, mastery: 0, lastReviewed: null });
+        added++;
+      }
+    }
+  });
+  scSave();
+  document.getElementById('scPasteInput').value = '';
+  showMsg('scImportMsg', 'Imported ' + added + ' cards. Total: ' + d.cards.length, 'success');
+  scRenderManageList();
+}
+
+function scRenderManageList() {
+  const d = scActiveDeck();
+  if (!d) return;
+  const list = document.getElementById('scManageList');
+  if (d.cards.length === 0) {
+    list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">No cards in this deck yet.</div>';
+    return;
+  }
+  let html = '';
+  d.cards.forEach(c => {
+    const masteryClass = c.mastery >= SC_MASTERY_THRESHOLD ? 'mastered' : c.mastery > 0 ? 'learning' : 'new';
+    const masteryLabel = c.mastery >= SC_MASTERY_THRESHOLD ? 'Mastered' : c.mastery > 0 ? 'Learning' : 'New';
+    html += '<div class="fc-card-item"><div style="flex:1; min-width:0;">' +
+      '<div class="fc-front">' + escapeHtml(c.front) + '</div>' +
+      '<div class="fc-back">' + escapeHtml(c.back) + '</div>' +
+      '<div style="margin-top:6px; display:flex; gap:6px; align-items:center;">' +
+        '<span class="progress-pill ' + masteryClass + '">' + masteryLabel + '</span>' +
+        '<span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted);">' + (c.correct || 0) + '/' + (c.seen || 0) + ' correct</span>' +
+      '</div></div><button class="icon-btn" data-card-remove="' + c.id + '" style="width:32px; height:32px; font-size:16px; flex-shrink:0;">×</button></div>';
+  });
+  list.innerHTML = html;
+  list.querySelectorAll('[data-card-remove]').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const d2 = scActiveDeck();
+      d2.cards = d2.cards.filter(x => x.id !== this.getAttribute('data-card-remove'));
+      scSave();
+      scRenderManageList();
+    });
+  });
+}
+
+function scClearAllCards() {
+  const d = scActiveDeck();
+  if (!d || d.cards.length === 0) return;
+  if (!window.confirm('Delete all cards in this deck?')) return;
+  d.cards = [];
+  scSave();
+  scRenderManageList();
+}
+
+function scStartStudy() {
+  const d = scActiveDeck();
+  if (!d || d.cards.length === 0) { showMsg('scImportMsg', 'Add cards first.', 'danger'); return; }
+  scStudyQueue = [...d.cards].sort(() => Math.random() - 0.5);
+  scStudyIndex = 0;
+  scStudyFlipped = false;
+  scSessionStats = { right: 0, wrong: 0, totalTime: 0, cardsReviewed: 0 };
+  document.getElementById('scDeckView').classList.add('hidden');
+  document.getElementById('scStatsView').classList.add('hidden');
+  document.getElementById('scManageView').classList.add('hidden');
+  document.getElementById('scStudyView').classList.remove('hidden');
+  document.getElementById('scSessionSummary').style.display = 'none';
+  document.getElementById('scStudyFlipPrompt').classList.remove('hidden');
+  document.getElementById('scStudyButtons').classList.add('hidden');
+  scRenderStudy();
+}
+
+function scRenderStudy() {
+  const d = scActiveDeck();
+  if (!d) return;
+  document.getElementById('scStudyDeckLabel').textContent = d.name;
+  if (scStudyIndex >= scStudyQueue.length) { scEndSession(); return; }
+  const card = scStudyQueue[scStudyIndex];
+  document.getElementById('scStudyText').textContent = scStudyFlipped ? card.back : card.front;
+  document.getElementById('scStudyLabel').textContent = scStudyFlipped ? 'Back' : 'Front';
+  document.getElementById('scStudyCounter').textContent = (scStudyIndex + 1) + ' / ' + scStudyQueue.length;
+  if (scStudyFlipped) {
+    document.getElementById('scStudyButtons').classList.remove('hidden');
+    document.getElementById('scStudyFlipPrompt').classList.add('hidden');
+    if (scStudyTimerInterval) clearInterval(scStudyTimerInterval);
+    scStudyTimerInterval = null;
+  } else {
+    document.getElementById('scStudyButtons').classList.add('hidden');
+    document.getElementById('scStudyFlipPrompt').classList.remove('hidden');
+    scStudyTimerStart = Date.now();
+    if (scStudyTimerInterval) clearInterval(scStudyTimerInterval);
+    scStudyTimerInterval = setInterval(() => {
+      const secs = ((Date.now() - scStudyTimerStart) / 1000).toFixed(1);
+      document.getElementById('scStudyTimer').textContent = secs + 's';
+    }, 100);
+  }
+}
+
+function scStudyFlip() {
+  if (scStudyIndex >= scStudyQueue.length) return;
+  scStudyFlipped = !scStudyFlipped;
+  scRenderStudy();
+}
+
+function scStudyAnswer(correct) {
+  const card = scStudyQueue[scStudyIndex];
+  if (!card) return;
+  const elapsed = (Date.now() - scStudyTimerStart) / 1000;
+  scSessionStats.totalTime += elapsed;
+  scSessionStats.cardsReviewed++;
+  const d = scActiveDeck();
+  const realCard = d.cards.find(c => c.id === card.id);
+  if (realCard) {
+    realCard.seen = (realCard.seen || 0) + 1;
+    realCard.totalTime = (realCard.totalTime || 0) + elapsed;
+    realCard.lastReviewed = Date.now();
+    if (correct) {
+      realCard.correct = (realCard.correct || 0) + 1;
+      realCard.mastery = Math.min(SC_MASTERY_THRESHOLD, (realCard.mastery || 0) + 1);
+      scSessionStats.right++;
+    } else {
+      realCard.wrong = (realCard.wrong || 0) + 1;
+      realCard.mastery = 0;
+      scSessionStats.wrong++;
+    }
+  }
+  scSave();
+  scStudyIndex++;
+  scStudyFlipped = false;
+  scRenderStudy();
+}
+
+function scEndSession() {
+  if (scStudyTimerInterval) clearInterval(scStudyTimerInterval);
+  scStudyTimerInterval = null;
+  document.getElementById('scStudyButtons').classList.add('hidden');
+  document.getElementById('scStudyFlipPrompt').classList.add('hidden');
+  const avg = scSessionStats.cardsReviewed > 0 ? (scSessionStats.totalTime / scSessionStats.cardsReviewed).toFixed(1) : '0.0';
+  const acc = scSessionStats.cardsReviewed > 0 ? Math.round((scSessionStats.right / scSessionStats.cardsReviewed) * 100) : 0;
+  document.getElementById('scSessionSummaryContent').innerHTML =
+    '<div class="stats-grid">' +
+      '<div class="stat-card"><div class="stat-value">' + scSessionStats.cardsReviewed + '</div><div class="stat-label">Cards Reviewed</div></div>' +
+      '<div class="stat-card"><div class="stat-value" style="color:var(--success);">' + scSessionStats.right + '</div><div class="stat-label">Correct</div></div>' +
+      '<div class="stat-card"><div class="stat-value" style="color:var(--danger);">' + scSessionStats.wrong + '</div><div class="stat-label">Wrong</div></div>' +
+      '<div class="stat-card"><div class="stat-value">' + acc + '%</div><div class="stat-label">Session Accuracy</div></div>' +
+      '<div class="stat-card"><div class="stat-value">' + avg + 's</div><div class="stat-label">Avg Time/Card</div></div>' +
+    '</div>';
+  document.getElementById('scSessionSummary').style.display = 'block';
+}
+
+function scExitStudy() {
+  if (scStudyTimerInterval) clearInterval(scStudyTimerInterval);
+  scStudyTimerInterval = null;
+  scBackToDeck();
+}
+
+function scInitPdf() {
+  const zone = document.getElementById('scPdfZone');
+  const input = document.getElementById('scPdfInput');
+  if (!zone || !input) return;
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) scHandlePdf(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', e => {
+    if (e.target.files.length > 0) scHandlePdf(e.target.files[0]);
+    input.value = '';
+  });
+}
+
+function scHandlePdf(file) {
+  if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+    showMsg('scImportMsg', 'Please select a PDF file.', 'danger');
+    return;
+  }
+  const progressEl = document.getElementById('scPdfProgress');
+  progressEl.style.display = 'block';
+  progressEl.textContent = 'Reading PDF...';
+  if (typeof pdfjsLib === 'undefined') {
+    progressEl.textContent = 'PDF library failed to load. Check your internet connection.';
+    return;
+  }
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const reader = new FileReader();
+  reader.onload = function () {
+    const typedArray = new Uint8Array(reader.result);
+    pdfjsLib.getDocument({ data: typedArray }).promise.then(pdf => {
+      progressEl.textContent = 'Extracting text from ' + pdf.numPages + ' pages...';
+      const pagePromises = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        pagePromises.push(pdf.getPage(i).then(page => page.getTextContent().then(tc => tc.items.map(item => item.str).join(' '))));
+      }
+      Promise.all(pagePromises).then(pagesText => {
+        const fullText = pagesText.join('\n');
+        progressEl.textContent = 'Extracted ' + fullText.length + ' characters. Building cards...';
+        scBuildCardsFromText(fullText);
+      }).catch(err => {
+        progressEl.textContent = 'Error extracting text: ' + err.message;
+      });
+    }).catch(err => {
+      progressEl.textContent = 'Could not read PDF. It may be password-protected or corrupted.';
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function scBuildCardsFromText(text) {
+  scPdfPendingCards = [];
+  const cleaned = text.replace(/\s+/g, ' ').replace(/[^\x20-\x7E\n]/g, '');
+  const sentences = cleaned.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 20 && s.length < 400);
+  for (let i = 0; i < sentences.length && scPdfPendingCards.length < 200; i++) {
+    const s = sentences[i];
+    let front = '', back = '';
+    const isMatch = s.match(/^(.{5,80}?)\s+(?:is|are|was|were|means|refers to|is defined as|is called)\s+(.{10,})/i);
+    const colonMatch = s.match(/^([^:]{5,80}):\s*(.{10,})/);
+    if (isMatch) {
+      front = 'What is ' + isMatch[1].replace(/^(what|who)\s+/i, '').trim() + '?';
+      back = isMatch[2].trim();
+    } else if (colonMatch) {
+      front = colonMatch[1].trim();
+      back = colonMatch[2].trim();
+    } else {
+      const words = s.split(' ').filter(w => w.length > 0);
+      if (words.length >= 8 && words.length <= 50) {
+        const keyword = words.reduce((longest, w) => w.length > longest.length && !/^(the|and|that|this|with|from|have|been|will)$/i.test(w) ? w : longest, '');
+        if (keyword && keyword.length > 5) {
+          front = 'What does "' + keyword + '" refer to in this context?';
+          back = s;
+        }
+      }
+    }
+    if (front && back) scPdfPendingCards.push({ front: front, back: back });
+  }
+  const preview = document.getElementById('scPdfPreview');
+  if (scPdfPendingCards.length === 0) {
+    document.getElementById('scPdfProgress').textContent = 'No cards could be extracted. The PDF may be image-based or formatted unusually. Try the Bulk Paste method instead.';
+    preview.classList.add('hidden');
+    document.getElementById('scPdfConfirmRow').classList.add('hidden');
+    return;
+  }
+  document.getElementById('scPdfProgress').textContent = 'Found ' + scPdfPendingCards.length + ' potential cards. Review and edit before adding.';
+  scRefreshPdfPreview();
+  preview.classList.remove('hidden');
+  document.getElementById('scPdfConfirmRow').classList.remove('hidden');
+}
+
+function scRefreshPdfPreview() {
+  const preview = document.getElementById('scPdfPreview');
+  if (scPdfPendingCards.length === 0) {
+    preview.classList.add('hidden');
+    document.getElementById('scPdfConfirmRow').classList.add('hidden');
+    document.getElementById('scPdfProgress').textContent = 'All cards removed.';
+    return;
+  }
+  let html = '';
+  scPdfPendingCards.forEach((c, i) => {
+    html += '<div class="pdf-preview-item" data-pdf-item="' + i + '">' +
+      '<span class="pdf-card-remove" data-pdf-remove="' + i + '">×</span>' +
+      '<div class="pdf-card-front" contenteditable="true" data-pdf-front="' + i + '">' + escapeHtml(c.front) + '</div>' +
+      '<div class="pdf-card-back" contenteditable="true" data-pdf-back="' + i + '">' + escapeHtml(c.back) + '</div>' +
+    '</div>';
+  });
+  preview.innerHTML = html;
+  preview.querySelectorAll('[data-pdf-remove]').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const idx = parseInt(this.getAttribute('data-pdf-remove'));
+      scPdfPendingCards.splice(idx, 1);
+      scRefreshPdfPreview();
+    });
+  });
+  preview.querySelectorAll('[data-pdf-front]').forEach(el => {
+    el.addEventListener('blur', function () {
+      const idx = parseInt(this.getAttribute('data-pdf-front'));
+      if (scPdfPendingCards[idx]) scPdfPendingCards[idx].front = this.textContent.trim();
+    });
+  });
+  preview.querySelectorAll('[data-pdf-back]').forEach(el => {
+    el.addEventListener('blur', function () {
+      const idx = parseInt(this.getAttribute('data-pdf-back'));
+      if (scPdfPendingCards[idx]) scPdfPendingCards[idx].back = this.textContent.trim();
+    });
+  });
+}
+
+function scImportPdfCards() {
+  const d = scActiveDeck();
+  if (!d) return;
+  let added = 0;
+  scPdfPendingCards.forEach((c, i) => {
+    if (c.front && c.back) {
+      d.cards.push({ id: 'card-' + Date.now() + '-' + Math.floor(Math.random() * 100000) + '-' + i, front: c.front, back: c.back, seen: 0, correct: 0, wrong: 0, totalTime: 0, mastery: 0, lastReviewed: null });
+      added++;
+    }
+  });
+  scSave();
+  scPdfPendingCards = [];
+  document.getElementById('scPdfPreview').classList.add('hidden');
+  document.getElementById('scPdfConfirmRow').classList.add('hidden');
+  document.getElementById('scPdfProgress').textContent = 'Imported ' + added + ' cards.';
+  showMsg('scImportMsg', 'Added ' + added + ' cards to deck. Total: ' + d.cards.length, 'success');
+  scRenderManageList();
+  setTimeout(() => { document.getElementById('scPdfProgress').style.display = 'none'; }, 2500);
+}
+
+function scClearPdfPreview() {
+  scPdfPendingCards = [];
+  document.getElementById('scPdfPreview').classList.add('hidden');
+  document.getElementById('scPdfConfirmRow').classList.add('hidden');
+  document.getElementById('scPdfProgress').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  try { scLoad(); } catch (e) { console.error('scLoad failed', e); scDecks = []; }
+  try { scInitPdf(); } catch (e) { console.error('scInitPdf failed', e); }
+  try { scRenderDecks(); } catch (e) { console.error('scRenderDecks failed', e); }
+});
+
+document.addEventListener('keydown', function (e) {
+  const scStudyView = document.getElementById('scStudyView');
+  if (!scStudyView || scStudyView.classList.contains('hidden')) return;
+  if (e.code === 'Space' && !scStudyFlipped) {
+    e.preventDefault();
+    scStudyFlip();
+  } else if (scStudyFlipped) {
+    if (e.key === '1') scStudyAnswer(false);
+    else if (e.key === '2') scStudyAnswer(true);
+  }
+});
+</script>
+</body>
+</html>

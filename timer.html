@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro Study Timer - Free Focus Timer for Students</title>
+<meta name="description" content="Free Pomodoro study timer with custom work and break durations, session counter, and sound alerts. No sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Pomodoro Study Timer</h1>
+    <p>Stay focused. Take breaks. Get things done.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="timerSetMode('work', this)">Work</button>
+      <button class="tab" onclick="timerSetMode('short', this)">Short Break</button>
+      <button class="tab" onclick="timerSetMode('long', this)">Long Break</button>
+    </div>
+
+    <div class="timer-display">
+      <div class="timer-time" id="timerTime">25:00</div>
+      <div class="timer-status" id="timerStatus">Ready to focus</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" id="timerStartBtn" onclick="timerToggle()">Start</button>
+      <button class="btn btn-secondary" onclick="timerReset()">Reset</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <label>Custom Durations (minutes)</label>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:8px">
+      <div>
+        <label style="font-size:10px">Work</label>
+        <input type="number" id="timerWork" min="1" max="120" value="25" onchange="timerUpdateDurations()">
+      </div>
+      <div>
+        <label style="font-size:10px">Short</label>
+        <input type="number" id="timerShort" min="1" max="60" value="5" onchange="timerUpdateDurations()">
+      </div>
+      <div>
+        <label style="font-size:10px">Long</label>
+        <input type="number" id="timerLong" min="1" max="60" value="15" onchange="timerUpdateDurations()">
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:20px; font-family:var(--font-mono); font-size:13px; color:var(--text-muted)">
+      Sessions completed: <strong id="timerSessions" style="color:var(--text); font-size:16px">0</strong>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+let timerMode = 'work';
+let timerRunning = false;
+let timerInterval = null;
+let timerSessions = 0;
+let timerDurations = { work: 25 * 60, short: 5 * 60, long: 15 * 60 };
+let timerLeft = 25 * 60;
+
+function timerUpdateDisplay() {
+  document.getElementById('timerTime').textContent = formatTime(timerLeft);
+}
+
+function timerSetMode(mode, btn) {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerStartBtn').textContent = 'Start';
+  }
+  timerMode = mode;
+  document.querySelectorAll('#view-timer .tab, .tabs .tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  timerLeft = timerDurations[mode];
+  timerUpdateDisplay();
+  document.getElementById('timerStatus').textContent = 'Ready to ' + (mode === 'work' ? 'focus' : 'rest');
+}
+
+function timerToggle() {
+  const btn = document.getElementById('timerStartBtn');
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    btn.textContent = 'Resume';
+    document.getElementById('timerStatus').textContent = 'Paused';
+  } else {
+    timerRunning = true;
+    btn.textContent = 'Pause';
+    document.getElementById('timerStatus').textContent = timerMode === 'work' ? 'Focusing...' : 'Resting...';
+    timerInterval = setInterval(() => {
+      timerLeft--;
+      timerUpdateDisplay();
+      if (timerLeft <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        btn.textContent = 'Start';
+        if (timerMode === 'work') {
+          timerSessions++;
+          document.getElementById('timerSessions').textContent = timerSessions;
+        }
+        beep(800);
+        document.getElementById('timerStatus').textContent = 'Time is up!';
+      }
+    }, 1000);
+  }
+}
+
+function timerReset() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('timerStartBtn').textContent = 'Start';
+  timerLeft = timerDurations[timerMode];
+  timerUpdateDisplay();
+  document.getElementById('timerStatus').textContent = 'Ready to ' + (timerMode === 'work' ? 'focus' : 'rest');
+}
+
+function timerUpdateDurations() {
+  const w = Math.max(1, parseInt(document.getElementById('timerWork').value) || 25);
+  const s = Math.max(1, parseInt(document.getElementById('timerShort').value) || 5);
+  const l = Math.max(1, parseInt(document.getElementById('timerLong').value) || 15);
+  timerDurations.work = w * 60;
+  timerDurations.short = s * 60;
+  timerDurations.long = l * 60;
+  if (!timerRunning) {
+    timerLeft = timerDurations[timerMode];
+    timerUpdateDisplay();
+  }
+}
+
+timerUpdateDisplay();
+</script>
+</body>
+</html>

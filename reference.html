@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reference List Formatter - Free Citation Sorter</title>
+<meta name="description" content="Clean, alphabetize, and format citations with proper hanging indents. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Reference List Formatter</h1>
+    <p>Clean, alphabetize, and format citations with proper hanging indents.</p>
+  </header>
+
+  <div class="card">
+    <label>Paste Raw Citations (one per line)</label>
+    <textarea id="refInput" style="min-height:160px;" placeholder="Paste your references here, one per line, in any order..."></textarea>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
+      <div>
+        <label>Sort Order</label>
+        <select id="refSort">
+          <option value="alpha" selected>Alphabetical (A to Z)</option>
+          <option value="reverse">Reverse Alphabetical (Z to A)</option>
+          <option value="none">Keep Original Order</option>
+        </select>
+      </div>
+      <div>
+        <label>Hanging Indent</label>
+        <select id="refHanging">
+          <option value="on" selected>On (academic style)</option>
+          <option value="off">Off (flush left)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="refFormat()">Format References</button>
+      <button class="btn btn-secondary" onclick="refLoadSample()">Load Sample</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div class="result-label" style="margin:0">Formatted References</div>
+      <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" id="refCopyBtn" onclick="refCopy(event)">Copy All</button>
+    </div>
+    <div class="reference-list" id="refOutput">
+      <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Paste your citations and click "Format References" to begin.</div>
+    </div>
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Sources</span>
+        <span class="result-cell-value" id="refCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Sort</span>
+        <span class="result-cell-value" id="refSortDisplay">A to Z</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Indent</span>
+        <span class="result-cell-value" id="refIndentDisplay">Hanging</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+function refFormat() {
+  const input = document.getElementById('refInput').value || '';
+  const sortMode = document.getElementById('refSort').value;
+  const hanging = document.getElementById('refHanging').value === 'on';
+
+  let refs = input.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+  refs = refs.map(r => r.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '').trim());
+
+  if (sortMode === 'alpha') {
+    refs.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+  } else if (sortMode === 'reverse') {
+    refs.sort((a, b) => b.localeCompare(a, 'en', { sensitivity: 'base' }));
+  }
+
+  const output = document.getElementById('refOutput');
+  if (refs.length === 0) {
+    output.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">No references found. Paste your citations above.</div>';
+  } else {
+    output.innerHTML = refs.map(r =>
+      '<div class="reference-item' + (hanging ? ' hanging' : '') + '">' + escapeHtml(r) + '</div>'
+    ).join('');
+  }
+
+  document.getElementById('refCount').textContent = refs.length;
+  document.getElementById('refSortDisplay').textContent =
+    sortMode === 'alpha' ? 'A to Z' : sortMode === 'reverse' ? 'Z to A' : 'Original';
+  document.getElementById('refIndentDisplay').textContent = hanging ? 'Hanging' : 'Flush';
+}
+
+function refLoadSample() {
+  document.getElementById('refInput').value =
+    'Zuboff, S. (2019). The age of surveillance capitalism. PublicAffairs.\n' +
+    'Acemoglu, D., & Robinson, J. A. (2012). Why nations fail. Crown Currency.\n' +
+    'Kahneman, D. (2011). Thinking, fast and slow. Farrar, Straus and Giroux.\n' +
+    'Bostrom, N. (2014). Superintelligence: Paths, dangers, strategies. Oxford University Press.\n' +
+    'Harari, Y. N. (2016). Homo Deus: A brief history of tomorrow. Harper.\n' +
+    'Miller, E. T., & Alvarez, C. R. (2024). Cognitive scaffolding in self-directed digital study platforms. Journal of Educational Technology Systems, 52(3), 312-329.';
+  refFormat();
+}
+
+function refCopy(e) {
+  const items = document.querySelectorAll('#refOutput .reference-item');
+  if (items.length === 0) return;
+  const text = Array.from(items).map(i => i.textContent).join('\n\n');
+  copyToClipboard(text, e.target);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const refInput = document.getElementById('refInput');
+  const refSort = document.getElementById('refSort');
+  const refHanging = document.getElementById('refHanging');
+  if (refInput) refInput.addEventListener('input', refFormat);
+  if (refSort) refSort.addEventListener('change', refFormat);
+  if (refHanging) refHanging.addEventListener('change', refFormat);
+});
+</script>
+</body>
+</html>

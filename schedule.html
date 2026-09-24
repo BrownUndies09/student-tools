@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Schedule Builder - Free Weekly Planner</title>
+<meta name="description" content="Plan weekly review blocks, subject pacing, and exam countdowns. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Study Schedule Builder</h1>
+    <p>Plan weekly review blocks, subject pacing, and exam countdowns.</p>
+  </header>
+
+  <div class="card">
+    <label>Add Study Block</label>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+      <div>
+        <label style="font-size:10px;">Day</label>
+        <select id="schDay">
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:10px;">Time</label>
+        <input type="text" id="schTime" placeholder="e.g. 09:00 - 11:00" value="09:00 - 11:00">
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+      <div>
+        <label style="font-size:10px;">Subject / Course</label>
+        <input type="text" id="schSubject" placeholder="e.g. Linear Algebra">
+      </div>
+      <div>
+        <label style="font-size:10px;">Focus Topic</label>
+        <input type="text" id="schTopic" placeholder="e.g. Eigenvectors">
+      </div>
+    </div>
+
+    <div id="schMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="schAdd()">+ Add Study Block</button>
+      <button class="btn btn-secondary" onclick="schClearAll()">Clear All</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Your Study Blocks</div>
+    <div id="schList"></div>
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Blocks</span>
+        <span class="result-cell-value" id="schCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Subjects</span>
+        <span class="result-cell-value" id="schSubjects">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Est. Hours</span>
+        <span class="result-cell-value" id="schHours">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Weekly Overview</div>
+    <div class="week-grid" id="schWeek"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+let scheduleBlocks = [];
+
+function schAdd() {
+  const day = document.getElementById('schDay').value;
+  const time = document.getElementById('schTime').value.trim() || '09:00 - 11:00';
+  const subject = document.getElementById('schSubject').value.trim();
+  const topic = document.getElementById('schTopic').value.trim() || 'General revision';
+
+  if (!subject) {
+    showMsg('schMsg', 'Please enter a subject name.', 'danger');
+    return;
+  }
+
+  scheduleBlocks.push({
+    id: 'block-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+    day: day,
+    time: time,
+    subject: subject,
+    topic: topic
+  });
+
+  document.getElementById('schSubject').value = '';
+  document.getElementById('schTopic').value = '';
+  showMsg('schMsg', 'Added "' + subject + '" for ' + day, 'success');
+  schRender();
+}
+
+function schRemove(id) {
+  scheduleBlocks = scheduleBlocks.filter(b => b.id !== id);
+  schRender();
+}
+
+function schClearAll() {
+  if (scheduleBlocks.length === 0) return;
+  scheduleBlocks = [];
+  schRender();
+}
+
+function schParseHours(timeStr) {
+  const match = timeStr.match(/(\d{1,2}):?(\d{2})?\s*[-–to]+\s*(\d{1,2}):?(\d{2})?/);
+  if (!match) return 1;
+  const h1 = parseInt(match[1]) + (match[2] ? parseInt(match[2]) / 60 : 0);
+  const h2 = parseInt(match[3]) + (match[4] ? parseInt(match[4]) / 60 : 0);
+  const diff = h2 - h1;
+  return diff > 0 ? diff : 1;
+}
+
+function schRender() {
+  const list = document.getElementById('schList');
+  const week = document.getElementById('schWeek');
+
+  if (scheduleBlocks.length === 0) {
+    list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">No study blocks yet. Add one above to get started.</div>';
+  } else {
+    const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const sorted = [...scheduleBlocks].sort((a, b) => {
+      const d = dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day);
+      if (d !== 0) return d;
+      return a.time.localeCompare(b.time);
+    });
+
+    let html = '<div class="schedule-item header"><div>Day</div><div>Time</div><div>Subject</div><div>Topic</div><div></div></div>';
+    sorted.forEach(b => {
+      html += '<div class="schedule-item">' +
+        '<span class="day-pill">' + escapeHtml(b.day.slice(0, 3)) + '</span>' +
+        '<span class="time-text">' + escapeHtml(b.time) + '</span>' +
+        '<span class="subj">' + escapeHtml(b.subject) + '</span>' +
+        '<span class="topic">' + escapeHtml(b.topic) + '</span>' +
+        '<button class="icon-btn" data-remove-id="' + b.id + '">×</button>' +
+      '</div>';
+    });
+    list.innerHTML = html;
+
+    list.querySelectorAll('[data-remove-id]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        schRemove(this.getAttribute('data-remove-id'));
+      });
+    });
+  }
+
+  const uniqueSubjects = new Set(scheduleBlocks.map(b => b.subject.toLowerCase())).size;
+  const totalHours = scheduleBlocks.reduce((sum, b) => sum + schParseHours(b.time), 0);
+
+  document.getElementById('schCount').textContent = scheduleBlocks.length;
+  document.getElementById('schSubjects').textContent = uniqueSubjects;
+  document.getElementById('schHours').textContent = totalHours.toFixed(1);
+
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  week.innerHTML = days.map(day => {
+    const dayBlocks = scheduleBlocks.filter(b => b.day === day);
+    const blocksHtml = dayBlocks.map(b =>
+      '<div class="week-block">' +
+        '<span class="wb-subj">' + escapeHtml(b.subject) + '</span>' +
+        '<span class="wb-time">' + escapeHtml(b.time) + '</span>' +
+      '</div>'
+    ).join('');
+    return '<div class="week-day">' +
+      '<div class="week-day-name">' + day.slice(0, 3) + '</div>' +
+      (blocksHtml || '<div style="text-align:center; color:var(--text-dim); font-size:10px; padding-top:20px;">-</div>') +
+    '</div>';
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  schRender();
+});
+</script>
+</body>
+</html>

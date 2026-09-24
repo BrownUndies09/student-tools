@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Flashcard Maker - Free Flip, Shuffle & Print</title>
+<meta name="description" content="Create, flip, shuffle, and print flashcards for rapid recall. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-narrow">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Simple Flashcard Maker</h1>
+    <p>Quick flip, shuffle, and print for basic recall.</p>
+  </header>
+
+  <div class="card">
+    <div class="result-label">Study Mode</div>
+    <div class="flashcard-viewer">
+      <div class="flashcard" id="fcCard" onclick="fcFlip()">
+        <span class="fc-label" id="fcLabel">Front</span>
+        <span class="fc-hint">Click to flip</span>
+        <div class="fc-text" id="fcText">Add a card below to get started</div>
+        <div class="fc-counter" id="fcCounter">0 / 0</div>
+      </div>
+    </div>
+    <div class="fc-controls">
+      <button class="btn btn-secondary" style="flex:1;" onclick="fcPrev()">← Previous</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="fcFlip()">Flip Card</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="fcNext()">Next →</button>
+    </div>
+    <div class="fc-controls">
+      <button class="btn btn-secondary" style="flex:1;" onclick="fcShuffle()">Shuffle</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="fcReset()">Reset Order</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <label>Add New Flashcard</label>
+    <div style="margin-top:8px;">
+      <label style="font-size:10px;">Front (Question / Term)</label>
+      <input type="text" id="fcFront" placeholder="e.g. What is the Central Limit Theorem?">
+    </div>
+    <div style="margin-top:12px;">
+      <label style="font-size:10px;">Back (Answer / Definition)</label>
+      <textarea id="fcBack" placeholder="e.g. The distribution of sample means approximates a normal distribution..." style="min-height:80px;"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="fcAdd()">+ Add Card</button>
+      <button class="btn btn-secondary" onclick="fcLoadSample()">Load Sample</button>
+      <button class="btn btn-secondary" onclick="fcClearAll()">Clear All</button>
+    </div>
+    <div id="fcMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div class="result-label" style="margin:0;">Your Cards</div>
+      <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" onclick="window.print()">Print All</button>
+    </div>
+    <div class="fc-card-list" id="fcList"></div>
+    <div class="result-grid">
+      <div class="result-cell">
+        <span class="result-cell-label">Cards</span>
+        <span class="result-cell-value" id="fcCount">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Current</span>
+        <span class="result-cell-value" id="fcCurrent">0</span>
+      </div>
+      <div class="result-cell">
+        <span class="result-cell-label">Flipped</span>
+        <span class="result-cell-value" id="fcFlips">0</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+let flashcards = [];
+let fcCurrentIndex = 0;
+let fcFlipped = false;
+let fcFlipCount = 0;
+let fcOriginalOrder = [];
+
+function fcAdd() {
+  const front = document.getElementById('fcFront').value.trim();
+  const back = document.getElementById('fcBack').value.trim();
+
+  if (!front || !back) {
+    showMsg('fcMsg', 'Please fill in both the front and back of the card.', 'danger');
+    return;
+  }
+
+  flashcards.push({
+    id: 'fc-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+    front: front,
+    back: back
+  });
+  fcOriginalOrder = [...flashcards];
+
+  document.getElementById('fcFront').value = '';
+  document.getElementById('fcBack').value = '';
+  showMsg('fcMsg', 'Card added. Total: ' + flashcards.length, 'success');
+
+  fcCurrentIndex = flashcards.length - 1;
+  fcFlipped = false;
+  fcRender();
+}
+
+function fcRemove(id) {
+  flashcards = flashcards.filter(c => c.id !== id);
+  fcOriginalOrder = [...flashcards];
+  if (fcCurrentIndex >= flashcards.length) fcCurrentIndex = Math.max(0, flashcards.length - 1);
+  fcFlipped = false;
+  fcRender();
+}
+
+function fcClearAll() {
+  if (flashcards.length === 0) return;
+  flashcards = [];
+  fcOriginalOrder = [];
+  fcCurrentIndex = 0;
+  fcFlipped = false;
+  fcFlipCount = 0;
+  fcRender();
+}
+
+function fcLoadSample() {
+  flashcards = [
+    { id: 'fc-s1', front: 'What is the Central Limit Theorem?', back: 'The distribution of sample means approximates a normal distribution as sample size grows, regardless of population distribution shape.' },
+    { id: 'fc-s2', front: 'Define P-Value', back: 'The probability of obtaining test results at least as extreme as observed results, under the assumption that the null hypothesis is correct.' },
+    { id: 'fc-s3', front: 'Mitosis vs Meiosis', back: 'Mitosis produces two genetically identical diploid cells; Meiosis produces four genetically diverse haploid gametes.' },
+    { id: 'fc-s4', front: 'What is Amdahl\'s Law?', back: 'A formula giving the theoretical speedup in latency of execution at fixed workload, based on improved resources.' },
+    { id: 'fc-s5', front: 'Define Neuroplasticity', back: 'The nervous system\'s capacity to modify its structural organization and functional connectivity in response to experience.' }
+  ];
+  fcOriginalOrder = [...flashcards];
+  fcCurrentIndex = 0;
+  fcFlipped = false;
+  fcFlipCount = 0;
+  fcRender();
+}
+
+function fcFlip() {
+  if (flashcards.length === 0) return;
+  fcFlipped = !fcFlipped;
+  if (fcFlipped) fcFlipCount++;
+  fcRender();
+}
+
+function fcNext() {
+  if (flashcards.length === 0) return;
+  fcCurrentIndex = (fcCurrentIndex + 1) % flashcards.length;
+  fcFlipped = false;
+  fcRender();
+}
+
+function fcPrev() {
+  if (flashcards.length === 0) return;
+  fcCurrentIndex = (fcCurrentIndex - 1 + flashcards.length) % flashcards.length;
+  fcFlipped = false;
+  fcRender();
+}
+
+function fcShuffle() {
+  if (flashcards.length < 2) return;
+  const shuffled = [...flashcards];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  flashcards = shuffled;
+  fcCurrentIndex = 0;
+  fcFlipped = false;
+  fcRender();
+}
+
+function fcReset() {
+  flashcards = [...fcOriginalOrder];
+  fcCurrentIndex = 0;
+  fcFlipped = false;
+  fcRender();
+}
+
+function fcRender() {
+  const card = document.getElementById('fcCard');
+  const textEl = document.getElementById('fcText');
+  const labelEl = document.getElementById('fcLabel');
+  const counterEl = document.getElementById('fcCounter');
+
+  if (flashcards.length === 0) {
+    textEl.textContent = 'Add a card below to get started';
+    labelEl.textContent = 'Front';
+    counterEl.textContent = '0 / 0';
+    card.classList.remove('flipped');
+  } else {
+    const current = flashcards[fcCurrentIndex];
+    if (fcFlipped) {
+      textEl.textContent = current.back;
+      labelEl.textContent = 'Back';
+      card.classList.add('flipped');
+    } else {
+      textEl.textContent = current.front;
+      labelEl.textContent = 'Front';
+      card.classList.remove('flipped');
+    }
+    counterEl.textContent = (fcCurrentIndex + 1) + ' / ' + flashcards.length;
+  }
+
+  document.getElementById('fcCount').textContent = flashcards.length;
+  document.getElementById('fcCurrent').textContent = flashcards.length > 0 ? (fcCurrentIndex + 1) : 0;
+  document.getElementById('fcFlips').textContent = fcFlipCount;
+
+  const listEl = document.getElementById('fcList');
+  if (flashcards.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">No cards yet. Add one above or load the sample set.</div>';
+  } else {
+    let html = '';
+    flashcards.forEach(c => {
+      html += '<div class="fc-card-item">' +
+        '<div style="flex:1; min-width:0;">' +
+          '<div class="fc-front">' + escapeHtml(c.front) + '</div>' +
+          '<div class="fc-back">' + escapeHtml(c.back) + '</div>' +
+        '</div>' +
+        '<button class="icon-btn" data-fc-remove="' + c.id + '" style="width:32px; height:32px; font-size:16px; flex-shrink:0;">×</button>' +
+      '</div>';
+    });
+    listEl.innerHTML = html;
+
+    listEl.querySelectorAll('[data-fc-remove]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        fcRemove(this.getAttribute('data-fc-remove'));
+      });
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  fcRender();
+});
+</script>
+</body>
+</html>

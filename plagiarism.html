@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plagiarism & Originality Checker - Free AI Detection for Students</title>
+<meta name="description" content="Analyze your draft for AI-generated patterns, repetition, and citation gaps. Runs entirely in your browser. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo">S</span>
+      <span>StudyTools</span>
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Plagiarism and Originality Checker</h1>
+    <p>Analyze your draft for AI-generated patterns, repetition, and citation gaps.</p>
+  </header>
+
+  <div class="card">
+    <div class="info-box">
+      <strong style="color:var(--text);">How this works:</strong> Unlike Turnitin, this tool does not compare against a web database (that requires a paid API). Instead, it analyzes your text for <strong>AI-generated patterns</strong>, <strong>repetitive phrasing</strong>, <strong>citation gaps</strong>, and <strong>stylistic anomalies</strong> using statistical methods. It runs 100% in your browser.
+    </div>
+
+    <label>Paste Your Draft (up to 10,000 words)</label>
+    <textarea id="plagInput" style="min-height:200px;" placeholder="Paste your essay, article, or paper here for analysis..."></textarea>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-block" onclick="plagAnalyze()">Analyze Text</button>
+      <button class="btn btn-secondary" onclick="plagLoadSample()">Load Sample</button>
+      <button class="btn btn-secondary" onclick="plagClear()">Clear</button>
+    </div>
+
+    <div id="plagMsg" style="display:none; margin-top:12px; padding:10px 14px; background:var(--glass-strong); border:1px solid var(--glass-border); border-radius:8px; font-size:13px;"></div>
+  </div>
+
+  <div id="plagResults" class="hidden">
+    <div class="card">
+      <div class="result-label">Originality Score</div>
+      <div class="plag-score-circle" id="plagCircle">
+        <div class="plag-score-inner">
+          <div class="plag-score-num" id="plagScoreNum">-</div>
+          <div class="plag-score-label">Originality</div>
+        </div>
+      </div>
+      <div class="result-sub" id="plagScoreSub" style="text-align:center;">Analysis complete</div>
+
+      <div class="result-grid">
+        <div class="result-cell">
+          <span class="result-cell-label">Words</span>
+          <span class="result-cell-value" id="plagWordCount">0</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Sentences</span>
+          <span class="result-cell-value" id="plagSentenceCount">0</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">AI Risk</span>
+          <span class="result-cell-value" id="plagAIRisk">-</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-cell-label">Repetition</span>
+          <span class="result-cell-value" id="plagRepRisk">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Detailed Metrics</div>
+      <div id="plagMetrics"></div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Flags and Findings</div>
+      <div id="plagFlags"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="result-label" style="margin:0;">Annotated Text</div>
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">Highlighted passages need review</span>
+      </div>
+      <div class="analysis-output" id="plagAnnotated"></div>
+    </div>
+
+    <div class="card">
+      <div class="info-box" style="border-left:3px solid var(--text-dim);">
+        <strong style="color:var(--text);">What this tool cannot do:</strong> It cannot detect text copied from books, paywalled journals, or private databases. For a full plagiarism check, use your institution's Turnitin, Ouriginal, or a paid API service like Copyscape. This tool is designed to catch AI-generated content, self-plagiarism signals, and citation problems before you submit.
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+function plagClear() {
+  document.getElementById('plagInput').value = '';
+  document.getElementById('plagResults').classList.add('hidden');
+}
+
+function plagLoadSample() {
+  document.getElementById('plagInput').value = 'The cognitive load theory originally formulated by John Sweller posits that instructional design should minimize extraneous cognitive processing while maximizing germane processing. This foundational principle has shaped modern educational psychology and continues to inform the design of digital learning environments.\n\nResearch has consistently demonstrated that working memory capacity is limited, and that overloading it impairs learning outcomes. The implications for instructional design are profound. The implications for instructional design are significant. The implications for instructional design are substantial.\n\n"Working memory is the limited capacity system that allows for the temporary storage and manipulation of information necessary for complex cognitive tasks."\n\nFurthermore, empirical investigations have revealed that spaced repetition enhances long-term retention more effectively than massed practice. Additionally, empirical studies have shown that spaced repetition improves long-term retention more effectively than massed practice. Moreover, empirical research has demonstrated that spaced repetition augments long-term retention more effectively than massed practice.';
+  plagAnalyze();
+}
+
+function plagAnalyze() {
+  const text = document.getElementById('plagInput').value.trim();
+  if (!text || text.split(/\s+/).length < 10) {
+    showMsg('plagMsg', 'Please enter at least 10 words for analysis.', 'danger');
+    return;
+  }
+  document.getElementById('plagMsg').style.display = 'none';
+
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 3);
+  const wordCount = words.length;
+  const sentenceCount = sentences.length;
+  const paragraphs = text.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+
+  const phrases = [];
+  for (let n = 3; n <= 6; n++) {
+    for (let i = 0; i <= words.length - n; i++) {
+      phrases.push(words.slice(i, i + n).join(' ').toLowerCase().replace(/[^a-z\s]/g, ''));
+    }
+  }
+  const phraseCounts = {};
+  phrases.forEach(p => { if (p.trim()) phraseCounts[p] = (phraseCounts[p] || 0) + 1; });
+  const repeatedPhrases = Object.entries(phraseCounts).filter(([p, c]) => c >= 2).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const repetitionScore = Math.min(100, repeatedPhrases.length * 8);
+
+  const sentenceLengths = sentences.map(s => s.split(/\s+/).length);
+  const avgSentLen = sentenceLengths.reduce((a, b) => a + b, 0) / (sentenceLengths.length || 1);
+  const variance = sentenceLengths.reduce((sum, l) => sum + Math.pow(l - avgSentLen, 2), 0) / (sentenceLengths.length || 1);
+  const stdDev = Math.sqrt(variance);
+  const burstiness = avgSentLen > 0 ? stdDev / avgSentLen : 0;
+  const aiSentenceRisk = burstiness < 0.4 ? 'High' : burstiness < 0.6 ? 'Moderate' : 'Low';
+  const aiSentenceScore = burstiness < 0.4 ? 75 : burstiness < 0.6 ? 45 : 15;
+
+  const uniqueWords = new Set(words.map(w => w.toLowerCase().replace(/[^a-z]/g, '')).filter(w => w));
+  const lexicalDiversity = uniqueWords.size / (wordCount || 1);
+  const lowDiversity = lexicalDiversity < 0.4;
+
+  const openers = sentences.map(s => s.split(/\s+/).slice(0, 2).join(' ').toLowerCase());
+  const openerCounts = {};
+  openers.forEach(o => { if (o) openerCounts[o] = (openerCounts[o] || 0) + 1; });
+  const repeatedOpeners = Object.entries(openerCounts).filter(([o, c]) => c >= 2);
+
+  const quotedSegments = text.match(/"[^"]{30,}"/g) || [];
+  const citationPattern = /\([A-Z][a-zA-Z]+(?:\s*(?:&|and)\s*[A-Z][a-zA-Z]+)?,?\s*\d{4}\)|\[\d+\]|\b[A-Z][a-z]+\s+\(\d{4}\)/g;
+  const citationMatches = text.match(citationPattern) || [];
+  const uncitedQuotes = quotedSegments.filter(q => {
+    const quoteIndex = text.indexOf(q);
+    const contextAfter = text.slice(quoteIndex + q.length, quoteIndex + q.length + 100);
+    return !citationPattern.test(contextAfter);
+  });
+
+  const paraLengths = paragraphs.map(p => p.split(/\s+/).length);
+  const paraVariance = paraLengths.length > 1 ? paraLengths.reduce((sum, l) => {
+    const mean = paraLengths.reduce((a, b) => a + b, 0) / paraLengths.length;
+    return sum + Math.pow(l - mean, 2);
+  }, 0) / paraLengths.length : 0;
+  const uniformParagraphs = paragraphs.length >= 3 && Math.sqrt(paraVariance) < 15;
+
+  const aiPhrases = ['furthermore', 'moreover', 'additionally', 'in conclusion', 'in summary', 'it is important to note', 'it is worth noting', 'in essence', 'ultimately', 'consequently', 'nevertheless', 'nonetheless', 'in other words', 'that being said', 'on the other hand', 'as a result', 'in addition', 'for instance', 'for example'];
+  const lowerText = text.toLowerCase();
+  const aiTransitionHits = aiPhrases.filter(p => lowerText.includes(p));
+  const aiTransitionDensity = (aiTransitionHits.length / (sentenceCount || 1)) * 100;
+  const highTransitionDensity = aiTransitionDensity > 8;
+
+  let riskPoints = 0, maxPoints = 0;
+  maxPoints += 20; riskPoints += Math.min(20, repetitionScore / 4);
+  maxPoints += 20; riskPoints += aiSentenceScore * 0.2;
+  maxPoints += 10; riskPoints += lowDiversity ? 8 : 2;
+  maxPoints += 10; riskPoints += Math.min(10, repeatedOpeners.length * 4);
+  maxPoints += 15; riskPoints += Math.min(15, uncitedQuotes.length * 10);
+  maxPoints += 10; riskPoints += uniformParagraphs ? 8 : 2;
+  maxPoints += 15; riskPoints += highTransitionDensity ? 12 : Math.min(8, aiTransitionHits.length);
+
+  const riskPercent = Math.min(100, Math.round((riskPoints / maxPoints) * 100));
+  const originality = Math.max(0, 100 - riskPercent);
+
+  const circle = document.getElementById('plagCircle');
+  const scoreColor = originality >= 80 ? 'var(--success)' : originality >= 60 ? 'var(--warning)' : 'var(--danger)';
+  circle.style.background = 'conic-gradient(' + scoreColor + ' ' + (originality * 3.6) + 'deg, var(--glass-strong) 0deg)';
+  circle.style.padding = '15px';
+
+  document.getElementById('plagScoreNum').textContent = originality + '%';
+  document.getElementById('plagScoreNum').style.color = scoreColor;
+
+  const subEl = document.getElementById('plagScoreSub');
+  if (originality >= 80) subEl.textContent = 'High originality detected. Minor review recommended.';
+  else if (originality >= 60) subEl.textContent = 'Moderate concerns found. Review flagged passages.';
+  else subEl.textContent = 'Significant flags detected. Rewrite flagged sections.';
+
+  document.getElementById('plagWordCount').textContent = wordCount.toLocaleString();
+  document.getElementById('plagSentenceCount').textContent = sentenceCount;
+  document.getElementById('plagAIRisk').textContent = aiSentenceRisk;
+  document.getElementById('plagRepRisk').textContent = repetitionScore > 50 ? 'High' : repetitionScore > 25 ? 'Moderate' : 'Low';
+
+  const metricsEl = document.getElementById('plagMetrics');
+  const metrics = [
+    { name: 'Lexical Diversity (unique vs total words)', value: lexicalDiversity.toFixed(2), pct: Math.min(100, lexicalDiversity * 150), good: !lowDiversity },
+    { name: 'Sentence Burstiness (human writing ~0.6+)', value: burstiness.toFixed(2), pct: Math.min(100, burstiness * 100), good: burstiness >= 0.5 },
+    { name: 'Repetition Score (lower is better)', value: repetitionScore + '%', pct: repetitionScore, good: repetitionScore < 30 },
+    { name: 'AI Transition Density', value: aiTransitionDensity.toFixed(1) + '%', pct: Math.min(100, aiTransitionDensity * 5), good: !highTransitionDensity },
+    { name: 'Paragraph Uniformity', value: uniformParagraphs ? 'Suspiciously uniform' : 'Natural variation', pct: uniformParagraphs ? 80 : 20, good: !uniformParagraphs },
+    { name: 'Citations Found', value: citationMatches.length + ' matches', pct: Math.min(100, citationMatches.length * 20), good: citationMatches.length > 0 }
+  ];
+  let metricsHtml = '';
+  metrics.forEach(m => {
+    const color = m.good ? 'var(--success)' : 'var(--warning)';
+    metricsHtml += '<div class="metric-row"><div><div class="metric-name">' + escapeHtml(m.name) + '</div><div class="metric-bar"><div class="metric-bar-fill" style="width:' + m.pct + '%; background:' + color + ';"></div></div></div><div class="metric-value">' + escapeHtml(m.value) + '</div></div>';
+  });
+  metricsEl.innerHTML = metricsHtml;
+
+  const flagsEl = document.getElementById('plagFlags');
+  let flagsHtml = '';
+  if (repeatedPhrases.length > 0) {
+    flagsHtml += '<div class="plag-flag warning"><strong>Repetitive phrasing detected (' + repeatedPhrases.length + ' repeated n-grams)</strong>Found the same multi-word phrases appearing multiple times.<div class="flag-detail">Examples: "' + repeatedPhrases.slice(0, 3).map(p => escapeHtml(p[0])).join('", "') + '"</div></div>';
+  }
+  if (aiSentenceScore > 50) {
+    flagsHtml += '<div class="plag-flag danger"><strong>AI-generated text signal: Low burstiness</strong>Your sentences have unusually uniform length (variance: ' + burstiness.toFixed(2) + '). Human writing tends to vary sentence length dramatically.</div>';
+  } else if (aiSentenceScore > 30) {
+    flagsHtml += '<div class="plag-flag warning"><strong>Moderate AI risk: Sentence lengths are somewhat uniform</strong>Consider varying sentence structure. Mix short punchy sentences with longer complex ones.</div>';
+  }
+  if (lowDiversity) {
+    flagsHtml += '<div class="plag-flag warning"><strong>Low vocabulary diversity (' + (lexicalDiversity * 100).toFixed(0) + '% unique words)</strong>You are reusing the same words frequently. Try varying your vocabulary.</div>';
+  }
+  if (repeatedOpeners.length > 0) {
+    flagsHtml += '<div class="plag-flag warning"><strong>Repeated sentence openers</strong>Multiple sentences start with the same words: "' + repeatedOpeners.slice(0, 3).map(o => escapeHtml(o[0])).join('", "') + '"</div>';
+  }
+  if (uncitedQuotes.length > 0) {
+    flagsHtml += '<div class="plag-flag danger"><strong>' + uncitedQuotes.length + ' quotation(s) without citation</strong>You have quoted material but no citation follows within 100 characters.<div class="flag-detail">First uncited quote: "' + escapeHtml(uncitedQuotes[0].slice(0, 80)) + '..."</div></div>';
+  }
+  if (highTransitionDensity) {
+    flagsHtml += '<div class="plag-flag warning"><strong>High density of academic transition phrases</strong>Found ' + aiTransitionHits.length + ' transition phrases like "furthermore," "moreover," "additionally."</div>';
+  }
+  if (uniformParagraphs) {
+    flagsHtml += '<div class="plag-flag warning"><strong>Paragraphs are uniformly sized</strong>All your paragraphs have similar word counts.</div>';
+  }
+  if (flagsHtml === '') {
+    flagsHtml = '<div class="plag-flag success"><strong>No major flags detected</strong>Your text shows natural human variation. Still review it manually before submitting.</div>';
+  }
+  flagsEl.innerHTML = flagsHtml;
+
+  let annotated = escapeHtml(text);
+  repeatedPhrases.forEach(([phrase]) => {
+    if (phrase.length < 10) return;
+    const regex = new RegExp('(' + phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    annotated = annotated.replace(regex, '<span class="plag-highlight">$1</span>');
+  });
+  uncitedQuotes.forEach(q => {
+    const escaped = escapeHtml(q);
+    annotated = annotated.replace(escaped, '<span class="plag-highlight danger">' + escaped + '</span>');
+  });
+  document.getElementById('plagAnnotated').innerHTML = annotated;
+
+  document.getElementById('plagResults').classList.remove('hidden');
+  setTimeout(() => { document.getElementById('plagResults').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+}
+</script>
+</body>
+</html>
