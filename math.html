@@ -12,12 +12,15 @@
 <link rel="stylesheet" href="sidebar.css">
 <style>
   .calc-wrap {
+    --calc-scale: 1;
     --calc-width: 640px;
-    --calc-key-height: 46px;
-    --calc-key-font: 18px;
-    --calc-func-font: 12px;
-    --calc-result-font: 30px;
-    --calc-gap: 6px;
+    --calc-key-height: calc(46px * var(--calc-scale));
+    --calc-key-font: calc(18px * var(--calc-scale));
+    --calc-func-font: calc(12px * var(--calc-scale));
+    --calc-result-font: calc(30px * var(--calc-scale));
+    --calc-gap: calc(6px * var(--calc-scale));
+    --calc-pad: calc(16px * var(--calc-scale));
+    --calc-radius: calc(8px * var(--calc-scale));
     max-width: var(--calc-width);
     width: 100%;
     margin: 0 auto;
@@ -35,7 +38,7 @@
     --calc-width: 100%;
   }
   .calc-wrap.fullscreen .calc-display {
-    min-height: 120px;
+    min-height: calc(120px * var(--calc-scale));
   }
 
   .calc-controls {
@@ -96,8 +99,7 @@
     border-color: var(--accent);
   }
 
-  /* Slider + number input row */
-  .calc-width-control {
+  .calc-control-row {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -106,7 +108,7 @@
     border-radius: var(--radius-sm);
     padding: 10px 14px;
   }
-  .calc-width-control label {
+  .calc-control-row label {
     font-family: var(--font-mono);
     font-size: 10px;
     text-transform: uppercase;
@@ -116,13 +118,13 @@
     flex-shrink: 0;
     min-width: 52px;
   }
-  .calc-width-slider {
+  .calc-control-row input[type="range"] {
     flex: 1;
     accent-color: var(--accent);
     cursor: pointer;
     height: 6px;
   }
-  .calc-width-number {
+  .calc-control-row input[type="number"] {
     width: 72px;
     padding: 6px 8px;
     background: var(--glass);
@@ -133,34 +135,35 @@
     color: var(--text);
     text-align: center;
   }
-  .calc-width-number:focus {
+  .calc-control-row input[type="number"]:focus {
     outline: none;
     border-color: var(--accent);
   }
-  .calc-width-unit {
+  .calc-control-row .unit {
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-dim);
     flex-shrink: 0;
+    min-width: 20px;
   }
 
   .calc-display {
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    padding: 16px 18px;
+    padding: var(--calc-pad);
     margin-bottom: 14px;
     text-align: right;
-    min-height: 76px;
+    min-height: calc(76px * var(--calc-scale));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     backdrop-filter: blur(10px);
-    transition: min-height 0.25s ease;
+    transition: min-height 0.15s ease;
   }
   .calc-expr {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: calc(13px * var(--calc-scale));
     color: var(--text-muted);
     word-break: break-all;
     min-height: 18px;
@@ -189,12 +192,12 @@
   }
   .calc-mode-tab {
     flex: 1;
-    padding: 8px;
+    padding: calc(8px * var(--calc-scale));
     background: transparent;
     border: none;
     border-radius: 6px;
     font-family: var(--font-sans);
-    font-size: 13px;
+    font-size: calc(13px * var(--calc-scale));
     font-weight: 500;
     color: var(--text-muted);
     cursor: pointer;
@@ -217,7 +220,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--calc-gap);
-    margin-bottom: 4px;
+    margin-bottom: calc(4px * var(--calc-scale));
   }
   .calc-basic-numbers {
     display: grid;
@@ -240,7 +243,7 @@
     border: 1px solid var(--glass-border);
     background: var(--glass-strong);
     backdrop-filter: blur(10px);
-    border-radius: 8px;
+    border-radius: var(--calc-radius);
     cursor: pointer;
     font-family: var(--font-mono);
     font-size: var(--calc-key-font);
@@ -350,11 +353,18 @@
         <button class="calc-fs-btn" id="fsBtn" onclick="mathToggleFullscreen()">Fullscreen</button>
       </div>
 
-      <div class="calc-width-control">
+      <div class="calc-control-row">
         <label>Width</label>
-        <input type="range" class="calc-width-slider" id="widthSlider" min="320" max="1400" step="10" value="640" oninput="mathWidthFromSlider()">
-        <input type="number" class="calc-width-number" id="widthNumber" min="320" max="1400" step="10" value="640" oninput="mathWidthFromNumber()">
-        <span class="calc-width-unit">px</span>
+        <input type="range" id="widthSlider" min="320" max="1400" step="10" value="640" oninput="mathWidthFromSlider()">
+        <input type="number" id="widthNumber" min="320" max="1400" step="10" value="640" oninput="mathWidthFromNumber()">
+        <span class="unit">px</span>
+      </div>
+
+      <div class="calc-control-row">
+        <label>Scale</label>
+        <input type="range" id="scaleSlider" min="0.7" max="2" step="0.05" value="1" oninput="mathScaleFromSlider()">
+        <input type="number" id="scaleNumber" min="0.7" max="2" step="0.05" value="1" oninput="mathScaleFromNumber()">
+        <span class="unit">×</span>
       </div>
     </div>
 
@@ -465,47 +475,61 @@ let mathExpression = '';
 let mathMode = 'basic';
 let calcFullscreen = false;
 let calcWidth = 640;
+let calcScale = 1;
 
 const CALC_WIDTH_PRESETS = { small: 420, medium: 640, large: 900 };
+const CALC_SCALE_PRESETS = { small: 0.85, medium: 1, large: 1.25 };
 const CALC_WIDTH_MIN = 320;
 const CALC_WIDTH_MAX = 1400;
+const CALC_SCALE_MIN = 0.7;
+const CALC_SCALE_MAX = 2;
 
 function mathSetWidth(px, fromInput) {
-  px = Math.max(CALC_WIDTH_MIN, Math.min(CALC_WIDTH_MAX, parseInt(px) || CALC_WIDTH_PRESETS.medium));
+  px = Math.max(CALC_WIDTH_MIN, Math.min(CALC_WIDTH_MAX, parseInt(px) || 640));
   calcWidth = px;
+  document.getElementById('calcWrap').style.setProperty('--calc-width', px + 'px');
 
-  const wrap = document.getElementById('calcWrap');
-  wrap.style.setProperty('--calc-width', px + 'px');
-
-  // Update slider and number input
-  if (fromInput !== 'slider') {
-    document.getElementById('widthSlider').value = px;
-  }
-  if (fromInput !== 'number') {
-    document.getElementById('widthNumber').value = px;
-  }
-
-  // Update S/M/L active state based on preset match
-  document.getElementById('sizeSmall').classList.toggle('active', px === CALC_WIDTH_PRESETS.small);
-  document.getElementById('sizeMedium').classList.toggle('active', px === CALC_WIDTH_PRESETS.medium);
-  document.getElementById('sizeLarge').classList.toggle('active', px === CALC_WIDTH_PRESETS.large);
+  if (fromInput !== 'slider') document.getElementById('widthSlider').value = px;
+  if (fromInput !== 'number') document.getElementById('widthNumber').value = px;
 
   try { localStorage.setItem('calcWidth', px); } catch (e) {}
 }
 
+function mathSetScale(scale, fromInput) {
+  scale = Math.max(CALC_SCALE_MIN, Math.min(CALC_SCALE_MAX, parseFloat(scale) || 1));
+  calcScale = scale;
+  document.getElementById('calcWrap').style.setProperty('--calc-scale', scale);
+
+  if (fromInput !== 'slider') document.getElementById('scaleSlider').value = scale;
+  if (fromInput !== 'number') document.getElementById('scaleNumber').value = scale;
+
+  // Update S/M/L active state based on combined preset match
+  const matchSmall = calcWidth === CALC_WIDTH_PRESETS.small && Math.abs(scale - CALC_SCALE_PRESETS.small) < 0.01;
+  const matchMedium = calcWidth === CALC_WIDTH_PRESETS.medium && Math.abs(scale - CALC_SCALE_PRESETS.medium) < 0.01;
+  const matchLarge = calcWidth === CALC_WIDTH_PRESETS.large && Math.abs(scale - CALC_SCALE_PRESETS.large) < 0.01;
+  document.getElementById('sizeSmall').classList.toggle('active', matchSmall);
+  document.getElementById('sizeMedium').classList.toggle('active', matchMedium);
+  document.getElementById('sizeLarge').classList.toggle('active', matchLarge);
+
+  try { localStorage.setItem('calcScale', scale); } catch (e) {}
+}
+
 function mathSetSize(size) {
-  const px = CALC_WIDTH_PRESETS[size] || CALC_WIDTH_PRESETS.medium;
-  mathSetWidth(px);
+  mathSetWidth(CALC_WIDTH_PRESETS[size] || 640);
+  mathSetScale(CALC_SCALE_PRESETS[size] || 1);
 }
 
 function mathWidthFromSlider() {
-  const px = document.getElementById('widthSlider').value;
-  mathSetWidth(px, 'slider');
+  mathSetWidth(document.getElementById('widthSlider').value, 'slider');
 }
-
 function mathWidthFromNumber() {
-  const px = document.getElementById('widthNumber').value;
-  mathSetWidth(px, 'number');
+  mathSetWidth(document.getElementById('widthNumber').value, 'number');
+}
+function mathScaleFromSlider() {
+  mathSetScale(document.getElementById('scaleSlider').value, 'slider');
+}
+function mathScaleFromNumber() {
+  mathSetScale(document.getElementById('scaleNumber').value, 'number');
 }
 
 function mathToggleFullscreen() {
@@ -514,14 +538,6 @@ function mathToggleFullscreen() {
   wrap.classList.toggle('fullscreen', calcFullscreen);
   document.getElementById('fsBtn').textContent = calcFullscreen ? 'Exit Fullscreen' : 'Fullscreen';
   document.body.style.overflow = calcFullscreen ? 'hidden' : '';
-
-  if (calcFullscreen) {
-    // In fullscreen, let content fill naturally
-    wrap.style.removeProperty('--calc-width');
-  } else {
-    // Restore width
-    wrap.style.setProperty('--calc-width', calcWidth + 'px');
-  }
 }
 
 function mathSetMode(mode) {
@@ -532,38 +548,18 @@ function mathSetMode(mode) {
   document.getElementById('panelSci').classList.toggle('active', mode === 'sci');
 }
 
-function mathInsert(symbol) {
-  mathExpression += symbol;
-  mathRender();
-}
-
-function mathBackspace() {
-  mathExpression = mathExpression.slice(0, -1);
-  mathRender();
-}
-
-function mathClear() {
-  mathExpression = '';
-  mathRender();
-}
+function mathInsert(symbol) { mathExpression += symbol; mathRender(); }
+function mathBackspace() { mathExpression = mathExpression.slice(0, -1); mathRender(); }
+function mathClear() { mathExpression = ''; mathRender(); }
 
 function mathToggleSign() {
-  if (!mathExpression) {
-    mathExpression = '-';
-    mathRender();
-    return;
-  }
+  if (!mathExpression) { mathExpression = '-'; mathRender(); return; }
   const match = mathExpression.match(/(-?\d*\.?\d+)$/);
   if (match) {
     const lastNum = match[0];
-    if (lastNum.startsWith('-')) {
-      mathExpression = mathExpression.slice(0, -lastNum.length) + lastNum.slice(1);
-    } else {
-      mathExpression = mathExpression.slice(0, -lastNum.length) + '-' + lastNum;
-    }
-  } else {
-    mathExpression += '-';
-  }
+    if (lastNum.startsWith('-')) mathExpression = mathExpression.slice(0, -lastNum.length) + lastNum.slice(1);
+    else mathExpression = mathExpression.slice(0, -lastNum.length) + '-' + lastNum;
+  } else mathExpression += '-';
   mathRender();
 }
 
@@ -582,31 +578,15 @@ function mathEvaluateNow() {
 function mathRender() {
   document.getElementById('mathExpr').textContent = mathExpression || '';
   const resultEl = document.getElementById('mathResult');
-
-  if (!mathExpression.trim()) {
-    resultEl.textContent = '0';
-    return;
-  }
-
+  if (!mathExpression.trim()) { resultEl.textContent = '0'; return; }
   try {
     const prepared = mathPrepareForEval(mathExpression);
-    if (!prepared) {
-      resultEl.textContent = '0';
-      return;
-    }
+    if (!prepared) { resultEl.textContent = '0'; return; }
     const result = mathEvaluate(prepared);
-    if (result === null) {
-      resultEl.textContent = '';
-      return;
-    }
-    if (!isFinite(result)) {
-      resultEl.textContent = '∞';
-      return;
-    }
+    if (result === null) { resultEl.textContent = ''; return; }
+    if (!isFinite(result)) { resultEl.textContent = '∞'; return; }
     resultEl.textContent = formatNumber(result);
-  } catch (e) {
-    resultEl.textContent = '';
-  }
+  } catch (e) { resultEl.textContent = ''; }
 }
 
 function mathPrepareForEval(expr) {
@@ -637,8 +617,7 @@ function mathPrepareForEval(expr) {
   s = s.replace(/(\d+)!/g, 'factorial($1)');
   s = s.replace(/±/g, '');
   s = s.replace(/%/g, '/100');
-  const cleaned = s.replace(/[^0-9+\-*/().,\s]|Math\.[a-zA-Z]+|Infinity|factorial|mod/g, '');
-  return cleaned.trim();
+  return s.replace(/[^0-9+\-*/().,\s]|Math\.[a-zA-Z]+|Infinity|factorial|mod/g, '').trim();
 }
 
 function factorial(n) {
@@ -655,12 +634,7 @@ function mathEvaluate(expr) {
   expr = expr.replace(/factorial\((\d+)\)/g, function(_, n) { return factorial(n); });
   const stripped = expr.replace(/Math\.[a-zA-Z]+/g, '').replace(/Infinity/g, '');
   if (/[^0-9+\-*/().%\s]/.test(stripped)) return null;
-  try {
-    const fn = new Function('return (' + expr + ')');
-    return fn();
-  } catch (e) {
-    return null;
-  }
+  try { return new Function('return (' + expr + ')')(); } catch (e) { return null; }
 }
 
 function formatNumber(n) {
@@ -674,11 +648,7 @@ function formatNumber(n) {
 document.addEventListener('keydown', function (e) {
   const tag = document.activeElement && document.activeElement.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-
-  if (e.key === 'Escape' && calcFullscreen) {
-    mathToggleFullscreen();
-    return;
-  }
+  if (e.key === 'Escape' && calcFullscreen) { mathToggleFullscreen(); return; }
   if (e.key === 'Enter') { e.preventDefault(); mathEvaluateNow(); }
   else if (e.key === 'Backspace') { e.preventDefault(); mathBackspace(); }
   else if (e.key === 'Escape') { mathClear(); }
@@ -691,12 +661,10 @@ document.addEventListener('keydown', function (e) {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-  const saved = parseInt(localStorage.getItem('calcWidth'));
-  if (saved && saved >= CALC_WIDTH_MIN && saved <= CALC_WIDTH_MAX) {
-    mathSetWidth(saved);
-  } else {
-    mathSetWidth(CALC_WIDTH_PRESETS.medium);
-  }
+  const savedWidth = parseInt(localStorage.getItem('calcWidth'));
+  const savedScale = parseFloat(localStorage.getItem('calcScale'));
+  mathSetWidth(savedWidth && savedWidth >= CALC_WIDTH_MIN ? savedWidth : 640);
+  mathSetScale(savedScale && savedScale >= CALC_SCALE_MIN ? savedScale : 1);
 });
 
 mathRender();
