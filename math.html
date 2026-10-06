@@ -12,17 +12,17 @@
 <link rel="stylesheet" href="sidebar.css">
 <style>
   .calc-wrap {
-    max-width: 400px;
+    max-width: 420px;
     margin: 0 auto;
   }
   .calc-display {
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
     text-align: right;
-    min-height: 110px;
+    min-height: 80px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -30,54 +30,55 @@
   }
   .calc-expr {
     font-family: var(--font-mono);
-    font-size: 15px;
+    font-size: 13px;
     color: var(--text-muted);
     word-break: break-all;
-    min-height: 22px;
+    min-height: 18px;
     line-height: 1.4;
   }
   .calc-result {
-    font-size: 42px;
+    font-size: 32px;
     font-weight: 600;
-    letter-spacing: -1.5px;
+    letter-spacing: -1px;
     color: var(--text);
-    margin-top: 8px;
+    margin-top: 6px;
     font-variant-numeric: tabular-nums;
     word-break: break-all;
     line-height: 1.1;
   }
+
   .calc-pad {
     display: grid;
     grid-template-columns: 3fr 1fr;
-    gap: 10px;
+    gap: 8px;
   }
   .calc-utilities {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 6px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 4px;
   }
   .calc-numbers {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
   .calc-ops {
     display: grid;
     grid-template-rows: repeat(5, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
+
   .calc-btn {
     border: 1px solid var(--glass-border);
     background: var(--glass-strong);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-radius: 50%;
-    aspect-ratio: 1;
+    border-radius: 12px;
     cursor: pointer;
     font-family: var(--font-sans);
-    font-size: 22px;
+    font-size: 17px;
     font-weight: 500;
     color: var(--text);
     transition: all 0.15s;
@@ -87,52 +88,56 @@
     padding: 0;
     line-height: 1;
     user-select: none;
+    aspect-ratio: 1;
   }
   .calc-btn:hover {
     background: var(--glass);
     border-color: var(--accent);
-    transform: scale(1.04);
+    transform: translateY(-1px);
   }
   .calc-btn:active {
-    transform: scale(0.97);
+    transform: translateY(0);
   }
   .calc-btn.utility {
     aspect-ratio: auto;
-    min-height: 48px;
-    border-radius: 100px;
-    font-size: 16px;
+    min-height: 40px;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 600;
   }
   .calc-btn.utility.clear {
     color: var(--danger);
   }
-  .calc-btn.operator {
-    aspect-ratio: auto;
-    border-radius: 100px;
+  .calc-btn.utility.sci-btn.active {
     background: var(--accent);
     color: var(--accent-text);
     border-color: var(--accent);
-    font-size: 26px;
+  }
+  .calc-btn.operator {
+    aspect-ratio: auto;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+    font-size: 19px;
     font-weight: 500;
   }
   .calc-btn.operator:hover {
     opacity: 0.9;
+    transform: translateY(-1px);
   }
   .calc-btn.equals {
     background: var(--accent);
     color: var(--accent-text);
     border-color: var(--accent);
-    font-size: 28px;
+    font-size: 21px;
     font-weight: 700;
   }
-  .sci-toggle {
-    margin-top: 16px;
-    text-align: center;
-  }
+
   .sci-panel {
     display: none;
-    margin-top: 16px;
-    padding: 18px;
+    margin-top: 12px;
+    padding: 14px;
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
@@ -145,27 +150,27 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-dim);
-    margin-bottom: 8px;
-    margin-top: 14px;
+    margin-bottom: 6px;
+    margin-top: 12px;
     font-weight: 600;
   }
   .sci-section-label:first-child { margin-top: 0; }
   .sci-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+    gap: 5px;
   }
   .sci-key {
     border: 1px solid var(--glass-border);
     background: var(--glass);
-    border-radius: 10px;
-    padding: 12px 4px;
+    border-radius: 8px;
+    padding: 9px 4px;
     cursor: pointer;
     font-family: var(--font-mono);
-    font-size: 15px;
+    font-size: 13px;
     color: var(--text);
     transition: all 0.15s;
-    min-height: 46px;
+    min-height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -175,10 +180,13 @@
     color: var(--accent-text);
     border-color: var(--accent);
   }
+
   @media (max-width: 400px) {
-    .calc-result { font-size: 34px; }
-    .calc-btn { font-size: 20px; }
-    .calc-btn.operator { font-size: 22px; }
+    .calc-result { font-size: 26px; }
+    .calc-btn { font-size: 15px; }
+    .calc-btn.operator { font-size: 17px; }
+    .calc-btn.equals { font-size: 19px; }
+    .sci-grid { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
   }
 </style>
 </head>
@@ -226,6 +234,7 @@
         <button class="calc-btn utility clear" onclick="mathClear()">AC</button>
         <button class="calc-btn utility" onclick="mathToggleSign()">+/−</button>
         <button class="calc-btn utility" onclick="mathInsert('%')">%</button>
+        <button class="calc-btn utility sci-btn" id="sciToggleBtn" onclick="mathToggleSci()">Sci</button>
       </div>
 
       <div class="calc-numbers">
@@ -250,10 +259,6 @@
         <button class="calc-btn operator" onclick="mathInsert('+')">+</button>
         <button class="calc-btn equals" onclick="mathEvaluateNow()">=</button>
       </div>
-    </div>
-
-    <div class="sci-toggle">
-      <button class="btn btn-secondary" onclick="mathToggleSci()">Scientific Symbols</button>
     </div>
 
     <div class="sci-panel" id="sciPanel">
@@ -349,7 +354,6 @@ function mathToggleSign() {
     mathRender();
     return;
   }
-  // Toggle sign on the last number in the expression
   const match = mathExpression.match(/(-?\d*\.?\d+)$/);
   if (match) {
     const lastNum = match[0];
@@ -365,7 +369,10 @@ function mathToggleSign() {
 }
 
 function mathToggleSci() {
-  document.getElementById('sciPanel').classList.toggle('open');
+  const panel = document.getElementById('sciPanel');
+  const btn = document.getElementById('sciToggleBtn');
+  panel.classList.toggle('open');
+  btn.classList.toggle('active');
 }
 
 function mathEvaluateNow() {
