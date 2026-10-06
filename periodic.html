@@ -19,7 +19,6 @@
     flex-wrap: wrap;
   }
   .pt-search-wrap {
-    position: relative;
     display: flex;
     align-items: center;
   }
@@ -142,7 +141,7 @@
     flex-shrink: 0;
   }
 
-  /* Wrapper gets the overflow so scaled table scrolls horizontally */
+  /* Wrapper: horizontal scroll for enlarged table */
   .pt-table-wrapper {
     overflow-x: auto;
     overflow-y: hidden;
@@ -150,21 +149,23 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Table: minimum cell width driven by --pt-cell-min variable */
   .pt-table {
+    --pt-cell-min: 28px;
     display: grid;
-    grid-template-columns: repeat(18, minmax(28px, 1fr));
+    grid-template-columns: repeat(18, minmax(var(--pt-cell-min), 1fr));
     gap: 3px;
-    width: 100%;
-    transform-origin: top left;
-    transition: transform 0.15s ease;
+    min-width: calc(18 * var(--pt-cell-min) + 17 * 3px);
+    width: max(100%, calc(18 * var(--pt-cell-min) + 17 * 3px));
   }
+
   .pt-cell {
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
     border-radius: 4px;
     padding: 2px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: border-color 0.2s, transform 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -373,9 +374,9 @@
       </div>
       <div class="pt-scale-control">
         <label>Scale</label>
-        <input type="range" id="ptScale" min="0.5" max="2" step="0.05" value="1" oninput="ptApplyScale()">
-        <input type="number" id="ptScaleNum" min="0.5" max="2" step="0.05" value="1" oninput="ptApplyScaleFromNum()">
-        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim);">×</span>
+        <input type="range" id="ptScale" min="28" max="80" step="2" value="28" oninput="ptApplyScale()">
+        <input type="number" id="ptScaleNum" min="28" max="80" step="2" value="28" oninput="ptApplyScaleFromNum()">
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim);">px</span>
       </div>
     </div>
 
@@ -538,7 +539,6 @@ const PT_ELEMENTS = [
 
 let ptActiveFilter = 'all';
 let ptSearchTerm = '';
-let ptScale = 1;
 
 function ptToggleSearch() {
   const input = document.getElementById('ptSearch');
@@ -554,23 +554,13 @@ function ptToggleSearch() {
 }
 
 function ptApplyScale() {
-  const val = parseFloat(document.getElementById('ptScale').value) || 1;
-  ptScale = val;
+  const val = parseInt(document.getElementById('ptScale').value) || 28;
   document.getElementById('ptScaleNum').value = val;
-  const table = document.getElementById('ptTable');
-  const wrapper = document.getElementById('ptTableWrapper');
-  table.style.transform = 'scale(' + val + ')';
-  // Reserve vertical space so scaled-up table doesn't overlap content below
-  const baseHeight = table.offsetHeight / (ptScale || 1);
-  if (val > 1) {
-    wrapper.style.minHeight = (baseHeight * val) + 'px';
-  } else {
-    wrapper.style.minHeight = '';
-  }
+  document.getElementById('ptTable').style.setProperty('--pt-cell-min', val + 'px');
 }
 
 function ptApplyScaleFromNum() {
-  const val = parseFloat(document.getElementById('ptScaleNum').value) || 1;
+  const val = parseInt(document.getElementById('ptScaleNum').value) || 28;
   document.getElementById('ptScale').value = val;
   ptApplyScale();
 }
@@ -643,7 +633,6 @@ function ptRenderTable() {
     }
   }
 
-  // Lanthanides row
   html += '<div class="pt-cell spacer"></div><div class="pt-cell spacer"></div>';
   for (let n = 57; n <= 71; n++) {
     const elem = PT_ELEMENTS.find(e => e.n === n);
@@ -651,7 +640,6 @@ function ptRenderTable() {
   }
   html += '<div class="pt-cell spacer"></div>';
 
-  // Actinides row
   html += '<div class="pt-cell spacer"></div><div class="pt-cell spacer"></div>';
   for (let n = 89; n <= 103; n++) {
     const elem = PT_ELEMENTS.find(e => e.n === n);
@@ -659,9 +647,6 @@ function ptRenderTable() {
   }
 
   table.innerHTML = html;
-  // Reapply scale after rerender
-  const val = ptScale;
-  table.style.transform = 'scale(' + val + ')';
 }
 
 function ptShowDetail(sym) {
