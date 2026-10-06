@@ -45,7 +45,11 @@
     transition: all 0.15s;
   }
   .pt-legend-item:hover { border-color: var(--accent); }
-  .pt-legend-item.active { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+  .pt-legend-item.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-text);
+  }
   .pt-legend-dot {
     width: 10px;
     height: 10px;
@@ -60,10 +64,10 @@
   }
   .pt-table {
     display: grid;
-    grid-template-columns: repeat(18, minmax(38px, 1fr));
-    grid-auto-rows: minmax(38px, 1fr);
+    grid-template-columns: repeat(18, minmax(40px, 1fr));
+    grid-auto-rows: minmax(40px, 1fr);
     gap: 3px;
-    min-width: 760px;
+    min-width: 800px;
   }
   .pt-cell {
     background: var(--glass-strong);
@@ -71,7 +75,7 @@
     border-radius: 4px;
     padding: 3px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -99,7 +103,6 @@
     font-weight: 700;
     line-height: 1;
     margin-top: 4px;
-    color: var(--text);
   }
   .pt-cell .name {
     font-size: 7px;
@@ -124,12 +127,23 @@
     pointer-events: none;
   }
   .pt-cell.spacer:hover { transform: none; box-shadow: none; }
-  .pt-cell.highlighted {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accent);
+
+  /* Dimmed state for non-matching elements */
+  .pt-cell.dimmed {
+    opacity: 0.2;
+    filter: grayscale(60%);
+  }
+  .pt-cell.dimmed:hover {
+    opacity: 0.5;
+    filter: grayscale(20%);
   }
 
-  /* Element detail panel */
+  /* Highlighted state for matching elements */
+  .pt-cell.highlighted {
+    box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 5;
+  }
+
   .pt-detail {
     display: none;
     margin-top: 20px;
@@ -142,6 +156,7 @@
     border-radius: var(--radius);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
   }
   .pt-detail-header {
     display: flex;
@@ -184,7 +199,6 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--text-muted);
     margin-bottom: 12px;
   }
 
@@ -233,7 +247,7 @@
   .pt-close-btn:hover { color: var(--text); border-color: var(--accent); }
 
   @media (max-width: 600px) {
-    .pt-table { grid-template-columns: repeat(18, 32px); grid-auto-rows: 32px; }
+    .pt-table { grid-template-columns: repeat(18, 32px); grid-auto-rows: 32px; min-width: 640px; }
     .pt-cell .sym { font-size: 10px; }
     .pt-cell .name, .pt-cell .mass { display: none; }
     .pt-detail-symbol { width: 70px; height: 70px; }
@@ -471,18 +485,21 @@ function ptMatchesFilter(elem) {
   return true;
 }
 
+function ptApplyState(elem, cat) {
+  const matches = ptMatchesFilter(elem);
+  const hasFilterOrSearch = ptActiveFilter !== 'all' || ptSearchTerm !== '';
+  const isDimmed = hasFilterOrSearch && !matches;
+  const isHighlighted = hasFilterOrSearch && matches;
+  return {
+    dimmed: isDimmed,
+    highlighted: isHighlighted
+  };
+}
+
 function ptRenderTable() {
   const table = document.getElementById('ptTable');
   let html = '';
 
-  // Build a 7-period x 18-group grid. Some cells are empty.
-  // Period 1: H at col 1, He at col 18
-  // Periods 2-3: full width
-  // Periods 4-5: full width
-  // Period 6: Cs, Ba (cols 1-2), La-Lu (separate row of 15 at bottom), Hf-Rn (cols 4-18)
-  // Period 7: Fr, Ra (cols 1-2), Ac-Lr (separate row of 15 at bottom), Rf-Og (cols 4-18)
-
-  // Use a fixed map for periods 1-7, groups 1-18 (mostly empty for periods 1-3, 6-7)
   const grid = {};
   PT_ELEMENTS.forEach(e => {
     if (e.cat === 'lanthanide' || e.cat === 'actinide') return;
@@ -490,16 +507,15 @@ function ptRenderTable() {
     grid[key] = e;
   });
 
-  // Periods 1-7, Groups 1-18
   for (let p = 1; p <= 7; p++) {
     for (let g = 1; g <= 18; g++) {
       const key = p + '-' + g;
       const elem = grid[key];
       if (elem) {
         const cat = PT_CATEGORIES[elem.cat] || PT_CATEGORIES.unknown;
-        const matches = ptMatchesFilter(elem);
-        const highlighted = ptSearchTerm && matches ? ' highlighted' : '';
-        html += '<div class="pt-cell' + highlighted + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
+        const state = ptApplyState(elem, cat);
+        const classes = 'pt-cell' + (state.dimmed ? ' dimmed' : '') + (state.highlighted ? ' highlighted' : '');
+        html += '<div class="' + classes + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
           '<span class="num">' + elem.n + '</span>' +
           '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
           '<span class="name">' + elem.name + '</span>' +
@@ -511,30 +527,32 @@ function ptRenderTable() {
     }
   }
 
-  // Lanthanide row (57-71) — 15 elements
+  // Lanthanides (57-71)
   html += '<div class="pt-cell spacer"></div>'.repeat(2);
   for (let n = 57; n <= 71; n++) {
     const elem = PT_ELEMENTS.find(e => e.n === n);
     if (elem) {
       const cat = PT_CATEGORIES[elem.cat];
-      const highlighted = ptSearchTerm && ptMatchesFilter(elem) ? ' highlighted' : '';
-      html += '<div class="pt-cell' + highlighted + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
+      const state = ptApplyState(elem, cat);
+      const classes = 'pt-cell' + (state.dimmed ? ' dimmed' : '') + (state.highlighted ? ' highlighted' : '');
+      html += '<div class="' + classes + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
         '<span class="num">' + elem.n + '</span>' +
         '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
         '<span class="name">' + elem.name + '</span>' +
       '</div>';
     }
   }
-  html += '<div class="pt-cell spacer"></div>'.repeat(1);
+  html += '<div class="pt-cell spacer"></div>';
 
-  // Actinide row (89-103)
+  // Actinides (89-103)
   html += '<div class="pt-cell spacer"></div>'.repeat(2);
   for (let n = 89; n <= 103; n++) {
     const elem = PT_ELEMENTS.find(e => e.n === n);
     if (elem) {
       const cat = PT_CATEGORIES[elem.cat];
-      const highlighted = ptSearchTerm && ptMatchesFilter(elem) ? ' highlighted' : '';
-      html += '<div class="pt-cell' + highlighted + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
+      const state = ptApplyState(elem, cat);
+      const classes = 'pt-cell' + (state.dimmed ? ' dimmed' : '') + (state.highlighted ? ' highlighted' : '');
+      html += '<div class="' + classes + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
         '<span class="num">' + elem.n + '</span>' +
         '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
         '<span class="name">' + elem.name + '</span>' +
