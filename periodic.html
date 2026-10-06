@@ -11,18 +11,115 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="sidebar.css">
 <style>
-  .pt-search {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--glass-strong);
+  .pt-wrap {
+    --pt-scale: 1;
+    --pt-cell-size: calc(40px * var(--pt-scale));
+    --pt-sym-size: calc(13px * var(--pt-scale));
+    --pt-num-size: calc(7px * var(--pt-scale));
+    --pt-name-size: calc(7px * var(--pt-scale));
+    --pt-mass-size: calc(7px * var(--pt-scale));
+    --pt-gap: calc(3px * var(--pt-scale));
+  }
+
+  .pt-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Collapsible search */
+  .pt-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .pt-search-toggle {
+    width: 40px;
+    height: 40px;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm);
+    background: var(--glass-strong);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--text);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .pt-search-toggle:hover { border-color: var(--accent); }
+  .pt-search-toggle.active {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+  }
+  .pt-search-input {
+    width: 0;
+    padding: 0;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-strong);
+    border-radius: 10px;
     font-family: var(--font-sans);
     font-size: 14px;
     color: var(--text);
-    margin-bottom: 12px;
+    margin-left: 0;
+    opacity: 0;
+    transition: width 0.3s ease, padding 0.3s ease, margin 0.3s ease, opacity 0.2s ease;
+    height: 40px;
+    overflow: hidden;
   }
-  .pt-search:focus { outline: none; border-color: var(--accent); }
+  .pt-search-input.open {
+    width: 260px;
+    padding: 0 14px;
+    margin-left: 8px;
+    opacity: 1;
+  }
+  .pt-search-input:focus { outline: none; border-color: var(--accent); }
+
+  .pt-scale-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 6px 12px;
+    height: 40px;
+    margin-left: auto;
+  }
+  .pt-scale-control label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .pt-scale-control input[type="range"] {
+    width: 100px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .pt-scale-control input[type="number"] {
+    width: 54px;
+    padding: 4px 6px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    text-align: center;
+  }
+  .pt-scale-control input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
 
   .pt-legend {
     display: flex;
@@ -61,19 +158,21 @@
     overflow-x: auto;
     padding-bottom: 12px;
     margin-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
   }
   .pt-table {
     display: grid;
-    grid-template-columns: repeat(18, minmax(40px, 1fr));
-    grid-auto-rows: minmax(40px, 1fr);
-    gap: 3px;
-    min-width: 800px;
+    grid-template-columns: repeat(18, var(--pt-cell-size));
+    grid-auto-rows: var(--pt-cell-size);
+    gap: var(--pt-gap);
+    margin: 0 auto;
+    width: fit-content;
   }
   .pt-cell {
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
     border-radius: 4px;
-    padding: 3px;
+    padding: 2px;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -86,7 +185,7 @@
     overflow: hidden;
   }
   .pt-cell:hover {
-    transform: scale(1.12);
+    transform: scale(1.15);
     z-index: 10;
     border-color: var(--accent);
     box-shadow: 0 4px 16px rgba(0,0,0,0.15);
@@ -95,17 +194,17 @@
     position: absolute;
     top: 2px;
     left: 3px;
-    font-size: 7px;
+    font-size: var(--pt-num-size);
     color: var(--text-dim);
   }
   .pt-cell .sym {
-    font-size: 13px;
+    font-size: var(--pt-sym-size);
     font-weight: 700;
     line-height: 1;
     margin-top: 4px;
   }
   .pt-cell .name {
-    font-size: 7px;
+    font-size: var(--pt-name-size);
     color: var(--text-muted);
     line-height: 1;
     margin-top: 2px;
@@ -115,7 +214,7 @@
     white-space: nowrap;
   }
   .pt-cell .mass {
-    font-size: 7px;
+    font-size: var(--pt-mass-size);
     color: var(--text-dim);
     line-height: 1;
     margin-top: 1px;
@@ -128,7 +227,6 @@
   }
   .pt-cell.spacer:hover { transform: none; box-shadow: none; }
 
-  /* Dimmed state for non-matching elements */
   .pt-cell.dimmed {
     opacity: 0.2;
     filter: grayscale(60%);
@@ -137,8 +235,6 @@
     opacity: 0.5;
     filter: grayscale(20%);
   }
-
-  /* Highlighted state for matching elements */
   .pt-cell.highlighted {
     box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(0,0,0,0.15);
     z-index: 5;
@@ -246,12 +342,10 @@
   }
   .pt-close-btn:hover { color: var(--text); border-color: var(--accent); }
 
-  @media (max-width: 600px) {
-    .pt-table { grid-template-columns: repeat(18, 32px); grid-auto-rows: 32px; min-width: 640px; }
-    .pt-cell .sym { font-size: 10px; }
-    .pt-cell .name, .pt-cell .mass { display: none; }
-    .pt-detail-symbol { width: 70px; height: 70px; }
-    .pt-detail-symbol .ds-sym { font-size: 28px; }
+  @media (max-width: 700px) {
+    .pt-search-input.open { width: 180px; }
+    .pt-scale-control { margin-left: 0; width: 100%; }
+    .pt-scale-control input[type="range"] { flex: 1; }
   }
 </style>
 </head>
@@ -288,9 +382,23 @@
     <p>All 118 elements. Click any element for full details.</p>
   </header>
 
-  <div class="card">
-    <input type="text" id="ptSearch" class="pt-search" placeholder="Search by name, symbol, or atomic number..." oninput="ptSearch()">
+  <div class="card pt-wrap" id="ptWrap">
+    <div class="pt-toolbar">
+      <div class="pt-search-wrap">
+        <button class="pt-search-toggle" id="ptSearchToggle" onclick="ptToggleSearch()" aria-label="Search">🔍</button>
+        <input type="text" id="ptSearch" class="pt-search-input" placeholder="Search element..." oninput="ptSearch()">
+      </div>
+
+      <div class="pt-scale-control">
+        <label>Scale</label>
+        <input type="range" id="ptScaleSlider" min="0.6" max="1.8" step="0.05" value="0.85" oninput="ptScaleFromSlider()">
+        <input type="number" id="ptScaleNumber" min="0.6" max="1.8" step="0.05" value="0.85" oninput="ptScaleFromNumber()">
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim);">×</span>
+      </div>
+    </div>
+
     <div class="pt-legend" id="ptLegend"></div>
+
     <div class="pt-wrapper">
       <div class="pt-table" id="ptTable"></div>
     </div>
@@ -413,195 +521,4 @@ const PT_ELEMENTS = [
   { n:85, sym:'At', name:'Astatine', mass:210, cat:'halogen', config:'[Xe] 4f14 5d10 6s2 6p5', group:17, period:6 },
   { n:86, sym:'Rn', name:'Radon', mass:222, cat:'noble-gas', config:'[Xe] 4f14 5d10 6s2 6p6', group:18, period:6 },
   { n:87, sym:'Fr', name:'Francium', mass:223, cat:'alkali-metal', config:'[Rn] 7s1', group:1, period:7 },
-  { n:88, sym:'Ra', name:'Radium', mass:226, cat:'alkaline-earth', config:'[Rn] 7s2', group:2, period:7 },
-  { n:89, sym:'Ac', name:'Actinium', mass:227, cat:'actinide', config:'[Rn] 6d1 7s2', group:3, period:7 },
-  { n:90, sym:'Th', name:'Thorium', mass:232.04, cat:'actinide', config:'[Rn] 6d2 7s2', group:3, period:7 },
-  { n:91, sym:'Pa', name:'Protactinium', mass:231.04, cat:'actinide', config:'[Rn] 5f2 6d1 7s2', group:3, period:7 },
-  { n:92, sym:'U', name:'Uranium', mass:238.03, cat:'actinide', config:'[Rn] 5f3 6d1 7s2', group:3, period:7 },
-  { n:93, sym:'Np', name:'Neptunium', mass:237, cat:'actinide', config:'[Rn] 5f4 6d1 7s2', group:3, period:7 },
-  { n:94, sym:'Pu', name:'Plutonium', mass:244, cat:'actinide', config:'[Rn] 5f6 7s2', group:3, period:7 },
-  { n:95, sym:'Am', name:'Americium', mass:243, cat:'actinide', config:'[Rn] 5f7 7s2', group:3, period:7 },
-  { n:96, sym:'Cm', name:'Curium', mass:247, cat:'actinide', config:'[Rn] 5f7 6d1 7s2', group:3, period:7 },
-  { n:97, sym:'Bk', name:'Berkelium', mass:247, cat:'actinide', config:'[Rn] 5f9 7s2', group:3, period:7 },
-  { n:98, sym:'Cf', name:'Californium', mass:251, cat:'actinide', config:'[Rn] 5f10 7s2', group:3, period:7 },
-  { n:99, sym:'Es', name:'Einsteinium', mass:252, cat:'actinide', config:'[Rn] 5f11 7s2', group:3, period:7 },
-  { n:100, sym:'Fm', name:'Fermium', mass:257, cat:'actinide', config:'[Rn] 5f12 7s2', group:3, period:7 },
-  { n:101, sym:'Md', name:'Mendelevium', mass:258, cat:'actinide', config:'[Rn] 5f13 7s2', group:3, period:7 },
-  { n:102, sym:'No', name:'Nobelium', mass:259, cat:'actinide', config:'[Rn] 5f14 7s2', group:3, period:7 },
-  { n:103, sym:'Lr', name:'Lawrencium', mass:266, cat:'actinide', config:'[Rn] 5f14 7s2 7p1', group:3, period:7 },
-  { n:104, sym:'Rf', name:'Rutherfordium', mass:267, cat:'transition-metal', config:'[Rn] 5f14 6d2 7s2', group:4, period:7 },
-  { n:105, sym:'Db', name:'Dubnium', mass:268, cat:'transition-metal', config:'[Rn] 5f14 6d3 7s2', group:5, period:7 },
-  { n:106, sym:'Sg', name:'Seaborgium', mass:269, cat:'transition-metal', config:'[Rn] 5f14 6d4 7s2', group:6, period:7 },
-  { n:107, sym:'Bh', name:'Bohrium', mass:270, cat:'transition-metal', config:'[Rn] 5f14 6d5 7s2', group:7, period:7 },
-  { n:108, sym:'Hs', name:'Hassium', mass:269, cat:'transition-metal', config:'[Rn] 5f14 6d6 7s2', group:8, period:7 },
-  { n:109, sym:'Mt', name:'Meitnerium', mass:278, cat:'unknown', config:'[Rn] 5f14 6d7 7s2', group:9, period:7 },
-  { n:110, sym:'Ds', name:'Darmstadtium', mass:281, cat:'unknown', config:'[Rn] 5f14 6d8 7s2', group:10, period:7 },
-  { n:111, sym:'Rg', name:'Roentgenium', mass:282, cat:'unknown', config:'[Rn] 5f14 6d9 7s2', group:11, period:7 },
-  { n:112, sym:'Cn', name:'Copernicium', mass:285, cat:'unknown', config:'[Rn] 5f14 6d10 7s2', group:12, period:7 },
-  { n:113, sym:'Nh', name:'Nihonium', mass:286, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p1', group:13, period:7 },
-  { n:114, sym:'Fl', name:'Flerovium', mass:289, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p2', group:14, period:7 },
-  { n:115, sym:'Mc', name:'Moscovium', mass:290, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p3', group:15, period:7 },
-  { n:116, sym:'Lv', name:'Livermorium', mass:293, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p4', group:16, period:7 },
-  { n:117, sym:'Ts', name:'Tennessine', mass:294, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p5', group:17, period:7 },
-  { n:118, sym:'Og', name:'Oganesson', mass:294, cat:'unknown', config:'[Rn] 5f14 6d10 7s2 7p6', group:18, period:7 }
-];
-
-let ptActiveFilter = 'all';
-let ptSearchTerm = '';
-
-function ptRenderLegend() {
-  const el = document.getElementById('ptLegend');
-  let html = '<div class="pt-legend-item active" data-filter="all" onclick="ptSetFilter(\'all\')">All</div>';
-  Object.keys(PT_CATEGORIES).forEach(key => {
-    const cat = PT_CATEGORIES[key];
-    html += '<div class="pt-legend-item" data-filter="' + key + '" onclick="ptSetFilter(\'' + key + '\')">' +
-      '<span class="pt-legend-dot" style="background:' + cat.color + ';"></span>' + cat.name +
-    '</div>';
-  });
-  el.innerHTML = html;
-}
-
-function ptSetFilter(filter) {
-  ptActiveFilter = filter;
-  document.querySelectorAll('.pt-legend-item').forEach(el => {
-    el.classList.toggle('active', el.getAttribute('data-filter') === filter);
-  });
-  ptRenderTable();
-}
-
-function ptSearch() {
-  ptSearchTerm = document.getElementById('ptSearch').value.trim().toLowerCase();
-  ptRenderTable();
-}
-
-function ptMatchesFilter(elem) {
-  if (ptActiveFilter !== 'all' && elem.cat !== ptActiveFilter) return false;
-  if (ptSearchTerm) {
-    const numMatch = elem.n.toString() === ptSearchTerm;
-    const symMatch = elem.sym.toLowerCase().includes(ptSearchTerm);
-    const nameMatch = elem.name.toLowerCase().includes(ptSearchTerm);
-    return numMatch || symMatch || nameMatch;
-  }
-  return true;
-}
-
-function ptApplyState(elem, cat) {
-  const matches = ptMatchesFilter(elem);
-  const hasFilterOrSearch = ptActiveFilter !== 'all' || ptSearchTerm !== '';
-  const isDimmed = hasFilterOrSearch && !matches;
-  const isHighlighted = hasFilterOrSearch && matches;
-  return {
-    dimmed: isDimmed,
-    highlighted: isHighlighted
-  };
-}
-
-function ptRenderTable() {
-  const table = document.getElementById('ptTable');
-  let html = '';
-
-  const grid = {};
-  PT_ELEMENTS.forEach(e => {
-    if (e.cat === 'lanthanide' || e.cat === 'actinide') return;
-    const key = e.period + '-' + e.group;
-    grid[key] = e;
-  });
-
-  for (let p = 1; p <= 7; p++) {
-    for (let g = 1; g <= 18; g++) {
-      const key = p + '-' + g;
-      const elem = grid[key];
-      if (elem) {
-        const cat = PT_CATEGORIES[elem.cat] || PT_CATEGORIES.unknown;
-        const state = ptApplyState(elem, cat);
-        const classes = 'pt-cell' + (state.dimmed ? ' dimmed' : '') + (state.highlighted ? ' highlighted' : '');
-        html += '<div class="' + classes + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
-          '<span class="num">' + elem.n + '</span>' +
-          '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
-          '<span class="name">' + elem.name + '</span>' +
-          '<span class="mass">' + elem.mass + '</span>' +
-        '</div>';
-      } else {
-        html += '<div class="pt-cell spacer"></div>';
-      }
-    }
-  }
-
-  // Lanthanides (57-71)
-  html += '<div class="pt-cell spacer"></div>'.repeat(2);
-  for (let n = 57; n <= 71; n++) {
-    const elem = PT_ELEMENTS.find(e => e.n === n);
-    if (elem) {
-      const cat = PT_CATEGORIES[elem.cat];
-      const state = ptApplyState(elem, cat);
-      const classes = 'pt-cell' + (state.dimmed ? ' dimmed' : '') + (state.highlighted ? ' highlighted' : '');
-      html += '<div class="' + classes + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
-        '<span class="num">' + elem.n + '</span>' +
-        '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
-        '<span class="name">' + elem.name + '</span>' +
-      '</div>';
-    }
-  }
-  html += '<div class="pt-cell spacer"></div>';
-
-  // Actinides (89-103)
-  html += '<div class="pt-cell spacer"></div>'.repeat(2);
-  for (let n = 89; n <= 103; n++) {
-    const elem = PT_ELEMENTS.find(e => e.n === n);
-    if (elem) {
-      const cat = PT_CATEGORIES[elem.cat];
-      const state = ptApplyState(elem, cat);
-      const classes = 'pt-cell' + (state.dimmed ? ' dimmed' : '') + (state.highlighted ? ' highlighted' : '');
-      html += '<div class="' + classes + '" data-sym="' + elem.sym + '" style="background:' + cat.color + '22; border-color:' + cat.color + '88;" onclick="ptShowDetail(\'' + elem.sym + '\')">' +
-        '<span class="num">' + elem.n + '</span>' +
-        '<span class="sym" style="color:' + cat.color + ';">' + elem.sym + '</span>' +
-        '<span class="name">' + elem.name + '</span>' +
-      '</div>';
-    }
-  }
-
-  table.innerHTML = html;
-}
-
-function ptShowDetail(sym) {
-  const elem = PT_ELEMENTS.find(e => e.sym === sym);
-  if (!elem) return;
-  const cat = PT_CATEGORIES[elem.cat] || PT_CATEGORIES.unknown;
-
-  const card = document.getElementById('ptDetailCard');
-  card.innerHTML =
-    '<button class="pt-close-btn" onclick="ptHideDetail()">×</button>' +
-    '<div class="pt-detail-header">' +
-      '<div class="pt-detail-symbol" style="background:' + cat.color + ';">' +
-        '<div class="ds-sym">' + elem.sym + '</div>' +
-        '<div class="ds-num">' + elem.n + '</div>' +
-      '</div>' +
-      '<div class="pt-detail-meta">' +
-        '<h2>' + elem.name + '</h2>' +
-        '<div class="pt-cat" style="color:' + cat.color + ';">' + cat.name + '</div>' +
-        '<div class="pt-stats">' +
-          '<div class="pt-stat"><span class="pt-stat-label">Atomic Mass</span><span class="pt-stat-value">' + elem.mass + ' u</span></div>' +
-          '<div class="pt-stat"><span class="pt-stat-label">Atomic Number</span><span class="pt-stat-value">' + elem.n + '</span></div>' +
-          '<div class="pt-stat"><span class="pt-stat-label">Group</span><span class="pt-stat-value">' + elem.group + '</span></div>' +
-          '<div class="pt-stat"><span class="pt-stat-label">Period</span><span class="pt-stat-value">' + elem.period + '</span></div>' +
-          '<div class="pt-stat" style="grid-column: span 2;"><span class="pt-stat-label">Electron Configuration</span><span class="pt-stat-value" style="font-family:var(--font-mono); font-size:13px;">' + elem.config + '</span></div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-
-  const detail = document.getElementById('ptDetail');
-  detail.classList.add('show');
-  setTimeout(() => { detail.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-}
-
-function ptHideDetail() {
-  document.getElementById('ptDetail').classList.remove('show');
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  ptRenderLegend();
-  ptRenderTable();
-});
-</script>
-</body>
-</html>
+ 
