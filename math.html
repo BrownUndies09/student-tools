@@ -12,9 +12,138 @@
 <link rel="stylesheet" href="sidebar.css">
 <style>
   .calc-wrap {
-    max-width: 100%;
+    --calc-width: 640px;
+    --calc-key-height: 46px;
+    --calc-key-font: 18px;
+    --calc-func-font: 12px;
+    --calc-result-font: 30px;
+    --calc-gap: 6px;
+    max-width: var(--calc-width);
+    width: 100%;
     margin: 0 auto;
+    transition: max-width 0.15s ease;
   }
+  .calc-wrap.fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--bg);
+    padding: 20px;
+    overflow-y: auto;
+    border-radius: 0;
+    max-width: 100%;
+    --calc-width: 100%;
+  }
+  .calc-wrap.fullscreen .calc-display {
+    min-height: 120px;
+  }
+
+  .calc-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .calc-controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .calc-size-group {
+    display: flex;
+    gap: 4px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .calc-size-btn {
+    padding: 6px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .calc-size-btn.active {
+    background: var(--glass);
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .calc-size-btn:hover:not(.active) {
+    color: var(--text);
+  }
+  .calc-fs-btn {
+    padding: 8px 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .calc-fs-btn:hover {
+    border-color: var(--accent);
+  }
+
+  /* Slider + number input row */
+  .calc-width-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+  .calc-width-control label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin: 0;
+    flex-shrink: 0;
+    min-width: 52px;
+  }
+  .calc-width-slider {
+    flex: 1;
+    accent-color: var(--accent);
+    cursor: pointer;
+    height: 6px;
+  }
+  .calc-width-number {
+    width: 72px;
+    padding: 6px 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    text-align: center;
+  }
+  .calc-width-number:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .calc-width-unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
   .calc-display {
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
@@ -27,6 +156,7 @@
     flex-direction: column;
     justify-content: flex-end;
     backdrop-filter: blur(10px);
+    transition: min-height 0.25s ease;
   }
   .calc-expr {
     font-family: var(--font-mono);
@@ -37,7 +167,7 @@
     line-height: 1.4;
   }
   .calc-result {
-    font-size: 30px;
+    font-size: var(--calc-result-font);
     font-weight: 600;
     letter-spacing: -1px;
     color: var(--text);
@@ -45,6 +175,7 @@
     font-variant-numeric: tabular-nums;
     word-break: break-all;
     line-height: 1.1;
+    transition: font-size 0.15s ease;
   }
 
   .calc-mode-tabs {
@@ -76,35 +207,33 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
-  /* Basic keypad: numbers grid (3 cols) + operators column (1 col) */
   .calc-basic {
     display: grid;
     grid-template-columns: 3fr 1fr;
-    gap: 6px;
+    gap: var(--calc-gap);
   }
   .calc-basic-utils {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: var(--calc-gap);
     margin-bottom: 4px;
   }
   .calc-basic-numbers {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: var(--calc-gap);
   }
   .calc-basic-ops {
     display: grid;
     grid-template-rows: repeat(5, 1fr);
-    gap: 6px;
+    gap: var(--calc-gap);
   }
 
-  /* Scientific keypad: 10-col grid */
   .calc-keypad {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 6px;
+    gap: var(--calc-gap);
   }
 
   .calc-key {
@@ -114,14 +243,14 @@
     border-radius: 8px;
     cursor: pointer;
     font-family: var(--font-mono);
-    font-size: 14px;
+    font-size: var(--calc-key-font);
     color: var(--text);
     transition: all 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    min-height: 38px;
+    min-height: var(--calc-key-height);
     user-select: none;
   }
   .calc-key:hover {
@@ -152,20 +281,13 @@
     color: white;
   }
   .calc-key.func {
-    font-size: 12px;
-  }
-  .calc-key.wide {
-    grid-column: span 2;
+    font-size: var(--calc-func-font);
   }
   .calc-key.number {
-    min-height: 46px;
-    font-size: 18px;
     font-family: var(--font-sans);
     font-weight: 500;
   }
   .calc-key.op {
-    min-height: 46px;
-    font-size: 18px;
     font-family: var(--font-sans);
     font-weight: 500;
   }
@@ -181,13 +303,6 @@
     .calc-keypad {
       grid-template-columns: repeat(5, 1fr);
     }
-    .calc-key.wide {
-      grid-column: span 2;
-    }
-    .calc-result { font-size: 24px; }
-    .calc-basic-numbers { gap: 5px; }
-    .calc-basic-ops { gap: 5px; }
-    .calc-basic { gap: 5px; }
   }
 </style>
 </head>
@@ -224,7 +339,25 @@
     <p>Standard calculator plus scientific symbols physical keyboards can't type.</p>
   </header>
 
-  <div class="calc-wrap">
+  <div class="calc-wrap" id="calcWrap">
+    <div class="calc-controls">
+      <div class="calc-controls-row">
+        <div class="calc-size-group">
+          <button class="calc-size-btn" id="sizeSmall" onclick="mathSetSize('small')">S</button>
+          <button class="calc-size-btn active" id="sizeMedium" onclick="mathSetSize('medium')">M</button>
+          <button class="calc-size-btn" id="sizeLarge" onclick="mathSetSize('large')">L</button>
+        </div>
+        <button class="calc-fs-btn" id="fsBtn" onclick="mathToggleFullscreen()">Fullscreen</button>
+      </div>
+
+      <div class="calc-width-control">
+        <label>Width</label>
+        <input type="range" class="calc-width-slider" id="widthSlider" min="320" max="1400" step="10" value="640" oninput="mathWidthFromSlider()">
+        <input type="number" class="calc-width-number" id="widthNumber" min="320" max="1400" step="10" value="640" oninput="mathWidthFromNumber()">
+        <span class="calc-width-unit">px</span>
+      </div>
+    </div>
+
     <div class="calc-display">
       <div class="calc-expr" id="mathExpr"></div>
       <div class="calc-result" id="mathResult">0</div>
@@ -330,6 +463,66 @@
 <script>
 let mathExpression = '';
 let mathMode = 'basic';
+let calcFullscreen = false;
+let calcWidth = 640;
+
+const CALC_WIDTH_PRESETS = { small: 420, medium: 640, large: 900 };
+const CALC_WIDTH_MIN = 320;
+const CALC_WIDTH_MAX = 1400;
+
+function mathSetWidth(px, fromInput) {
+  px = Math.max(CALC_WIDTH_MIN, Math.min(CALC_WIDTH_MAX, parseInt(px) || CALC_WIDTH_PRESETS.medium));
+  calcWidth = px;
+
+  const wrap = document.getElementById('calcWrap');
+  wrap.style.setProperty('--calc-width', px + 'px');
+
+  // Update slider and number input
+  if (fromInput !== 'slider') {
+    document.getElementById('widthSlider').value = px;
+  }
+  if (fromInput !== 'number') {
+    document.getElementById('widthNumber').value = px;
+  }
+
+  // Update S/M/L active state based on preset match
+  document.getElementById('sizeSmall').classList.toggle('active', px === CALC_WIDTH_PRESETS.small);
+  document.getElementById('sizeMedium').classList.toggle('active', px === CALC_WIDTH_PRESETS.medium);
+  document.getElementById('sizeLarge').classList.toggle('active', px === CALC_WIDTH_PRESETS.large);
+
+  try { localStorage.setItem('calcWidth', px); } catch (e) {}
+}
+
+function mathSetSize(size) {
+  const px = CALC_WIDTH_PRESETS[size] || CALC_WIDTH_PRESETS.medium;
+  mathSetWidth(px);
+}
+
+function mathWidthFromSlider() {
+  const px = document.getElementById('widthSlider').value;
+  mathSetWidth(px, 'slider');
+}
+
+function mathWidthFromNumber() {
+  const px = document.getElementById('widthNumber').value;
+  mathSetWidth(px, 'number');
+}
+
+function mathToggleFullscreen() {
+  const wrap = document.getElementById('calcWrap');
+  calcFullscreen = !calcFullscreen;
+  wrap.classList.toggle('fullscreen', calcFullscreen);
+  document.getElementById('fsBtn').textContent = calcFullscreen ? 'Exit Fullscreen' : 'Fullscreen';
+  document.body.style.overflow = calcFullscreen ? 'hidden' : '';
+
+  if (calcFullscreen) {
+    // In fullscreen, let content fill naturally
+    wrap.style.removeProperty('--calc-width');
+  } else {
+    // Restore width
+    wrap.style.setProperty('--calc-width', calcWidth + 'px');
+  }
+}
 
 function mathSetMode(mode) {
   mathMode = mode;
@@ -482,6 +675,10 @@ document.addEventListener('keydown', function (e) {
   const tag = document.activeElement && document.activeElement.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
+  if (e.key === 'Escape' && calcFullscreen) {
+    mathToggleFullscreen();
+    return;
+  }
   if (e.key === 'Enter') { e.preventDefault(); mathEvaluateNow(); }
   else if (e.key === 'Backspace') { e.preventDefault(); mathBackspace(); }
   else if (e.key === 'Escape') { mathClear(); }
@@ -490,6 +687,15 @@ document.addEventListener('keydown', function (e) {
     if (e.key === '*') mathInsert('×');
     else if (e.key === '/') mathInsert('÷');
     else mathInsert(e.key);
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const saved = parseInt(localStorage.getItem('calcWidth'));
+  if (saved && saved >= CALC_WIDTH_MIN && saved <= CALC_WIDTH_MAX) {
+    mathSetWidth(saved);
+  } else {
+    mathSetWidth(CALC_WIDTH_PRESETS.medium);
   }
 });
 
