@@ -76,13 +76,38 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
+  /* Basic keypad: numbers grid (3 cols) + operators column (1 col) */
+  .calc-basic {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 6px;
+  }
+  .calc-basic-utils {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .calc-basic-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .calc-basic-ops {
+    display: grid;
+    grid-template-rows: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  /* Scientific keypad: 10-col grid */
   .calc-keypad {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     gap: 6px;
   }
+
   .calc-key {
-    aspect-ratio: 1;
     border: 1px solid var(--glass-border);
     background: var(--glass-strong);
     backdrop-filter: blur(10px);
@@ -107,10 +132,6 @@
   .calc-key:active {
     transform: translateY(0);
   }
-  .calc-key.wide {
-    grid-column: span 2;
-    aspect-ratio: auto;
-  }
   .calc-key.accent {
     background: var(--accent);
     color: var(--accent-text);
@@ -133,6 +154,21 @@
   .calc-key.func {
     font-size: 12px;
   }
+  .calc-key.wide {
+    grid-column: span 2;
+  }
+  .calc-key.number {
+    min-height: 46px;
+    font-size: 18px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+  .calc-key.op {
+    min-height: 46px;
+    font-size: 18px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
 
   .calc-panel {
     display: none;
@@ -149,6 +185,9 @@
       grid-column: span 2;
     }
     .calc-result { font-size: 24px; }
+    .calc-basic-numbers { gap: 5px; }
+    .calc-basic-ops { gap: 5px; }
+    .calc-basic { gap: 5px; }
   }
 </style>
 </head>
@@ -197,27 +236,35 @@
     </div>
 
     <div class="calc-panel active" id="panelBasic">
-      <div class="calc-keypad">
-        <button class="calc-key func" onclick="mathInsert('7')">7</button>
-        <button class="calc-key func" onclick="mathInsert('8')">8</button>
-        <button class="calc-key func" onclick="mathInsert('9')">9</button>
-        <button class="calc-key accent" onclick="mathInsert('÷')">÷</button>
-        <button class="calc-key danger wide" onclick="mathClear()">Clear</button>
-        <button class="calc-key func" onclick="mathInsert('4')">4</button>
-        <button class="calc-key func" onclick="mathInsert('5')">5</button>
-        <button class="calc-key func" onclick="mathInsert('6')">6</button>
-        <button class="calc-key accent" onclick="mathInsert('×')">×</button>
-        <button class="calc-key accent" onclick="mathInsert('-')">−</button>
-        <button class="calc-key func" onclick="mathInsert('1')">1</button>
-        <button class="calc-key func" onclick="mathInsert('2')">2</button>
-        <button class="calc-key func" onclick="mathInsert('3')">3</button>
-        <button class="calc-key accent" onclick="mathInsert('+')">+</button>
-        <button class="calc-key accent wide" onclick="mathEvaluateNow()">=</button>
-        <button class="calc-key func" onclick="mathInsert('0')">0</button>
-        <button class="calc-key func" onclick="mathInsert('.')">.</button>
-        <button class="calc-key func" onclick="mathInsert('(')">(</button>
-        <button class="calc-key func" onclick="mathInsert(')')">)</button>
-        <button class="calc-key wide" onclick="mathBackspace()">⌫ Back</button>
+      <div class="calc-basic">
+        <div class="calc-basic-utils">
+          <button class="calc-key danger" onclick="mathClear()">AC</button>
+          <button class="calc-key" onclick="mathToggleSign()">+/−</button>
+          <button class="calc-key" onclick="mathInsert('%')">%</button>
+        </div>
+
+        <div class="calc-basic-numbers">
+          <button class="calc-key number" onclick="mathInsert('7')">7</button>
+          <button class="calc-key number" onclick="mathInsert('8')">8</button>
+          <button class="calc-key number" onclick="mathInsert('9')">9</button>
+          <button class="calc-key number" onclick="mathInsert('4')">4</button>
+          <button class="calc-key number" onclick="mathInsert('5')">5</button>
+          <button class="calc-key number" onclick="mathInsert('6')">6</button>
+          <button class="calc-key number" onclick="mathInsert('1')">1</button>
+          <button class="calc-key number" onclick="mathInsert('2')">2</button>
+          <button class="calc-key number" onclick="mathInsert('3')">3</button>
+          <button class="calc-key number" onclick="mathInsert('.')">.</button>
+          <button class="calc-key number" onclick="mathInsert('0')">0</button>
+          <button class="calc-key number" onclick="mathBackspace()">⌫</button>
+        </div>
+
+        <div class="calc-basic-ops">
+          <button class="calc-key op accent" onclick="mathInsert('÷')">÷</button>
+          <button class="calc-key op accent" onclick="mathInsert('×')">×</button>
+          <button class="calc-key op accent" onclick="mathInsert('-')">−</button>
+          <button class="calc-key op accent" onclick="mathInsert('+')">+</button>
+          <button class="calc-key op accent" onclick="mathEvaluateNow()">=</button>
+        </div>
       </div>
     </div>
 
@@ -304,6 +351,26 @@ function mathBackspace() {
 
 function mathClear() {
   mathExpression = '';
+  mathRender();
+}
+
+function mathToggleSign() {
+  if (!mathExpression) {
+    mathExpression = '-';
+    mathRender();
+    return;
+  }
+  const match = mathExpression.match(/(-?\d*\.?\d+)$/);
+  if (match) {
+    const lastNum = match[0];
+    if (lastNum.startsWith('-')) {
+      mathExpression = mathExpression.slice(0, -lastNum.length) + lastNum.slice(1);
+    } else {
+      mathExpression = mathExpression.slice(0, -lastNum.length) + '-' + lastNum;
+    }
+  } else {
+    mathExpression += '-';
+  }
   mathRender();
 }
 
