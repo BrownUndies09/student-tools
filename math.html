@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="sidebar.css">
 <style>
   .calc-wrap {
-    max-width: 420px;
+    max-width: 100%;
     margin: 0 auto;
   }
   .calc-display {
@@ -20,9 +20,9 @@
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
     padding: 16px 18px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     text-align: right;
-    min-height: 80px;
+    min-height: 76px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -37,7 +37,7 @@
     line-height: 1.4;
   }
   .calc-result {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 600;
     letter-spacing: -1px;
     color: var(--text);
@@ -47,146 +47,108 @@
     line-height: 1.1;
   }
 
-  .calc-pad {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 8px;
+  .calc-mode-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
   }
-  .calc-utilities {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 4px;
+  .calc-mode-tab {
+    flex: 1;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
   }
-  .calc-numbers {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .calc-ops {
-    display: grid;
-    grid-template-rows: repeat(5, 1fr);
-    gap: 8px;
+  .calc-mode-tab.active {
+    background: var(--glass);
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
-  .calc-btn {
+  .calc-keypad {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+  }
+  .calc-key {
+    aspect-ratio: 1;
     border: 1px solid var(--glass-border);
     background: var(--glass-strong);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
-    font-family: var(--font-sans);
-    font-size: 17px;
-    font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: 14px;
     color: var(--text);
     transition: all 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    line-height: 1;
+    min-height: 38px;
     user-select: none;
-    aspect-ratio: 1;
   }
-  .calc-btn:hover {
+  .calc-key:hover {
     background: var(--glass);
     border-color: var(--accent);
     transform: translateY(-1px);
   }
-  .calc-btn:active {
+  .calc-key:active {
     transform: translateY(0);
   }
-  .calc-btn.utility {
+  .calc-key.wide {
+    grid-column: span 2;
     aspect-ratio: auto;
-    min-height: 40px;
-    border-radius: 10px;
-    font-size: 14px;
+  }
+  .calc-key.accent {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
     font-weight: 600;
   }
-  .calc-btn.utility.clear {
-    color: var(--danger);
-  }
-  .calc-btn.utility.sci-btn.active {
-    background: var(--accent);
-    color: var(--accent-text);
-    border-color: var(--accent);
-  }
-  .calc-btn.operator {
-    aspect-ratio: auto;
-    border-radius: 12px;
-    background: var(--accent);
-    color: var(--accent-text);
-    border-color: var(--accent);
-    font-size: 19px;
-    font-weight: 500;
-  }
-  .calc-btn.operator:hover {
+  .calc-key.accent:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
   }
-  .calc-btn.equals {
-    background: var(--accent);
-    color: var(--accent-text);
-    border-color: var(--accent);
-    font-size: 21px;
-    font-weight: 700;
-  }
-
-  .sci-panel {
-    display: none;
-    margin-top: 12px;
-    padding: 14px;
-    background: var(--glass-strong);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    backdrop-filter: blur(10px);
-  }
-  .sci-panel.open { display: block; }
-  .sci-section-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-    margin-top: 12px;
+  .calc-key.danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger);
     font-weight: 600;
   }
-  .sci-section-label:first-child { margin-top: 0; }
-  .sci-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-    gap: 5px;
+  .calc-key.danger:hover {
+    background: var(--danger);
+    color: white;
   }
-  .sci-key {
-    border: 1px solid var(--glass-border);
-    background: var(--glass);
-    border-radius: 8px;
-    padding: 9px 4px;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--text);
-    transition: all 0.15s;
-    min-height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .sci-key:hover {
-    background: var(--accent);
-    color: var(--accent-text);
-    border-color: var(--accent);
+  .calc-key.func {
+    font-size: 12px;
   }
 
-  @media (max-width: 400px) {
-    .calc-result { font-size: 26px; }
-    .calc-btn { font-size: 15px; }
-    .calc-btn.operator { font-size: 17px; }
-    .calc-btn.equals { font-size: 19px; }
-    .sci-grid { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
+  .calc-panel {
+    display: none;
+  }
+  .calc-panel.active {
+    display: block;
+  }
+
+  @media (max-width: 600px) {
+    .calc-keypad {
+      grid-template-columns: repeat(5, 1fr);
+    }
+    .calc-key.wide {
+      grid-column: span 2;
+    }
+    .calc-result { font-size: 24px; }
   }
 </style>
 </head>
@@ -229,93 +191,81 @@
       <div class="calc-result" id="mathResult">0</div>
     </div>
 
-    <div class="calc-pad">
-      <div class="calc-utilities">
-        <button class="calc-btn utility clear" onclick="mathClear()">AC</button>
-        <button class="calc-btn utility" onclick="mathToggleSign()">+/−</button>
-        <button class="calc-btn utility" onclick="mathInsert('%')">%</button>
-        <button class="calc-btn utility sci-btn" id="sciToggleBtn" onclick="mathToggleSci()">Sci</button>
-      </div>
+    <div class="calc-mode-tabs">
+      <button class="calc-mode-tab active" id="tabBasic" onclick="mathSetMode('basic')">Basic</button>
+      <button class="calc-mode-tab" id="tabSci" onclick="mathSetMode('sci')">Scientific</button>
+    </div>
 
-      <div class="calc-numbers">
-        <button class="calc-btn" onclick="mathInsert('7')">7</button>
-        <button class="calc-btn" onclick="mathInsert('8')">8</button>
-        <button class="calc-btn" onclick="mathInsert('9')">9</button>
-        <button class="calc-btn" onclick="mathInsert('4')">4</button>
-        <button class="calc-btn" onclick="mathInsert('5')">5</button>
-        <button class="calc-btn" onclick="mathInsert('6')">6</button>
-        <button class="calc-btn" onclick="mathInsert('1')">1</button>
-        <button class="calc-btn" onclick="mathInsert('2')">2</button>
-        <button class="calc-btn" onclick="mathInsert('3')">3</button>
-        <button class="calc-btn" onclick="mathInsert('.')">.</button>
-        <button class="calc-btn" onclick="mathInsert('0')">0</button>
-        <button class="calc-btn" onclick="mathBackspace()">⌫</button>
-      </div>
-
-      <div class="calc-ops">
-        <button class="calc-btn operator" onclick="mathInsert('÷')">÷</button>
-        <button class="calc-btn operator" onclick="mathInsert('×')">×</button>
-        <button class="calc-btn operator" onclick="mathInsert('-')">−</button>
-        <button class="calc-btn operator" onclick="mathInsert('+')">+</button>
-        <button class="calc-btn equals" onclick="mathEvaluateNow()">=</button>
+    <div class="calc-panel active" id="panelBasic">
+      <div class="calc-keypad">
+        <button class="calc-key func" onclick="mathInsert('7')">7</button>
+        <button class="calc-key func" onclick="mathInsert('8')">8</button>
+        <button class="calc-key func" onclick="mathInsert('9')">9</button>
+        <button class="calc-key accent" onclick="mathInsert('÷')">÷</button>
+        <button class="calc-key danger wide" onclick="mathClear()">Clear</button>
+        <button class="calc-key func" onclick="mathInsert('4')">4</button>
+        <button class="calc-key func" onclick="mathInsert('5')">5</button>
+        <button class="calc-key func" onclick="mathInsert('6')">6</button>
+        <button class="calc-key accent" onclick="mathInsert('×')">×</button>
+        <button class="calc-key accent" onclick="mathInsert('-')">−</button>
+        <button class="calc-key func" onclick="mathInsert('1')">1</button>
+        <button class="calc-key func" onclick="mathInsert('2')">2</button>
+        <button class="calc-key func" onclick="mathInsert('3')">3</button>
+        <button class="calc-key accent" onclick="mathInsert('+')">+</button>
+        <button class="calc-key accent wide" onclick="mathEvaluateNow()">=</button>
+        <button class="calc-key func" onclick="mathInsert('0')">0</button>
+        <button class="calc-key func" onclick="mathInsert('.')">.</button>
+        <button class="calc-key func" onclick="mathInsert('(')">(</button>
+        <button class="calc-key func" onclick="mathInsert(')')">)</button>
+        <button class="calc-key wide" onclick="mathBackspace()">⌫ Back</button>
       </div>
     </div>
 
-    <div class="sci-panel" id="sciPanel">
-      <div class="sci-section-label">Powers & Roots</div>
-      <div class="sci-grid">
-        <button class="sci-key" onclick="mathInsert('^')">^</button>
-        <button class="sci-key" onclick="mathInsert('√(')">√</button>
-        <button class="sci-key" onclick="mathInsert('∛(')">∛</button>
-        <button class="sci-key" onclick="mathInsert('^2')">x²</button>
-        <button class="sci-key" onclick="mathInsert('^3')">x³</button>
-        <button class="sci-key" onclick="mathInsert('1/')">1/</button>
-        <button class="sci-key" onclick="mathInsert('abs(')">|x|</button>
-        <button class="sci-key" onclick="mathInsert('ln(')">ln</button>
-        <button class="sci-key" onclick="mathInsert('log(')">log</button>
-        <button class="sci-key" onclick="mathInsert('exp(')">eˣ</button>
-      </div>
+    <div class="calc-panel" id="panelSci">
+      <div class="calc-keypad">
+        <button class="calc-key func" onclick="mathInsert('^')">^</button>
+        <button class="calc-key func" onclick="mathInsert('√(')">√</button>
+        <button class="calc-key func" onclick="mathInsert('∛(')">∛</button>
+        <button class="calc-key func" onclick="mathInsert('^2')">x²</button>
+        <button class="calc-key func" onclick="mathInsert('^3')">x³</button>
+        <button class="calc-key func" onclick="mathInsert('1/')">1/</button>
+        <button class="calc-key func" onclick="mathInsert('abs(')">|x|</button>
+        <button class="calc-key func" onclick="mathInsert('ln(')">ln</button>
+        <button class="calc-key func" onclick="mathInsert('log(')">log</button>
+        <button class="calc-key func" onclick="mathInsert('exp(')">eˣ</button>
 
-      <div class="sci-section-label">Constants & Greek</div>
-      <div class="sci-grid">
-        <button class="sci-key" onclick="mathInsert('π')">π</button>
-        <button class="sci-key" onclick="mathInsert('e')">e</button>
-        <button class="sci-key" onclick="mathInsert('∞')">∞</button>
-        <button class="sci-key" onclick="mathInsert('σ')">σ</button>
-        <button class="sci-key" onclick="mathInsert('Σ')">Σ</button>
-        <button class="sci-key" onclick="mathInsert('θ')">θ</button>
-        <button class="sci-key" onclick="mathInsert('α')">α</button>
-        <button class="sci-key" onclick="mathInsert('β')">β</button>
-        <button class="sci-key" onclick="mathInsert('λ')">λ</button>
-        <button class="sci-key" onclick="mathInsert('μ')">μ</button>
-      </div>
+        <button class="calc-key func" onclick="mathInsert('π')">π</button>
+        <button class="calc-key func" onclick="mathInsert('e')">e</button>
+        <button class="calc-key func" onclick="mathInsert('∞')">∞</button>
+        <button class="calc-key func" onclick="mathInsert('σ')">σ</button>
+        <button class="calc-key func" onclick="mathInsert('Σ')">Σ</button>
+        <button class="calc-key func" onclick="mathInsert('θ')">θ</button>
+        <button class="calc-key func" onclick="mathInsert('α')">α</button>
+        <button class="calc-key func" onclick="mathInsert('β')">β</button>
+        <button class="calc-key func" onclick="mathInsert('λ')">λ</button>
+        <button class="calc-key func" onclick="mathInsert('μ')">μ</button>
 
-      <div class="sci-section-label">Comparison & Logic</div>
-      <div class="sci-grid">
-        <button class="sci-key" onclick="mathInsert('≤')">≤</button>
-        <button class="sci-key" onclick="mathInsert('≥')">≥</button>
-        <button class="sci-key" onclick="mathInsert('≠')">≠</button>
-        <button class="sci-key" onclick="mathInsert('≈')">≈</button>
-        <button class="sci-key" onclick="mathInsert('±')">±</button>
-        <button class="sci-key" onclick="mathInsert('∫(')">∫</button>
-        <button class="sci-key" onclick="mathInsert('d/dx')">d/dx</button>
-        <button class="sci-key" onclick="mathInsert('lim(')">lim</button>
-        <button class="sci-key" onclick="mathInsert('mod')">mod</button>
-        <button class="sci-key" onclick="mathInsert('!')">n!</button>
-      </div>
+        <button class="calc-key func" onclick="mathInsert('≤')">≤</button>
+        <button class="calc-key func" onclick="mathInsert('≥')">≥</button>
+        <button class="calc-key func" onclick="mathInsert('≠')">≠</button>
+        <button class="calc-key func" onclick="mathInsert('≈')">≈</button>
+        <button class="calc-key func" onclick="mathInsert('±')">±</button>
+        <button class="calc-key func" onclick="mathInsert('∫(')">∫</button>
+        <button class="calc-key func" onclick="mathInsert('d/dx')">d/dx</button>
+        <button class="calc-key func" onclick="mathInsert('lim(')">lim</button>
+        <button class="calc-key func" onclick="mathInsert('mod')">mod</button>
+        <button class="calc-key func" onclick="mathInsert('!')">n!</button>
 
-      <div class="sci-section-label">Trigonometry</div>
-      <div class="sci-grid">
-        <button class="sci-key" onclick="mathInsert('sin(')">sin</button>
-        <button class="sci-key" onclick="mathInsert('cos(')">cos</button>
-        <button class="sci-key" onclick="mathInsert('tan(')">tan</button>
-        <button class="sci-key" onclick="mathInsert('asin(')">sin⁻¹</button>
-        <button class="sci-key" onclick="mathInsert('acos(')">cos⁻¹</button>
-        <button class="sci-key" onclick="mathInsert('atan(')">tan⁻¹</button>
-        <button class="sci-key" onclick="mathInsert('sinh(')">sinh</button>
-        <button class="sci-key" onclick="mathInsert('cosh(')">cosh</button>
-        <button class="sci-key" onclick="mathInsert('tanh(')">tanh</button>
-        <button class="sci-key" onclick="mathInsert('°')">°</button>
+        <button class="calc-key func" onclick="mathInsert('sin(')">sin</button>
+        <button class="calc-key func" onclick="mathInsert('cos(')">cos</button>
+        <button class="calc-key func" onclick="mathInsert('tan(')">tan</button>
+        <button class="calc-key func" onclick="mathInsert('asin(')">sin⁻¹</button>
+        <button class="calc-key func" onclick="mathInsert('acos(')">cos⁻¹</button>
+        <button class="calc-key func" onclick="mathInsert('atan(')">tan⁻¹</button>
+        <button class="calc-key func" onclick="mathInsert('sinh(')">sinh</button>
+        <button class="calc-key func" onclick="mathInsert('cosh(')">cosh</button>
+        <button class="calc-key func" onclick="mathInsert('tanh(')">tanh</button>
+        <button class="calc-key func" onclick="mathInsert('°')">°</button>
       </div>
     </div>
   </div>
@@ -332,6 +282,15 @@
 <script src="sidebar.js"></script>
 <script>
 let mathExpression = '';
+let mathMode = 'basic';
+
+function mathSetMode(mode) {
+  mathMode = mode;
+  document.getElementById('tabBasic').classList.toggle('active', mode === 'basic');
+  document.getElementById('tabSci').classList.toggle('active', mode === 'sci');
+  document.getElementById('panelBasic').classList.toggle('active', mode === 'basic');
+  document.getElementById('panelSci').classList.toggle('active', mode === 'sci');
+}
 
 function mathInsert(symbol) {
   mathExpression += symbol;
@@ -346,33 +305,6 @@ function mathBackspace() {
 function mathClear() {
   mathExpression = '';
   mathRender();
-}
-
-function mathToggleSign() {
-  if (!mathExpression) {
-    mathExpression = '-';
-    mathRender();
-    return;
-  }
-  const match = mathExpression.match(/(-?\d*\.?\d+)$/);
-  if (match) {
-    const lastNum = match[0];
-    if (lastNum.startsWith('-')) {
-      mathExpression = mathExpression.slice(0, -lastNum.length) + lastNum.slice(1);
-    } else {
-      mathExpression = mathExpression.slice(0, -lastNum.length) + '-' + lastNum;
-    }
-  } else {
-    mathExpression += '-';
-  }
-  mathRender();
-}
-
-function mathToggleSci() {
-  const panel = document.getElementById('sciPanel');
-  const btn = document.getElementById('sciToggleBtn');
-  panel.classList.toggle('open');
-  btn.classList.toggle('active');
 }
 
 function mathEvaluateNow() {
