@@ -142,11 +142,21 @@
     flex-shrink: 0;
   }
 
+  /* Wrapper gets the overflow so scaled table scrolls horizontally */
+  .pt-table-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .pt-table {
     display: grid;
     grid-template-columns: repeat(18, minmax(28px, 1fr));
     gap: 3px;
     width: 100%;
+    transform-origin: top left;
+    transition: transform 0.15s ease;
   }
   .pt-cell {
     background: var(--glass-strong);
@@ -363,15 +373,17 @@
       </div>
       <div class="pt-scale-control">
         <label>Scale</label>
-        <input type="range" id="ptScale" min="0.6" max="1.5" step="0.05" value="1" oninput="ptApplyScale()">
-        <input type="number" id="ptScaleNum" min="0.6" max="1.5" step="0.05" value="1" oninput="ptApplyScaleFromNum()">
+        <input type="range" id="ptScale" min="0.5" max="2" step="0.05" value="1" oninput="ptApplyScale()">
+        <input type="number" id="ptScaleNum" min="0.5" max="2" step="0.05" value="1" oninput="ptApplyScaleFromNum()">
         <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim);">×</span>
       </div>
     </div>
 
     <div class="pt-legend" id="ptLegend"></div>
 
-    <div class="pt-table" id="ptTable"></div>
+    <div class="pt-table-wrapper" id="ptTableWrapper">
+      <div class="pt-table" id="ptTable"></div>
+    </div>
   </div>
 
   <div class="pt-detail" id="ptDetail">
@@ -526,6 +538,7 @@ const PT_ELEMENTS = [
 
 let ptActiveFilter = 'all';
 let ptSearchTerm = '';
+let ptScale = 1;
 
 function ptToggleSearch() {
   const input = document.getElementById('ptSearch');
@@ -541,11 +554,19 @@ function ptToggleSearch() {
 }
 
 function ptApplyScale() {
-  const val = parseFloat(document.getElementById('ptScale').value);
+  const val = parseFloat(document.getElementById('ptScale').value) || 1;
+  ptScale = val;
   document.getElementById('ptScaleNum').value = val;
   const table = document.getElementById('ptTable');
-  table.style.fontSize = val + 'em';
-  table.style.gridTemplateColumns = 'repeat(18, minmax(' + (28 * val) + 'px, 1fr))';
+  const wrapper = document.getElementById('ptTableWrapper');
+  table.style.transform = 'scale(' + val + ')';
+  // Reserve vertical space so scaled-up table doesn't overlap content below
+  const baseHeight = table.offsetHeight / (ptScale || 1);
+  if (val > 1) {
+    wrapper.style.minHeight = (baseHeight * val) + 'px';
+  } else {
+    wrapper.style.minHeight = '';
+  }
 }
 
 function ptApplyScaleFromNum() {
@@ -638,6 +659,9 @@ function ptRenderTable() {
   }
 
   table.innerHTML = html;
+  // Reapply scale after rerender
+  const val = ptScale;
+  table.style.transform = 'scale(' + val + ')';
 }
 
 function ptShowDetail(sym) {
