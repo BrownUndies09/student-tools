@@ -44,7 +44,7 @@
   .calc-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
     margin-bottom: 12px;
   }
   .calc-controls-row {
@@ -83,7 +83,14 @@
   .calc-size-btn:hover:not(.active) {
     color: var(--text);
   }
-  .calc-fs-btn {
+
+  .calc-right-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .calc-fs-btn,
+  .calc-customize-btn {
     padding: 8px 14px;
     background: var(--glass-strong);
     border: 1px solid var(--glass-border);
@@ -94,9 +101,39 @@
     color: var(--text);
     cursor: pointer;
     transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
-  .calc-fs-btn:hover {
+  .calc-fs-btn:hover,
+  .calc-customize-btn:hover {
     border-color: var(--accent);
+  }
+  .calc-customize-btn .chevron {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .calc-customize-btn.open .chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Collapsible panel */
+  .calc-custom-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.25s ease;
+    opacity: 0;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .calc-custom-panel.open {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 10px;
   }
 
   .calc-control-row {
@@ -350,21 +387,28 @@
           <button class="calc-size-btn active" id="sizeMedium" onclick="mathSetSize('medium')">M</button>
           <button class="calc-size-btn" id="sizeLarge" onclick="mathSetSize('large')">L</button>
         </div>
-        <button class="calc-fs-btn" id="fsBtn" onclick="mathToggleFullscreen()">Fullscreen</button>
+        <div class="calc-right-controls">
+          <button class="calc-customize-btn" id="customizeBtn" onclick="mathToggleCustomize()">
+            <span>Customize</span>
+            <span class="chevron">▼</span>
+          </button>
+          <button class="calc-fs-btn" id="fsBtn" onclick="mathToggleFullscreen()">Fullscreen</button>
+        </div>
       </div>
 
-      <div class="calc-control-row">
-        <label>Width</label>
-        <input type="range" id="widthSlider" min="320" max="1400" step="10" value="640" oninput="mathWidthFromSlider()">
-        <input type="number" id="widthNumber" min="320" max="1400" step="10" value="640" oninput="mathWidthFromNumber()">
-        <span class="unit">px</span>
-      </div>
-
-      <div class="calc-control-row">
-        <label>Scale</label>
-        <input type="range" id="scaleSlider" min="0.7" max="2" step="0.05" value="1" oninput="mathScaleFromSlider()">
-        <input type="number" id="scaleNumber" min="0.7" max="2" step="0.05" value="1" oninput="mathScaleFromNumber()">
-        <span class="unit">×</span>
+      <div class="calc-custom-panel" id="customPanel">
+        <div class="calc-control-row">
+          <label>Width</label>
+          <input type="range" id="widthSlider" min="320" max="1400" step="10" value="640" oninput="mathWidthFromSlider()">
+          <input type="number" id="widthNumber" min="320" max="1400" step="10" value="640" oninput="mathWidthFromNumber()">
+          <span class="unit">px</span>
+        </div>
+        <div class="calc-control-row">
+          <label>Scale</label>
+          <input type="range" id="scaleSlider" min="0.7" max="2" step="0.05" value="1" oninput="mathScaleFromSlider()">
+          <input type="number" id="scaleNumber" min="0.7" max="2" step="0.05" value="1" oninput="mathScaleFromNumber()">
+          <span class="unit">×</span>
+        </div>
       </div>
     </div>
 
@@ -484,6 +528,13 @@ const CALC_WIDTH_MAX = 1400;
 const CALC_SCALE_MIN = 0.7;
 const CALC_SCALE_MAX = 2;
 
+function mathToggleCustomize() {
+  const panel = document.getElementById('customPanel');
+  const btn = document.getElementById('customizeBtn');
+  panel.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
 function mathSetWidth(px, fromInput) {
   px = Math.max(CALC_WIDTH_MIN, Math.min(CALC_WIDTH_MAX, parseInt(px) || 640));
   calcWidth = px;
@@ -503,7 +554,6 @@ function mathSetScale(scale, fromInput) {
   if (fromInput !== 'slider') document.getElementById('scaleSlider').value = scale;
   if (fromInput !== 'number') document.getElementById('scaleNumber').value = scale;
 
-  // Update S/M/L active state based on combined preset match
   const matchSmall = calcWidth === CALC_WIDTH_PRESETS.small && Math.abs(scale - CALC_SCALE_PRESETS.small) < 0.01;
   const matchMedium = calcWidth === CALC_WIDTH_PRESETS.medium && Math.abs(scale - CALC_SCALE_PRESETS.medium) < 0.01;
   const matchLarge = calcWidth === CALC_WIDTH_PRESETS.large && Math.abs(scale - CALC_SCALE_PRESETS.large) < 0.01;
