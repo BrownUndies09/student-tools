@@ -141,7 +141,6 @@
     flex-shrink: 0;
   }
 
-  /* Wrapper: horizontal scroll for enlarged table */
   .pt-table-wrapper {
     overflow-x: auto;
     overflow-y: hidden;
@@ -149,14 +148,14 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Table: minimum cell width driven by --pt-cell-min variable */
+  /* FIXED: fixed column width, no stretching, real scaling */
   .pt-table {
     --pt-cell-min: 28px;
     display: grid;
-    grid-template-columns: repeat(18, minmax(var(--pt-cell-min), 1fr));
+    grid-template-columns: repeat(18, var(--pt-cell-min));
+    grid-auto-rows: var(--pt-cell-min);
     gap: 3px;
-    min-width: calc(18 * var(--pt-cell-min) + 17 * 3px);
-    width: max(100%, calc(18 * var(--pt-cell-min) + 17 * 3px));
+    width: max-content;
   }
 
   .pt-cell {
@@ -174,7 +173,6 @@
     text-align: center;
     position: relative;
     overflow: hidden;
-    aspect-ratio: 1;
   }
   .pt-cell:hover {
     transform: scale(1.15);
@@ -374,8 +372,8 @@
       </div>
       <div class="pt-scale-control">
         <label>Scale</label>
-        <input type="range" id="ptScale" min="28" max="80" step="2" value="28" oninput="ptApplyScale()">
-        <input type="number" id="ptScaleNum" min="28" max="80" step="2" value="28" oninput="ptApplyScaleFromNum()">
+        <input type="range" id="ptScale" min="24" max="70" step="2" value="34" oninput="ptApplyScale()">
+        <input type="number" id="ptScaleNum" min="24" max="70" step="2" value="34" oninput="ptApplyScaleFromNum()">
         <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim);">px</span>
       </div>
     </div>
@@ -554,13 +552,13 @@ function ptToggleSearch() {
 }
 
 function ptApplyScale() {
-  const val = parseInt(document.getElementById('ptScale').value) || 28;
+  const val = parseInt(document.getElementById('ptScale').value) || 34;
   document.getElementById('ptScaleNum').value = val;
   document.getElementById('ptTable').style.setProperty('--pt-cell-min', val + 'px');
 }
 
 function ptApplyScaleFromNum() {
-  const val = parseInt(document.getElementById('ptScaleNum').value) || 28;
+  const val = parseInt(document.getElementById('ptScaleNum').value) || 34;
   document.getElementById('ptScale').value = val;
   ptApplyScale();
 }
