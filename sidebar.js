@@ -25,6 +25,7 @@ const SIDEBAR_TOOLS = [
       { label: 'GPA Calculator', icon: '🎓', href: 'gpa.html' },
       { label: 'Grade Calculator', icon: '📊', href: 'grade.html' },
       { label: 'Math Keyboard', icon: '🧮', href: 'math.html' },
+      { label: 'Equation Solver', icon: '➗', href: 'solver.html' },
       { label: 'Unit Converter', icon: '📐', href: 'convert.html' }
     ]
   },
@@ -33,6 +34,28 @@ const SIDEBAR_TOOLS = [
     tools: [
       { label: 'Periodic Table', icon: '⚗️', href: 'periodic.html' },
       { label: 'Molar Mass', icon: '🧪', href: 'molar.html' }
+    ]
+  },
+  {
+    group: 'NSC Mathematics',
+    tools: [
+      { label: 'Calculus', icon: '📉', href: 'calculus.html' },
+      { label: 'Trigonometry', icon: '📐', href: 'trig.html' },
+      { label: 'Euclidean Geometry', icon: '🔺', href: 'euclidean.html' },
+      { label: 'Functions', icon: '📈', href: 'functions.html' },
+      { label: 'Financial Maths', icon: '💰', href: 'finance.html' },
+      { label: 'Analytical Geometry', icon: '📊', href: 'analytical.html' },
+      { label: 'Sequences & Series', icon: '🔢', href: 'sequences.html' },
+      { label: 'Algebra', icon: '✖️', href: 'algebra.html' },
+      { label: 'Statistics', icon: '📊', href: 'statistics.html' },
+      { label: 'Probability', icon: '🎲', href: 'probability.html' }
+    ]
+  },
+  {
+    group: 'NSC Physical Sciences',
+    tools: [
+      { label: 'Physics', icon: '⚡', href: 'physics.html' },
+      { label: 'Chemistry', icon: '🧪', href: 'chemistry.html' }
     ]
   },
   {
@@ -50,18 +73,50 @@ function buildSidebar() {
   const currentPath = window.location.pathname.replace(/\/+$/, '');
   const currentPage = currentPath.split('/').pop() || 'index.html';
 
+  // Find which group contains the current page
+  let activeGroupIndex = -1;
+  SIDEBAR_TOOLS.forEach((group, idx) => {
+    if (group.tools.some(t => t.href === currentPage)) {
+      activeGroupIndex = idx;
+    }
+  });
+
+  // If no group matches (e.g., homepage), default to first group
+  if (activeGroupIndex === -1) activeGroupIndex = 0;
+
+  // Check localStorage for last opened group
+  let storedIndex = -1;
+  try {
+    const stored = localStorage.getItem('sidebarOpenGroup');
+    if (stored !== null) storedIndex = parseInt(stored);
+  } catch (e) {}
+
+  // Priority: current page's group > stored group > first group
+  const initialOpenIndex = activeGroupIndex !== -1 ? activeGroupIndex : (storedIndex >= 0 ? storedIndex : 0);
+
   let linksHtml = '';
-  SIDEBAR_TOOLS.forEach(group => {
-    linksHtml += '<div class="sidebar-group">';
-    linksHtml += '<div class="sidebar-group-title">' + group.group + '</div>';
+  SIDEBAR_TOOLS.forEach((group, gIdx) => {
+    const isOpen = gIdx === initialOpenIndex;
+    const hasCurrentPage = group.tools.some(t => t.href === currentPage);
+
+    let toolsHtml = '';
     group.tools.forEach(tool => {
       const isActive = tool.href === currentPage;
-      linksHtml += '<a href="' + tool.href + '" class="sidebar-link' + (isActive ? ' active' : '') + '">' +
+      toolsHtml += '<a href="' + tool.href + '" class="sidebar-link' + (isActive ? ' active' : '') + '">' +
         '<span class="sidebar-icon">' + tool.icon + '</span>' +
         '<span class="sidebar-label">' + tool.label + '</span>' +
       '</a>';
     });
-    linksHtml += '</div>';
+
+    linksHtml += '<div class="sidebar-group' + (isOpen ? ' open' : '') + (hasCurrentPage ? ' contains-active' : '') + '" data-group-index="' + gIdx + '">' +
+      '<button class="sidebar-group-toggle" onclick="toggleGroup(' + gIdx + ', event)">' +
+        '<span class="sidebar-group-title">' + group.group + '</span>' +
+        '<span class="sidebar-chevron">▼</span>' +
+      '</button>' +
+      '<div class="sidebar-group-body">' +
+        '<div class="sidebar-group-inner">' + toolsHtml + '</div>' +
+      '</div>' +
+    '</div>';
   });
 
   root.innerHTML =
@@ -72,11 +127,31 @@ function buildSidebar() {
           '<span class="nav-logo">S</span>' +
           '<span>StudyTools</span>' +
         '</a>' +
-        '<button class="sidebar-close" onclick="closeSidebar()" aria-label="Close menu"></button>' +
+        '<button class="sidebar-close" onclick="closeSidebar()" aria-label="Close menu">×</button>' +
       '</div>' +
       '<div class="sidebar-body">' + linksHtml + '</div>' +
       '<div class="sidebar-footer">Made for students</div>' +
     '</aside>';
+}
+
+function toggleGroup(index, event) {
+  if (event) event.stopPropagation();
+  const allGroups = document.querySelectorAll('.sidebar-group');
+  const target = document.querySelector('.sidebar-group[data-group-index="' + index + '"]');
+  if (!target) return;
+
+  const isCurrentlyOpen = target.classList.contains('open');
+
+  // Close all groups
+  allGroups.forEach(g => g.classList.remove('open'));
+
+  // If target was closed, open it. If it was open, leave everything closed.
+  if (!isCurrentlyOpen) {
+    target.classList.add('open');
+    try { localStorage.setItem('sidebarOpenGroup', index); } catch (e) {}
+  } else {
+    try { localStorage.removeItem('sidebarOpenGroup'); } catch (e) {}
+  }
 }
 
 function openSidebar() {
