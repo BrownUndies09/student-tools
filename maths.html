@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maths Tools - Grade 10, 11 & 12 NSC Calculator</title>
+<meta name="description" content="Free NSC Mathematics calculators for Grade 10, 11 and 12. Algebra, functions, calculus, trig, Euclidean geometry, finance, statistics, probability, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .mth-tool-select { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .mth-tool-pill {
+    padding: 7px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: 100px; font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .mth-tool-pill:hover { border-color: var(--accent); color: var(--text); }
+  .mth-tool-pill.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  .mth-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .mth-input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 500px) { .mth-input-grid { grid-template-columns: 1fr; } .mth-input-grid-3 { grid-template-columns: 1fr; } }
+  .mth-answer {
+    font-size: 30px; font-weight: 700; letter-spacing: -1px; color: var(--success);
+    font-family: var(--font-mono); margin: 8px 0; word-break: break-word; line-height: 1.15;
+  }
+  .mth-answer.multi { font-size: 22px; }
+  .mth-input { font-family: var(--font-mono); font-size: 15px; padding: 12px 14px; }
+  .mth-step {
+    padding: 12px 16px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm); margin-bottom: 8px; font-family: var(--font-mono);
+    font-size: 13px; color: var(--text); line-height: 1.65;
+  }
+  .mth-step .step-num {
+    display: inline-block; width: 22px; height: 22px; background: var(--accent);
+    color: var(--accent-text); border-radius: 50%; font-size: 11px; text-align: center;
+    line-height: 22px; font-weight: 600; margin-right: 10px; flex-shrink: 0;
+  }
+  .mth-step .step-row { display: flex; align-items: flex-start; }
+  .mth-formula {
+    display: inline-block; padding: 2px 8px; background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--text); margin: 0 2px;
+  }
+  .mth-formula-note {
+    padding: 10px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent); border-radius: 10px; font-size: 12px;
+    color: var(--text-muted); line-height: 1.7; margin-bottom: 12px;
+  }
+  .mth-formula-note strong { color: var(--text); }
+  .mth-result-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .mth-const-note {
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+    text-align: center; margin-top: 8px; letter-spacing: 0.3px;
+  }
+  .mth-hidden { display: none !important; }
+  .mth-subpills {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; padding: 8px;
+    background: var(--glass-strong); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  }
+  .mth-subpill {
+    padding: 5px 11px; background: transparent; border: none; border-radius: 100px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .mth-subpill:hover { color: var(--text); }
+  .mth-subpill.active { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Maths Tools</h1>
+    <p>NSC Grade 10, 11 &amp; 12 Mathematics calculators with step-by-step working.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab active" id="tabG10" onclick="mthSetGrade(10)">Grade 10</button>
+      <button class="tab" id="tabG11" onclick="mthSetGrade(11)">Grade 11</button>
+      <button class="tab" id="tabG12" onclick="mthSetGrade(12)">Grade 12</button>
+    </div>
+
+    <div id="mthGrade10Tools">
+      <div class="mth-tool-select">
+        <button class="mth-tool-pill active" data-g10-tool="algebra10" onclick="mthSelectTool10('algebra10')">Algebra</button>
+        <button class="mth-tool-pill" data-g10-tool="functions10" onclick="mthSelectTool10('functions10')">Functions</button>
+        <button class="mth-tool-pill" data-g10-tool="sequences10" onclick="mthSelectTool10('sequences10')">Sequences</button>
+        <button class="mth-tool-pill" data-g10-tool="finance10" onclick="mthSelectTool10('finance10')">Finance</button>
+        <button class="mth-tool-pill" data-g10-tool="probability10" onclick="mthSelectTool10('probability10')">Probability</button>
+        <button class="mth-tool-pill" data-g10-tool="statistics10" onclick="mthSelectTool10('statistics10')">Statistics</button>
+        <button class="mth-tool-pill" data-g10-tool="analytical10" onclick="mthSelectTool10('analytical10')">Analytical</button>
+        <button class="mth-tool-pill" data-g10-tool="trig10" onclick="mthSelectTool10('trig10')">Trigonometry</button>
+      </div>
+    </div>
+
+    <div id="mthGrade11Tools" class="mth-hidden">
+      <div class="mth-tool-select">
+        <button class="mth-tool-pill active" data-g11-tool="algebra11" onclick="mthSelectTool11('algebra11')">Algebra</button>
+        <button class="mth-tool-pill" data-g11-tool="functions11" onclick="mthSelectTool11('functions11')">Functions</button>
+        <button class="mth-tool-pill" data-g11-tool="sequences11" onclick="mthSelectTool11('sequences11')">Sequences</button>
+        <button class="mth-tool-pill" data-g11-tool="finance11" onclick="mthSelectTool11('finance11')">Finance</button>
+        <button class="mth-tool-pill" data-g11-tool="probability11" onclick="mthSelectTool11('probability11')">Probability</button>
+        <button class="mth-tool-pill" data-g11-tool="statistics11" onclick="mthSelectTool11('statistics11')">Statistics</button>
+        <button class="mth-tool-pill" data-g11-tool="analytical11" onclick="mthSelectTool11('analytical11')">Analytical</button>
+        <button class="mth-tool-pill" data-g11-tool="trig11" onclick="mthSelectTool11('trig11')">Trigonometry</button>
+        <button class="mth-tool-pill" data-g11-tool="euclidean11" onclick="mthSelectTool11('euclidean11')">Euclidean</button>
+      </div>
+    </div>
+
+    <div id="mthGrade12Tools" class="mth-hidden">
+      <div class="mth-tool-select">
+        <button class="mth-tool-pill active" data-g12-tool="calculus" onclick="mthSelectTool12('calculus')">Calculus</button>
+        <button class="mth-tool-pill" data-g12-tool="functions12" onclick="mthSelectTool12('functions12')">Functions</button>
+        <button class="mth-tool-pill" data-g12-tool="trig12" onclick="mthSelectTool12('trig12')">Trigonometry</button>
+        <button class="mth-tool-pill" data-g12-tool="euclidean12" onclick="mthSelectTool12('euclidean12')">Euclidean</button>
+        <button class="mth-tool-pill" data-g12-tool="analytical12" onclick="mthSelectTool12('analytical12')">Analytical</button>
+        <button class="mth-tool-pill" data-g12-tool="statistics12" onclick="mthSelectTool12('statistics12')">Statistics</button>
+        <button class="mth-tool-pill" data-g12-tool="probability12" onclick="mthSelectTool12('probability12')">Probability</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 10 ============ -->
+  <div id="tool-algebra10" class="mth-tool-panel">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Quadratic equation ax² + bx + c = 0:</strong><br>
+        <span class="mth-formula">x = (−b ± √(b² − 4ac)) / 2a</span>
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>a</label><input type="number" id="a10_a" class="mth-input" step="any" value="1"></div>
+        <div><label>b</label><input type="number" id="a10_b" class="mth-input" step="any" value="-5"></div>
+        <div><label>c</label><input type="number" id="a10_c" class="mth-input" step="any" value="6"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthAlgebra10()">Solve</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="a10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter coefficients and click Solve.</div></div>
+    </div>
+    <div class="card mth-hidden" id="a10_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="a10_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-functions10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note"><strong>Function analyser:</strong> enter parameters to get turning points, asymptotes, intercepts.</div>
+      <div style="margin-bottom:10px;">
+        <label>Function type</label>
+        <select id="f10_type" class="mth-input" onchange="mthFunctions10TypeChange()">
+          <option value="parabola">Parabola y = a(x+p)² + q</option>
+          <option value="hyperbola">Hyperbola y = a/(x+p) + q</option>
+          <option value="exponential">Exponential y = a·b^x + q</option>
+        </select>
+      </div>
+      <div id="f10_parabola_inputs">
+        <div class="mth-input-grid-3">
+          <div><label>a</label><input type="number" id="f10_a" class="mth-input" step="any" value="1"></div>
+          <div><label>p</label><input type="number" id="f10_p" class="mth-input" step="any" value="0"></div>
+          <div><label>q</label><input type="number" id="f10_q" class="mth-input" step="any" value="-4"></div>
+        </div>
+      </div>
+      <div id="f10_hyperbola_inputs" class="mth-hidden">
+        <div class="mth-input-grid-3">
+          <div><label>a</label><input type="number" id="f10_ha" class="mth-input" step="any" value="2"></div>
+          <div><label>p</label><input type="number" id="f10_hp" class="mth-input" step="any" value="0"></div>
+          <div><label>q</label><input type="number" id="f10_hq" class="mth-input" step="any" value="0"></div>
+        </div>
+      </div>
+      <div id="f10_exponential_inputs" class="mth-hidden">
+        <div class="mth-input-grid-3">
+          <div><label>a</label><input type="number" id="f10_ea" class="mth-input" step="any" value="1"></div>
+          <div><label>b</label><input type="number" id="f10_eb" class="mth-input" step="any" value="2"></div>
+          <div><label>q</label><input type="number" id="f10_eq" class="mth-input" step="any" value="0"></div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthFunctions10()">Analyse</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Analysis</div>
+      <div id="f10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Analyse.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-sequences10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Arithmetic:</strong> <span class="mth-formula">T_n = a + (n−1)d</span> <span class="mth-formula">S_n = n/2[2a + (n−1)d]</span><br>
+        <strong>Geometric:</strong> <span class="mth-formula">T_n = a·r^(n−1)</span> <span class="mth-formula">S_n = a(r^n − 1)/(r − 1)</span>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Type</label>
+        <select id="s10_type" class="mth-input">
+          <option value="arith">Arithmetic</option>
+          <option value="geom">Geometric</option>
+        </select>
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>a (first term)</label><input type="number" id="s10_a" class="mth-input" step="any" value="3"></div>
+        <div><label>d or r</label><input type="number" id="s10_d" class="mth-input" step="any" value="4"></div>
+        <div><label>n</label><input type="number" id="s10_n" class="mth-input" step="any" value="10"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthSequences10()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="s10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="s10_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="s10_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-finance10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Simple:</strong> <span class="mth-formula">A = P(1 + ni)</span><br>
+        <strong>Compound:</strong> <span class="mth-formula">A = P(1 + i)^n</span><br>
+        <strong>Depreciation (SL):</strong> <span class="mth-formula">A = P(1 − ni)</span><br>
+        <strong>Depreciation (RB):</strong> <span class="mth-formula">A = P(1 − i)^n</span>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Type</label>
+        <select id="fi10_type" class="mth-input">
+          <option value="simple">Simple interest</option>
+          <option value="compound">Compound interest</option>
+          <option value="dep_sl">Depreciation (straight-line)</option>
+          <option value="dep_rb">Depreciation (reducing balance)</option>
+        </select>
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>P (principal)</label><input type="number" id="fi10_P" class="mth-input" step="any" value="10000"></div>
+        <div><label>i (rate, decimal)</label><input type="number" id="fi10_i" class="mth-input" step="any" value="0.08"></div>
+        <div><label>n (years)</label><input type="number" id="fi10_n" class="mth-input" step="any" value="5"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthFinance10()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Final Amount</div>
+      <div id="fi10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="fi10_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="fi10_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-probability10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <span class="mth-formula">P(A or B) = P(A) + P(B) − P(A and B)</span><br>
+        <span class="mth-formula">Mutually exclusive: P(A and B) = 0</span><br>
+        <span class="mth-formula">Independent: P(A and B) = P(A)·P(B)</span>
+      </div>
+      <div class="mth-input-grid">
+        <div><label>P(A)</label><input type="number" id="pr10_pa" class="mth-input" step="any" value="0.4"></div>
+        <div><label>P(B)</label><input type="number" id="pr10_pb" class="mth-input" step="any" value="0.3"></div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>P(A and B) — leave blank if mutually exclusive</label>
+        <input type="number" id="pr10_pab" class="mth-input" step="any" placeholder="0">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthProbability10()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="pr10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="pr10_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pr10_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-statistics10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">Enter data values separated by commas or spaces.</div>
+      <div><label>Data values</label>
+        <textarea id="st10_data" class="mth-input" style="min-height:80px;">4, 8, 15, 16, 23, 42, 8, 12</textarea>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthStatistics10()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Statistics</div>
+      <div id="st10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter data and click Calculate.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-analytical10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <span class="mth-formula">d = √((x₂−x₁)² + (y₂−y₁)²)</span>
+        <span class="mth-formula">M = ((x₁+x₂)/2, (y₁+y₂)/2)</span>
+        <span class="mth-formula">m = (y₂−y₁)/(x₂−x₁)</span>
+      </div>
+      <div class="mth-input-grid">
+        <div><label>Point 1 — x₁</label><input type="number" id="an10_x1" class="mth-input" step="any" value="1"></div>
+        <div><label>Point 1 — y₁</label><input type="number" id="an10_y1" class="mth-input" step="any" value="2"></div>
+        <div><label>Point 2 — x₂</label><input type="number" id="an10_x2" class="mth-input" step="any" value="5"></div>
+        <div><label>Point 2 — y₂</label><input type="number" id="an10_y2" class="mth-input" step="any" value="8"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthAnalytical10()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Line Properties</div>
+      <div id="an10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter points and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="an10_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="an10_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-trig10" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>SOH CAH TOA</strong> · sin = opp/hyp · cos = adj/hyp · tan = opp/adj<br>
+        Special angles: 0°, 30°, 45°, 60°, 90°. Reduction formulae use ASTC.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>What are s1 and s2?</label>
+        <select id="tr10_mode" class="mth-input">
+          <option value="opp_adj">Opposite and adjacent</option>
+          <option value="opp_hyp">Opposite and hypotenuse</option>
+          <option value="adj_hyp">Adjacent and hypotenuse</option>
+        </select>
+      </div>
+      <div class="mth-input-grid">
+        <div><label>Side 1</label><input type="number" id="tr10_s1" class="mth-input" step="any" value="3"></div>
+        <div><label>Side 2</label><input type="number" id="tr10_s2" class="mth-input" step="any" value="4"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthTrig10()">Solve</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="tr10_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+    <div class="card mth-hidden" id="tr10_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="tr10_steps"></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 11 ============ -->
+  <div id="tool-algebra11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Nature of roots:</strong> <span class="mth-formula">Δ = b² − 4ac</span><br>
+        Δ > 0: two real unequal · Δ = 0: two equal real · Δ &lt; 0: non-real
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="a11_mode" class="mth-input" onchange="mthAlgebra11ModeChange()">
+          <option value="nature">Nature of roots</option>
+          <option value="inequality">Quadratic inequality</option>
+        </select>
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>a</label><input type="number" id="a11_a" class="mth-input" step="any" value="1"></div>
+        <div><label>b</label><input type="number" id="a11_b" class="mth-input" step="any" value="-5"></div>
+        <div><label>c</label><input type="number" id="a11_c" class="mth-input" step="any" value="6"></div>
+      </div>
+      <div id="a11_ineq_row" class="mth-hidden" style="margin-bottom:10px;">
+        <label>Inequality symbol</label>
+        <select id="a11_symbol" class="mth-input">
+          <option value=">">ax² + bx + c &gt; 0</option>
+          <option value=">=">ax² + bx + c ≥ 0</option>
+          <option value="<">ax² + bx + c &lt; 0</option>
+          <option value="<=">ax² + bx + c ≤ 0</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthAlgebra11()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="a11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="a11_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="a11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-functions11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Transformations:</strong> f(x) + q shifts up/down · f(x + p) shifts left/right · −f(x) reflects in x-axis · f(−x) reflects in y-axis
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Base function</label>
+        <select id="f11_base" class="mth-input">
+          <option value="parabola">y = x²</option>
+          <option value="hyperbola">y = 1/x</option>
+          <option value="exponential">y = 2^x</option>
+        </select>
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>p (horizontal)</label><input type="number" id="f11_p" class="mth-input" step="any" value="0"></div>
+        <div><label>q (vertical)</label><input type="number" id="f11_q" class="mth-input" step="any" value="-3"></div>
+        <div><label>a (stretch)</label><input type="number" id="f11_a" class="mth-input" step="any" value="1"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthFunctions11()">Show Transformation</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Transformed Equation</div>
+      <div id="f11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Show.</div></div>
+    </div>
+    <div class="card mth-hidden" id="f11_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="f11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-sequences11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Sum to infinity:</strong> <span class="mth-formula">S_∞ = a / (1 − r)</span> for |r| &lt; 1<br>
+        <strong>Sigma:</strong> evaluates sums from i=1 to n.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="s11_mode" class="mth-input" onchange="mthSequences11ModeChange()">
+          <option value="sum">Sum to infinity</option>
+          <option value="sigma">Sigma sum</option>
+        </select>
+      </div>
+      <div id="s11_sum_inputs">
+        <div class="mth-input-grid">
+          <div><label>a</label><input type="number" id="s11_a" class="mth-input" step="any" value="8"></div>
+          <div><label>r</label><input type="number" id="s11_r" class="mth-input" step="any" value="0.5"></div>
+        </div>
+      </div>
+      <div id="s11_sigma_inputs" class="mth-hidden">
+        <div class="mth-input-grid">
+          <div><label>a</label><input type="number" id="s11_sa" class="mth-input" step="any" value="3"></div>
+          <div><label>d or r</label><input type="number" id="s11_sd" class="mth-input" step="any" value="4"></div>
+          <div><label>n</label><input type="number" id="s11_sn" class="mth-input" step="any" value="10"></div>
+          <div>
+            <label>Type</label>
+            <select id="s11_stype" class="mth-input">
+              <option value="arith">Arithmetic</option>
+              <option value="geom">Geometric</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthSequences11()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="s11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="s11_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="s11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-finance11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>FV annuity:</strong> <span class="mth-formula">F = x[(1+i)^n − 1] / i</span><br>
+        <strong>PV annuity:</strong> <span class="mth-formula">P = x[1 − (1+i)^(−n)] / i</span><br>
+        <strong>Effective rate:</strong> <span class="mth-formula">1 + i_eff = (1 + i_nom/m)^m</span>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="fi11_mode" class="mth-input" onchange="mthFinance11ModeChange()">
+          <option value="fv">Future value annuity</option>
+          <option value="pv">Present value annuity</option>
+          <option value="eff">Effective interest rate</option>
+        </select>
+      </div>
+      <div id="fi11_fv_inputs">
+        <div class="mth-input-grid-3">
+          <div><label>x (payment)</label><input type="number" id="fi11_x" class="mth-input" step="any" value="1000"></div>
+          <div><label>i per period</label><input type="number" id="fi11_i" class="mth-input" step="any" value="0.01"></div>
+          <div><label>n periods</label><input type="number" id="fi11_n" class="mth-input" step="any" value="60"></div>
+        </div>
+      </div>
+      <div id="fi11_pv_inputs" class="mth-hidden">
+        <div class="mth-input-grid-3">
+          <div><label>x (payment)</label><input type="number" id="fi11_px" class="mth-input" step="any" value="1000"></div>
+          <div><label>i per period</label><input type="number" id="fi11_pi" class="mth-input" step="any" value="0.01"></div>
+          <div><label>n periods</label><input type="number" id="fi11_pn" class="mth-input" step="any" value="60"></div>
+        </div>
+      </div>
+      <div id="fi11_eff_inputs" class="mth-hidden">
+        <div class="mth-input-grid">
+          <div><label>i_nom</label><input type="number" id="fi11_inom" class="mth-input" step="any" value="0.12"></div>
+          <div><label>m</label><input type="number" id="fi11_m" class="mth-input" step="any" value="12"></div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthFinance11()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="fi11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="fi11_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="fi11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-probability11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Permutations:</strong> <span class="mth-formula">^nP_r = n! / (n−r)!</span><br>
+        <strong>Combinations:</strong> <span class="mth-formula">^nC_r = n! / (r!(n−r)!)</span><br>
+        <strong>Factorial:</strong> <span class="mth-formula">n! = n·(n−1)·…·1</span>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="pr11_mode" class="mth-input" onchange="mthProbability11ModeChange()">
+          <option value="fact">Factorial n!</option>
+          <option value="perm">Permutations nPr</option>
+          <option value="comb">Combinations nCr</option>
+        </select>
+      </div>
+      <div class="mth-input-grid">
+        <div><label>n</label><input type="number" id="pr11_n" class="mth-input" step="any" value="5"></div>
+        <div id="pr11_r_wrap"><label>r</label><input type="number" id="pr11_r" class="mth-input" step="any" value="2"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthProbability11()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="pr11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="pr11_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pr11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-statistics11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Variance:</strong> <span class="mth-formula">σ² = Σ(x − x̄)² / n</span><br>
+        <strong>Regression:</strong> <span class="mth-formula">ŷ = a + bx</span><br>
+        <strong>Correlation:</strong> <span class="mth-formula">r = Sxy / √(Sxx·Syy)</span>
+      </div>
+      <div class="mth-input-grid">
+        <div><label>X values</label><textarea id="st11_x" class="mth-input" style="min-height:60px;">1, 2, 3, 4, 5</textarea></div>
+        <div><label>Y values</label><textarea id="st11_y" class="mth-input" style="min-height:60px;">3, 5, 7, 9, 11</textarea></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthStatistics11()">Analyse</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Statistics</div>
+      <div id="st11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter X and Y values, click Analyse.</div></div>
+    </div>
+    <div class="card mth-hidden" id="st11_steps_card">
+      <div class="result-label">Working</div>
+      <div id="st11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-analytical11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Inclination:</strong> <span class="mth-formula">m = tan θ</span> · θ measured anti-clockwise from positive x-axis.
+      </div>
+      <div class="mth-input-grid">
+        <div><label>Gradient m</label><input type="number" id="an11_m" class="mth-input" step="any" placeholder="leave blank if unknown"></div>
+        <div><label>Angle θ (°)</label><input type="number" id="an11_theta" class="mth-input" step="any" placeholder="leave blank if unknown"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthAnalytical11()">Solve</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="an11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Leave one field blank, fill the other, click Solve.</div></div>
+    </div>
+    <div class="card mth-hidden" id="an11_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="an11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-trig11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Compound/double angles · Sine rule a/sinA = b/sinB · Cosine rule a² = b² + c² − 2bc·cosA · Area = ½ab·sinC</strong>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="tr11_mode" class="mth-input" onchange="mthTrig11ModeChange()">
+          <option value="compound">Compound / double angle</option>
+          <option value="sine">Sine rule</option>
+          <option value="cosine">Cosine rule</option>
+          <option value="area">Area rule</option>
+        </select>
+      </div>
+      <div id="tr11_compound">
+        <div class="mth-input-grid">
+          <div><label>Angle A (°)</label><input type="number" id="tr11_A" class="mth-input" step="any" value="30"></div>
+          <div><label>Angle B (°)</label><input type="number" id="tr11_B" class="mth-input" step="any" value="45"></div>
+        </div>
+      </div>
+      <div id="tr11_sine" class="mth-hidden">
+        <div class="mth-input-grid">
+          <div><label>Side a</label><input type="number" id="tr11_sa" class="mth-input" step="any" value="8"></div>
+          <div><label>Angle A (°)</label><input type="number" id="tr11_sA" class="mth-input" step="any" value="30"></div>
+          <div><label>Side b (blank to solve)</label><input type="number" id="tr11_sb" class="mth-input" step="any" placeholder="leave blank"></div>
+          <div><label>Angle B (°)</label><input type="number" id="tr11_sB" class="mth-input" step="any" value="45"></div>
+        </div>
+      </div>
+      <div id="tr11_cosine" class="mth-hidden">
+        <div class="mth-input-grid-3">
+          <div><label>Side b</label><input type="number" id="tr11_cb" class="mth-input" step="any" value="5"></div>
+          <div><label>Side c</label><input type="number" id="tr11_cc" class="mth-input" step="any" value="7"></div>
+          <div><label>Angle A (°)</label><input type="number" id="tr11_cA" class="mth-input" step="any" value="60"></div>
+        </div>
+      </div>
+      <div id="tr11_area" class="mth-hidden">
+        <div class="mth-input-grid-3">
+          <div><label>Side a</label><input type="number" id="tr11_aa" class="mth-input" step="any" value="6"></div>
+          <div><label>Side b</label><input type="number" id="tr11_ab" class="mth-input" step="any" value="8"></div>
+          <div><label>Angle C (°)</label><input type="number" id="tr11_aC" class="mth-input" step="any" value="30"></div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthTrig11()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="tr11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="tr11_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="tr11_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-euclidean11" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Circle geometry theorems (Gr 11).</strong> Pick one to see details.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Theorem</label>
+        <select id="eu11_theorem" class="mth-input">
+          <option value="1">1. Perpendicular from centre bisects chord</option>
+          <option value="2">2. Angle at centre = 2 × angle at circumference</option>
+          <option value="3">3. Angle in semicircle = 90°</option>
+          <option value="4">4. Angles in same segment are equal</option>
+          <option value="5">5. Cyclic quadrilateral opposite angles</option>
+          <option value="6">6. Tangent perpendicular to radius</option>
+          <option value="7">7. Two tangents from same point</option>
+          <option value="8">8. Tan-chord theorem</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthEuclidean11()">Show Theorem</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Details</div>
+      <div id="eu11_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a theorem and click Show.</div></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 12 ============ -->
+  <div id="tool-calculus" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-subpills">
+        <button class="mth-subpill active" data-calc="first" onclick="mthCalcSub('first')">First Principles</button>
+        <button class="mth-subpill" data-calc="diff" onclick="mthCalcSub('diff')">Differentiate</button>
+        <button class="mth-subpill" data-calc="tangent" onclick="mthCalcSub('tangent')">Tangent Line</button>
+        <button class="mth-subpill" data-calc="stationary" onclick="mthCalcSub('stationary')">Stationary Points</button>
+        <button class="mth-subpill" data-calc="cubic" onclick="mthCalcSub('cubic')">Cubic Sketch</button>
+        <button class="mth-subpill" data-calc="optimise" onclick="mthCalcSub('optimise')">Optimisation</button>
+        <button class="mth-subpill" data-calc="rates" onclick="mthCalcSub('rates')">Rates of Change</button>
+      </div>
+    </div>
+
+    <div id="calc-first" class="calc-subpanel">
+      <div class="card">
+        <div class="mth-formula-note">
+          <span class="mth-formula">f'(x) = lim_{h→0} [f(x+h) − f(x)] / h</span>
+        </div>
+        <div class="mth-input-grid-3">
+          <div><label>a (x²)</label><input type="number" id="fp_a" class="mth-input" step="any" value="1"></div>
+          <div><label>b (x)</label><input type="number" id="fp_b" class="mth-input" step="any" value="0"></div>
+          <div><label>c</label><input type="number" id="fp_c" class="mth-input" step="any" value="0"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthFirstPrinciples()">Show Working</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Answer</div>
+        <div id="fp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter coefficients and click Show.</div></div>
+      </div>
+      <div class="card mth-hidden" id="fp_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="fp_steps"></div>
+      </div>
+    </div>
+
+    <div id="calc-diff" class="calc-subpanel mth-hidden">
+      <div class="card">
+        <div class="mth-formula-note"><span class="mth-formula">d/dx (ax^n) = a·n·x^(n−1)</span> · enter polynomial terms separated by + or −</div>
+        <div><label>f(x)</label><input type="text" id="df_f" class="mth-input" value="3x^3 - 2x^2 + 5x - 7"></div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthDifferentiate()">Differentiate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">f'(x)</div>
+        <div id="df_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter polynomial and click Differentiate.</div></div>
+      </div>
+      <div class="card mth-hidden" id="df_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="df_steps"></div>
+      </div>
+    </div>
+
+    <div id="calc-tangent" class="calc-subpanel mth-hidden">
+      <div class="card">
+        <div class="mth-formula-note"><span class="mth-formula">m = f'(a)</span> · <span class="mth-formula">y − f(a) = m(x − a)</span></div>
+        <div><label>f(x)</label><input type="text" id="tn_f" class="mth-input" value="x^3 - 3x + 2"></div>
+        <div style="margin-top:10px;"><label>Point x = a</label><input type="number" id="tn_a" class="mth-input" step="any" value="2"></div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthTangent()">Find Tangent &amp; Normal</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Equations</div>
+        <div id="tn_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter function and point, click Find.</div></div>
+      </div>
+      <div class="card mth-hidden" id="tn_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="tn_steps"></div>
+      </div>
+    </div>
+
+    <div id="calc-stationary" class="calc-subpanel mth-hidden">
+      <div class="card">
+        <div class="mth-formula-note"><strong>Stationary points:</strong> solve <span class="mth-formula">f'(x) = 0</span> · second derivative test classifies each point.</div>
+        <div><label>f(x)</label><input type="text" id="sp_f" class="mth-input" value="x^3 - 3x^2 - 9x + 5"></div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthStationary()">Find Stationary Points</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Stationary Points</div>
+        <div id="sp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter polynomial and click Find.</div></div>
+      </div>
+      <div class="card mth-hidden" id="sp_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="sp_steps"></div>
+      </div>
+    </div>
+
+    <div id="calc-cubic" class="calc-subpanel mth-hidden">
+      <div class="card">
+        <div class="mth-formula-note">Enter cubic ax³ + bx² + cx + d. Returns intercepts, turning points, inflection.</div>
+        <div class="mth-input-grid">
+          <div><label>a</label><input type="number" id="cb_a" class="mth-input" step="any" value="1"></div>
+          <div><label>b</label><input type="number" id="cb_b" class="mth-input" step="any" value="-3"></div>
+          <div><label>c</label><input type="number" id="cb_c" class="mth-input" step="any" value="0"></div>
+          <div><label>d</label><input type="number" id="cb_d" class="mth-input" step="any" value="4"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthCubicSketch()">Analyse Cubic</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Key Features</div>
+        <div id="cb_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter coefficients and click Analyse.</div></div>
+      </div>
+      <div class="card mth-hidden" id="cb_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="cb_steps"></div>
+      </div>
+    </div>
+
+    <div id="calc-optimise" class="calc-subpanel mth-hidden">
+      <div class="card">
+        <div class="mth-formula-note"><strong>Box problem:</strong> square sheet of side L, cut corners of x, fold into open box. <span class="mth-formula">V(x) = x(L − 2x)²</span></div>
+        <div><label>Sheet side L (cm)</label><input type="number" id="op_L" class="mth-input" step="any" value="20"></div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthOptimise()">Maximise Volume</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Maximum Volume</div>
+        <div id="op_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter L and click Maximise.</div></div>
+      </div>
+      <div class="card mth-hidden" id="op_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="op_steps"></div>
+      </div>
+    </div>
+
+    <div id="calc-rates" class="calc-subpanel mth-hidden">
+      <div class="card">
+        <div class="mth-formula-note"><span class="mth-formula">v(t) = s'(t)</span> · <span class="mth-formula">a(t) = v'(t) = s''(t)</span></div>
+        <div><label>s(t) (polynomial in t)</label><input type="text" id="rt_s" class="mth-input" value="t^3 - 6t^2 + 9t"></div>
+        <div style="margin-top:10px;"><label>Evaluate at t =</label><input type="number" id="rt_t" class="mth-input" step="any" value="2"></div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthRates()">Calculate v and a</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Velocity and Acceleration</div>
+        <div id="rt_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter s(t) and time, click Calculate.</div></div>
+      </div>
+      <div class="card mth-hidden" id="rt_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="rt_steps"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tool-functions12" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note"><strong>Inverse functions:</strong> swap x and y, solve for y. Restriction needed for one-to-one.</div>
+      <div style="margin-bottom:10px;">
+        <label>Function type</label>
+        <select id="f12_type" class="mth-input">
+          <option value="linear">Linear y = mx + c</option>
+          <option value="parabola">Parabola y = ax²</option>
+          <option value="exponential">Exponential y = a^x</option>
+          <option value="hyperbola">Hyperbola y = a/x</option>
+        </select>
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>a</label><input type="number" id="f12_a" class="mth-input" step="any" value="2"></div>
+        <div><label>b (m or q)</label><input type="number" id="f12_b" class="mth-input" step="any" value="0"></div>
+        <div><label>Restriction</label><input type="number" id="f12_r" class="mth-input" step="any" placeholder="optional"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthFunctions12()">Find Inverse</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Inverse Function</div>
+      <div id="f12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Find Inverse.</div></div>
+    </div>
+    <div class="card mth-hidden" id="f12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="f12_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-trig12" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>General solution:</strong><br>
+        <span class="mth-formula">sin θ = k → θ = sin⁻¹k + 360°k OR 180° − sin⁻¹k + 360°k</span><br>
+        <span class="mth-formula">cos θ = k → θ = ±cos⁻¹k + 360°k</span><br>
+        <span class="mth-formula">tan θ = k → θ = tan⁻¹k + 180°k</span>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="tr12_mode" class="mth-input" onchange="mthTrig12ModeChange()">
+          <option value="gen">General solution</option>
+          <option value="expr">Expression in terms of t</option>
+        </select>
+      </div>
+      <div id="tr12_gen_inputs">
+        <div class="mth-input-grid">
+          <div>
+            <label>Ratio</label>
+            <select id="tr12_ratio" class="mth-input">
+              <option value="sin">sin θ</option>
+              <option value="cos">cos θ</option>
+              <option value="tan">tan θ</option>
+            </select>
+          </div>
+          <div><label>Value k</label><input type="number" id="tr12_k" class="mth-input" step="any" value="0.5"></div>
+        </div>
+      </div>
+      <div id="tr12_expr_inputs" class="mth-hidden">
+        <div class="mth-input-grid">
+          <div><label>Known angle (°)</label><input type="number" id="tr12_ang" class="mth-input" step="any" value="17"></div>
+          <div>
+            <label>Function</label>
+            <select id="tr12_fn" class="mth-input">
+              <option value="cos">cos</option>
+              <option value="sin">sin</option>
+              <option value="tan">tan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthTrig12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="tr12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="tr12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="tr12_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-euclidean12" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note"><strong>Gr 12 Euclidean geometry:</strong> converse theorems, proportionality, midpoint, similar triangles, Pythagoras.</div>
+      <div style="margin-bottom:10px;">
+        <label>Concept</label>
+        <select id="eu12_theorem" class="mth-input">
+          <option value="converse_cyclic">Converse: prove quad is cyclic</option>
+          <option value="converse_tangent">Converse: prove line is tangent</option>
+          <option value="midpoint">Midpoint theorem</option>
+          <option value="proportional">Proportionality theorem</option>
+          <option value="similar">Similar triangles</option>
+          <option value="pythagoras">Pythagoras</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthEuclidean12()">Show Concept</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Details</div>
+      <div id="eu12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a concept and click Show.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-analytical12" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Circle:</strong> <span class="mth-formula">(x − a)² + (y − b)² = r²</span><br>
+        <strong>General:</strong> <span class="mth-formula">x² + y² + Dx + Ey + F = 0</span><br>
+        <strong>Tangent ⊥ radius</strong> at point of contact.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="an12_mode" class="mth-input" onchange="mthAnalytical12ModeChange()">
+          <option value="circle">Circle from centre + radius</option>
+          <option value="general">Circle from general form</option>
+          <option value="tangent">Tangent line at a point</option>
+        </select>
+      </div>
+      <div id="an12_circle_inputs">
+        <div class="mth-input-grid-3">
+          <div><label>Centre a</label><input type="number" id="an12_a" class="mth-input" step="any" value="2"></div>
+          <div><label>Centre b</label><input type="number" id="an12_b" class="mth-input" step="any" value="-3"></div>
+          <div><label>Radius r</label><input type="number" id="an12_r" class="mth-input" step="any" value="5"></div>
+        </div>
+      </div>
+      <div id="an12_general_inputs" class="mth-hidden">
+        <div class="mth-input-grid">
+          <div><label>D</label><input type="number" id="an12_D" class="mth-input" step="any" value="-4"></div>
+          <div><label>E</label><input type="number" id="an12_E" class="mth-input" step="any" value="6"></div>
+          <div><label>F</label><input type="number" id="an12_F" class="mth-input" step="any" value="-12"></div>
+        </div>
+      </div>
+      <div id="an12_tangent_inputs" class="mth-hidden">
+        <div class="mth-input-grid-3">
+          <div><label>Centre a</label><input type="number" id="an12_ta" class="mth-input" step="any" value="2"></div>
+          <div><label>Centre b</label><input type="number" id="an12_tb" class="mth-input" step="any" value="-3"></div>
+          <div><label>Point x</label><input type="number" id="an12_px" class="mth-input" step="any" value="5"></div>
+          <div><label>Point y</label><input type="number" id="an12_py" class="mth-input" step="any" value="-3"></div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthAnalytical12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="an12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="an12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="an12_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-statistics12" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>Normal distribution:</strong> ~68% within ±1σ, ~95% within ±2σ, ~99.7% within ±3σ.
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>Mean μ</label><input type="number" id="st12_mu" class="mth-input" step="any" value="100"></div>
+        <div><label>σ</label><input type="number" id="st12_sigma" class="mth-input" step="any" value="15"></div>
+        <div><label>Value x</label><input type="number" id="st12_x" class="mth-input" step="any" value="120"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthStatistics12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="st12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="st12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="st12_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-probability12" class="mth-tool-panel mth-hidden">
+    <div class="card">
+      <div class="mth-formula-note">
+        <strong>3-circle Venn:</strong> enter counts for each region.
+      </div>
+      <div class="mth-input-grid-3">
+        <div><label>|A| only</label><input type="number" id="pb12_a" class="mth-input" step="any" value="10"></div>
+        <div><label>|B| only</label><input type="number" id="pb12_b" class="mth-input" step="any" value="12"></div>
+        <div><label>|C| only</label><input type="number" id="pb12_c" class="mth-input" step="any" value="8"></div>
+        <div><label>|A ∩ B| only</label><input type="number" id="pb12_ab" class="mth-input" step="any" value="3"></div>
+        <div><label>|A ∩ C| only</label><input type="number" id="pb12_ac" class="mth-input" step="any" value="2"></div>
+        <div><label>|B ∩ C| only</label><input type="number" id="pb12_bc" class="mth-input" step="any" value="4"></div>
+        <div><label>|A ∩ B ∩ C|</label><input type="number" id="pb12_abc" class="mth-input" step="any" value="1"></div>
+        <div><label>None</label><input type="number" id="pb12_none" class="mth-input" step="any" value="5"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="mthProbability12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Probabilities</div>
+      <div id="pb12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter counts and click Calculate.</div></div>
+    </div>
+    <div class="card mth-hidden" id="pb12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pb12_steps"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+function mthFmt(n) {
+  if (!isFinite(n)) return '—';
+  if (n === 0) return '0';
+  if (Number.isInteger(n)) return n.toString();
+  const abs = Math.abs(n);
+  if (abs < 0.0001 || abs >= 100000) return parseFloat(n.toExponential(4)).toString();
+  return parseFloat(n.toFixed(6)).toString();
+}
+function mthShowSteps(stepsId, cardId, steps) {
+  const el = document.getElementById(stepsId);
+  if (!el) return;
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="mth-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  const card = document.getElementById(cardId);
+  if (card) card.classList.remove('mth-hidden');
+}
+function mthResult(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+function parsePoly(str) {
+  str = str.replace(/\s+/g, '').replace(/-/g, '+-');
+  const terms = str.split('+').filter(t => t.length > 0);
+  const out = [];
+  terms.forEach(t => {
+    let sign = 1;
+    if (t[0] === '-') { sign = -1; t = t.slice(1); }
+    let coeff, exp;
+    if (t.includes('x')) {
+      const parts = t.split('x');
+      if (parts[0] === '') coeff = 1;
+      else coeff = parseFloat(parts[0]);
+      if (parts[1] === '') exp = 1;
+      else if (parts[1].startsWith('^')) exp = parseInt(parts[1].slice(1));
+      else exp = 1;
+    } else { coeff = parseFloat(t); exp = 0; }
+    out.push({ coeff: sign * coeff, exp: exp });
+  });
+  return out;
+}
+function polyDerivative(poly) {
+  return poly.filter(t => t.exp > 0).map(t => ({ coeff: t.coeff * t.exp, exp: t.exp - 1 }));
+}
+function polyToString(poly) {
+  if (poly.length === 0) return '0';
+  let s = '';
+  poly.forEach(t => {
+    if (t.coeff === 0) return;
+    const sign = t.coeff > 0 ? (s === '' ? '' : ' + ') : (s === '' ? '-' : ' - ');
+    const absC = Math.abs(t.coeff);
+    const cStr = (absC === 1 && t.exp > 0) ? '' : mthFmt(absC);
+    let term = cStr;
+    if (t.exp > 0) term += 'x';
+    if (t.exp > 1) term += '^' + t.exp;
+    s += sign + term;
+  });
+  return s || '0';
+}
+function polyEval(poly, x) { return poly.reduce((sum, t) => sum + t.coeff * Math.pow(x, t.exp), 0); }
+function solveQuadratic(a, b, c) {
+  if (a === 0) return { type: 'linear', x: -c / b };
+  const disc = b * b - 4 * a * c;
+  if (disc > 0) return { type: 'two', x1: (-b + Math.sqrt(disc)) / (2 * a), x2: (-b - Math.sqrt(disc)) / (2 * a), disc: disc };
+  if (disc === 0) return { type: 'one', x: -b / (2 * a), disc: disc };
+  return { type: 'complex', real: -b / (2 * a), imag: Math.sqrt(-disc) / (2 * a), disc: disc };
+}
+
+let mthGrade = 10;
+let mthTool10 = 'algebra10';
+let mthTool11 = 'algebra11';
+let mthTool12 = 'calculus';
+
+function mthSetGrade(g) {
+  mthGrade = g;
+  document.getElementById('tabG10').classList.toggle('active', g === 10);
+  document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('tabG12').classList.toggle('active', g === 12);
+  document.getElementById('mthGrade10Tools').classList.toggle('mth-hidden', g !== 10);
+  document.getElementById('mthGrade11Tools').classList.toggle('mth-hidden', g !== 11);
+  document.getElementById('mthGrade12Tools').classList.toggle('mth-hidden', g !== 12);
+  let current = g === 10 ? mthTool10 : g === 11 ? mthTool11 : mthTool12;
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    p.classList.toggle('mth-hidden', p.id !== 'tool-' + current);
+  });
+}
+function mthSelectTool10(t) { mthTool10 = t; mthSetGrade(10); window.scrollTo({top:0,behavior:'smooth'}); }
+function mthSelectTool11(t) { mthTool11 = t; mthSetGrade(11); window.scrollTo({top:0,behavior:'smooth'}); }
+function mthSelectTool12(t) { mthTool12 = t; mthSetGrade(12); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function mthAlgebra10() {
+  const a = parseFloat(document.getElementById('a10_a').value);
+  const b = parseFloat(document.getElementById('a10_b').value);
+  const c = parseFloat(document.getElementById('a10_c').value);
+  if ([a,b,c].some(v => isNaN(v)) || a === 0) { mthResult('a10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid coefficients (a ≠ 0).</div>'); return; }
+  const steps = [];
+  steps.push('Equation: ' + mthFmt(a) + 'x² + ' + mthFmt(b) + 'x + ' + mthFmt(c) + ' = 0');
+  const disc = b*b - 4*a*c;
+  steps.push('Δ = b² − 4ac = ' + mthFmt(disc));
+  let html = '';
+  if (disc > 0) {
+    const x1 = (-b + Math.sqrt(disc)) / (2*a);
+    const x2 = (-b - Math.sqrt(disc)) / (2*a);
+    steps.push('Δ > 0 → two real roots');
+    steps.push('x = (' + mthFmt(-b) + ' ± √' + mthFmt(disc) + ') / ' + mthFmt(2*a));
+    steps.push('x₁ = ' + mthFmt(x1));
+    steps.push('x₂ = ' + mthFmt(x2));
+    html = '<div class="mth-answer">x₁ = ' + mthFmt(x1) + '</div><div class="mth-answer multi" style="color:var(--text);">x₂ = ' + mthFmt(x2) + '</div>';
+  } else if (disc === 0) {
+    const x = -b / (2*a);
+    steps.push('Δ = 0 → one repeated root x = ' + mthFmt(x));
+    html = '<div class="mth-answer">x = ' + mthFmt(x) + ' (double)</div>';
+  } else {
+    const real = -b / (2*a);
+    const imag = Math.sqrt(-disc) / (2*a);
+    steps.push('Δ < 0 → non-real roots');
+    html = '<div class="mth-answer multi">x = ' + mthFmt(real) + ' ± ' + mthFmt(imag) + 'i</div>';
+  }
+  mthResult('a10_result', html);
+  mthShowSteps('a10_steps', 'a10_steps_card', steps);
+}
+
+function mthFunctions10TypeChange() {
+  const t = document.getElementById('f10_type').value;
+  document.getElementById('f10_parabola_inputs').classList.toggle('mth-hidden', t !== 'parabola');
+  document.getElementById('f10_hyperbola_inputs').classList.toggle('mth-hidden', t !== 'hyperbola');
+  document.getElementById('f10_exponential_inputs').classList.toggle('mth-hidden', t !== 'exponential');
+}
+function mthFunctions10() {
+  const t = document.getElementById('f10_type').value;
+  const steps = [];
+  let html = '';
+  if (t === 'parabola') {
+    const a = parseFloat(document.getElementById('f10_a').value);
+    const p = parseFloat(document.getElementById('f10_p').value);
+    const q = parseFloat(document.getElementById('f10_q').value);
+    steps.push('y = ' + mthFmt(a) + '(x + ' + mthFmt(p) + ')² + ' + mthFmt(q));
+    steps.push('Turning point: (' + mthFmt(-p) + ', ' + mthFmt(q) + ')');
+    steps.push('Axis of symmetry: x = ' + mthFmt(-p));
+    steps.push('Opens ' + (a > 0 ? 'upward' : 'downward'));
+    const yInt = a * p * p + q;
+    steps.push('y-intercept: ' + mthFmt(yInt));
+    html = '<div class="mth-answer">TP = (' + mthFmt(-p) + ', ' + mthFmt(q) + ')</div>' +
+      '<div class="mth-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Opens</span><span class="result-cell-value">' + (a > 0 ? 'Up' : 'Down') + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Axis</span><span class="result-cell-value">x = ' + mthFmt(-p) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">y-int</span><span class="result-cell-value">' + mthFmt(yInt) + '</span></div>' +
+      '</div>';
+  } else if (t === 'hyperbola') {
+    const a = parseFloat(document.getElementById('f10_ha').value);
+    const p = parseFloat(document.getElementById('f10_hp').value);
+    const q = parseFloat(document.getElementById('f10_hq').value);
+    steps.push('y = ' + mthFmt(a) + '/(x + ' + mthFmt(p) + ') + ' + mthFmt(q));
+    steps.push('VA: x = ' + mthFmt(-p));
+    steps.push('HA: y = ' + mthFmt(q));
+    html = '<div class="mth-answer multi">VA: x = ' + mthFmt(-p) + ' · HA: y = ' + mthFmt(q) + '</div>';
+  } else {
+    const a = parseFloat(document.getElementById('f10_ea').value);
+    const b = parseFloat(document.getElementById('f10_eb').value);
+    const q = parseFloat(document.getElementById('f10_eq').value);
+    steps.push('y = ' + mthFmt(a) + '·' + mthFmt(b) + '^x + ' + mthFmt(q));
+    steps.push('HA: y = ' + mthFmt(q));
+    steps.push('y-int: ' + mthFmt(a + q));
+    steps.push(b > 1 ? 'Growth' : 'Decay');
+    html = '<div class="mth-answer multi">HA: y = ' + mthFmt(q) + '</div>';
+  }
+  mthResult('f10_result', html);
+}
+
+function mthSequences10() {
+  const type = document.getElementById('s10_type').value;
+  const a = parseFloat(document.getElementById('s10_a').value);
+  const d = parseFloat(document.getElementById('s10_d').value);
+  const n = parseFloat(document.getElementById('s10_n').value);
+  if ([a,d,n].some(v => isNaN(v))) { mthResult('s10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields.</div>'); return; }
+  const steps = [];
+  let tn, sn;
+  if (type === 'arith') {
+    tn = a + (n - 1) * d;
+    sn = (n/2) * (2*a + (n-1)*d);
+    steps.push('T_n = a + (n−1)d = ' + mthFmt(tn));
+    steps.push('S_n = n/2[2a + (n−1)d] = ' + mthFmt(sn));
+  } else {
+    tn = a * Math.pow(d, n-1);
+    sn = d === 1 ? n * a : a * (Math.pow(d, n) - 1) / (d - 1);
+    steps.push('T_n = a·r^(n−1) = ' + mthFmt(tn));
+    steps.push('S_n = a(r^n − 1)/(r − 1) = ' + mthFmt(sn));
+  }
+  mthResult('s10_result', '<div class="mth-answer">T_n = ' + mthFmt(tn) + '</div><div class="mth-answer multi" style="color:var(--text);">S_n = ' + mthFmt(sn) + '</div>');
+  mthShowSteps('s10_steps', 's10_steps_card', steps);
+}
+
+function mthFinance10() {
+  const type = document.getElementById('fi10_type').value;
+  const P = parseFloat(document.getElementById('fi10_P').value);
+  const i = parseFloat(document.getElementById('fi10_i').value);
+  const n = parseFloat(document.getElementById('fi10_n').value);
+  if ([P,i,n].some(v => isNaN(v))) { mthResult('fi10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields.</div>'); return; }
+  let A, formula;
+  const steps = [];
+  if (type === 'simple') { A = P * (1 + n*i); formula = 'A = P(1 + ni)'; }
+  else if (type === 'compound') { A = P * Math.pow(1+i, n); formula = 'A = P(1 + i)^n'; }
+  else if (type === 'dep_sl') { A = P * (1 - n*i); formula = 'A = P(1 − ni)'; }
+  else { A = P * Math.pow(1-i, n); formula = 'A = P(1 − i)^n'; }
+  steps.push(formula + ' = ' + mthFmt(A));
+  mthResult('fi10_result', '<div class="mth-answer">A = ' + mthFmt(A) + '</div>');
+  mthShowSteps('fi10_steps', 'fi10_steps_card', steps);
+}
+
+function mthProbability10() {
+  const pa = parseFloat(document.getElementById('pr10_pa').value);
+  const pb = parseFloat(document.getElementById('pr10_pb').value);
+  const pabInput = document.getElementById('pr10_pab').value;
+  const pab = pabInput === '' ? 0 : parseFloat(pabInput);
+  if ([pa,pb].some(v => isNaN(v))) { mthResult('pr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill P(A) and P(B).</div>'); return; }
+  const pOR = pa + pb - pab;
+  const pNotA = 1 - pa;
+  const steps = [];
+  steps.push('P(A or B) = ' + mthFmt(pa) + ' + ' + mthFmt(pb) + ' − ' + mthFmt(pab) + ' = ' + mthFmt(pOR));
+  steps.push('P(not A) = ' + mthFmt(pNotA));
+  if (pab === 0) steps.push('Mutually exclusive');
+  else if (Math.abs(pab - pa*pb) < 1e-9) steps.push('Independent');
+  else steps.push('Neither independent nor mutually exclusive');
+  mthResult('pr10_result', '<div class="mth-answer">P(A ∪ B) = ' + mthFmt(pOR) + '</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">P(not A)</span><span class="result-cell-value">' + mthFmt(pNotA) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(A ∩ B)</span><span class="result-cell-value">' + mthFmt(pab) + '</span></div>' +
+    '</div>');
+  mthShowSteps('pr10_steps', 'pr10_steps_card', steps);
+}
+
+function mthStatistics10() {
+  const raw = document.getElementById('st10_data').value.trim();
+  const nums = raw.split(/[,\s]+/).map(s => parseFloat(s)).filter(n => !isNaN(n));
+  if (nums.length === 0) { mthResult('st10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter some numbers.</div>'); return; }
+  const sorted = [...nums].sort((a,b) => a-b);
+  const n = nums.length;
+  const mean = nums.reduce((s,v) => s+v, 0) / n;
+  const median = n % 2 === 0 ? (sorted[n/2 - 1] + sorted[n/2]) / 2 : sorted[Math.floor(n/2)];
+  const freq = {};
+  nums.forEach(v => freq[v] = (freq[v] || 0) + 1);
+  const maxFreq = Math.max(...Object.values(freq));
+  const modes = maxFreq === 1 ? 'None' : Object.keys(freq).filter(k => freq[k] === maxFreq).join(', ');
+  const range = sorted[n-1] - sorted[0];
+  const q1 = sorted[Math.floor((n-1) * 0.25)];
+  const q3 = sorted[Math.floor((n-1) * 0.75)];
+  const iqr = q3 - q1;
+  mthResult('st10_result', '<div class="mth-answer">mean = ' + mthFmt(mean) + '</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">Median</span><span class="result-cell-value">' + mthFmt(median) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Mode</span><span class="result-cell-value">' + modes + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Range</span><span class="result-cell-value">' + mthFmt(range) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Q1</span><span class="result-cell-value">' + mthFmt(q1) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Q3</span><span class="result-cell-value">' + mthFmt(q3) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">IQR</span><span class="result-cell-value">' + mthFmt(iqr) + '</span></div>' +
+    '</div>');
+}
+
+function mthAnalytical10() {
+  const x1 = parseFloat(document.getElementById('an10_x1').value);
+  const y1 = parseFloat(document.getElementById('an10_y1').value);
+  const x2 = parseFloat(document.getElementById('an10_x2').value);
+  const y2 = parseFloat(document.getElementById('an10_y2').value);
+  if ([x1,y1,x2,y2].some(v => isNaN(v))) { mthResult('an10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all four fields.</div>'); return; }
+  const d = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+  const mx = (x1+x2)/2, my = (y1+y2)/2;
+  const dx = x2-x1;
+  const steps = [];
+  steps.push('d = √((x₂−x₁)² + (y₂−y₁)²) = ' + mthFmt(d));
+  steps.push('Midpoint (' + mthFmt(mx) + ', ' + mthFmt(my) + ')');
+  let m, eq;
+  if (dx === 0) { m = Infinity; eq = 'x = ' + mthFmt(x1); }
+  else {
+    m = (y2-y1)/dx;
+    const c = y1 - m*x1;
+    eq = 'y = ' + mthFmt(m) + 'x + ' + mthFmt(c);
+    steps.push('Gradient m = ' + mthFmt(m));
+    steps.push('Equation: ' + eq);
+  }
+  mthResult('an10_result', '<div class="mth-answer">d = ' + mthFmt(d) + '</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">Midpoint</span><span class="result-cell-value">(' + mthFmt(mx) + ', ' + mthFmt(my) + ')</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Gradient</span><span class="result-cell-value">' + (isFinite(m) ? mthFmt(m) : 'undef') + '</span></div>' +
+    '<div class="result-cell" style="grid-column:1/-1;"><span class="result-cell-label">Line</span><span class="result-cell-value" style="font-size:12px;">' + eq + '</span></div>' +
+    '</div>');
+  mthShowSteps('an10_steps', 'an10_steps_card', steps);
+}
+
+function mthTrig10() {
+  const mode = document.getElementById('tr10_mode').value;
+  const s1 = parseFloat(document.getElementById('tr10_s1').value);
+  const s2 = parseFloat(document.getElementById('tr10_s2').value);
+  if ([s1,s2].some(v => isNaN(v))) { mthResult('tr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both sides.</div>'); return; }
+  const steps = [];
+  let hyp, opp, adj, angle;
+  if (mode === 'opp_adj') {
+    opp = s1; adj = s2;
+    hyp = Math.sqrt(opp*opp + adj*adj);
+    angle = Math.atan2(opp, adj) * 180 / Math.PI;
+    steps.push('hyp = √(opp² + adj²) = ' + mthFmt(hyp));
+    steps.push('θ = tan⁻¹(opp/adj) = ' + mthFmt(angle) + '°');
+  } else if (mode === 'opp_hyp') {
+    opp = s1; hyp = s2;
+    if (hyp <= opp) { mthResult('tr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Hyp must exceed opp.</div>'); return; }
+    adj = Math.sqrt(hyp*hyp - opp*opp);
+    angle = Math.asin(opp/hyp) * 180 / Math.PI;
+    steps.push('adj = √(hyp² − opp²) = ' + mthFmt(adj));
+    steps.push('θ = sin⁻¹(opp/hyp) = ' + mthFmt(angle) + '°');
+  } else {
+    adj = s1; hyp = s2;
+    if (hyp <= adj) { mthResult('tr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Hyp must exceed adj.</div>'); return; }
+    opp = Math.sqrt(hyp*hyp - adj*adj);
+    angle = Math.acos(adj/hyp) * 180 / Math.PI;
+    steps.push('opp = √(hyp² − adj²) = ' + mthFmt(opp));
+    steps.push('θ = cos⁻¹(adj/hyp) = ' + mthFmt(angle) + '°');
+  }
+  mthResult('tr10_result', '<div class="mth-answer">θ = ' + mthFmt(angle) + '°</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">Opp</span><span class="result-cell-value">' + mthFmt(opp) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Adj</span><span class="result-cell-value">' + mthFmt(adj) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Hyp</span><span class="result-cell-value">' + mthFmt(hyp) + '</span></div>' +
+    '</div>');
+  mthShowSteps('tr10_steps', 'tr10_steps_card', steps);
+}
+
+function mthAlgebra11ModeChange() {
+  document.getElementById('a11_ineq_row').classList.toggle('mth-hidden', document.getElementById('a11_mode').value !== 'inequality');
+}
+function mthAlgebra11() {
+  const a = parseFloat(document.getElementById('a11_a').value);
+  const b = parseFloat(document.getElementById('a11_b').value);
+  const c = parseFloat(document.getElementById('a11_c').value);
+  const mode = document.getElementById('a11_mode').value;
+  if ([a,b,c].some(v => isNaN(v)) || a === 0) { mthResult('a11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid a≠0, b, c.</div>'); return; }
+  const disc = b*b - 4*a*c;
+  const steps = [];
+  steps.push('Δ = b² − 4ac = ' + mthFmt(disc));
+  let html = '';
+  if (mode === 'nature') {
+    if (disc > 0) { steps.push('Δ > 0 → two unequal real roots'); html = '<div class="mth-answer multi">Two real unequal roots</div>'; }
+    else if (disc === 0) { steps.push('Δ = 0 → two equal real roots'); html = '<div class="mth-answer multi">Two equal real roots</div>'; }
+    else { steps.push('Δ < 0 → non-real roots'); html = '<div class="mth-answer multi">Non-real roots</div>'; }
+  } else {
+    const roots = solveQuadratic(a,b,c);
+    if (roots.type === 'complex') { mthResult('a11_result','<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">Δ &lt; 0 → no real critical values.</div>'); return; }
+    let r1, r2;
+    if (roots.type === 'two') { r1 = roots.x1; r2 = roots.x2; }
+    else { r1 = r2 = roots.x; }
+    if (r1 > r2) { const t = r1; r1 = r2; r2 = t; }
+    steps.push('Critical values: ' + mthFmt(r1) + ', ' + mthFmt(r2));
+    const sym = document.getElementById('a11_symbol').value;
+    let interval;
+    const opensUp = a > 0;
+    if (opensUp) {
+      if (sym === '>' || sym === '>=') interval = 'x < ' + mthFmt(r1) + ' or x > ' + mthFmt(r2);
+      else interval = mthFmt(r1) + ' < x < ' + mthFmt(r2);
+    } else {
+      if (sym === '>' || sym === '>=') interval = mthFmt(r1) + ' < x < ' + mthFmt(r2);
+      else interval = 'x < ' + mthFmt(r1) + ' or x > ' + mthFmt(r2);
+    }
+    steps.push('Solution: ' + interval);
+    html = '<div class="mth-answer multi">' + interval + '</div>';
+  }
+  mthResult('a11_result', html);
+  mthShowSteps('a11_steps', 'a11_steps_card', steps);
+}
+
+function mthFunctions11() {
+  const base = document.getElementById('f11_base').value;
+  const p = parseFloat(document.getElementById('f11_p').value) || 0;
+  const q = parseFloat(document.getElementById('f11_q').value) || 0;
+  const a = parseFloat(document.getElementById('f11_a').value) || 1;
+  const steps = [];
+  let eq = '';
+  if (base === 'parabola') eq = 'y = ' + mthFmt(a) + '(x + ' + mthFmt(p) + ')² + ' + mthFmt(q);
+  else if (base === 'hyperbola') eq = 'y = ' + mthFmt(a) + '/(x + ' + mthFmt(p) + ') + ' + mthFmt(q);
+  else eq = 'y = ' + mthFmt(a) + '·2^(x + ' + mthFmt(p) + ') + ' + mthFmt(q);
+  steps.push('Transformed: ' + eq);
+  steps.push('Horizontal shift: ' + (p > 0 ? 'left' : 'right') + ' by ' + Math.abs(p));
+  steps.push('Vertical shift: ' + (q > 0 ? 'up' : 'down') + ' by ' + Math.abs(q));
+  if (a !== 1) steps.push('Stretch/reflect by a = ' + mthFmt(a));
+  mthResult('f11_result', '<div class="mth-answer multi">' + eq + '</div>');
+  mthShowSteps('f11_steps', 'f11_steps_card', steps);
+}
+
+function mthSequences11ModeChange() {
+  const m = document.getElementById('s11_mode').value;
+  document.getElementById('s11_sum_inputs').classList.toggle('mth-hidden', m !== 'sum');
+  document.getElementById('s11_sigma_inputs').classList.toggle('mth-hidden', m !== 'sigma');
+}
+function mthSequences11() {
+  const mode = document.getElementById('s11_mode').value;
+  const steps = [];
+  let html = '';
+  if (mode === 'sum') {
+    const a = parseFloat(document.getElementById('s11_a').value);
+    const r = parseFloat(document.getElementById('s11_r').value);
+    if ([a,r].some(v => isNaN(v))) { mthResult('s11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both.</div>'); return; }
+    if (Math.abs(r) >= 1) { mthResult('s11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|r| must be < 1.</div>'); return; }
+    const s = a / (1 - r);
+    steps.push('S_∞ = a / (1 − r) = ' + mthFmt(s));
+    html = '<div class="mth-answer">S_∞ = ' + mthFmt(s) + '</div>';
+  } else {
+    const a = parseFloat(document.getElementById('s11_sa').value);
+    const d = parseFloat(document.getElementById('s11_sd').value);
+    const n = parseFloat(document.getElementById('s11_sn').value);
+    const type = document.getElementById('s11_stype').value;
+    if ([a,d,n].some(v => isNaN(v))) { mthResult('s11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all.</div>'); return; }
+    let sum;
+    if (type === 'arith') sum = (n/2) * (2*a + (n-1)*d);
+    else sum = d === 1 ? n * a : a * (Math.pow(d, n) - 1) / (d - 1);
+    steps.push('Σ = ' + mthFmt(sum));
+    html = '<div class="mth-answer">Σ = ' + mthFmt(sum) + '</div>';
+  }
+  mthResult('s11_result', html);
+  mthShowSteps('s11_steps', 's11_steps_card', steps);
+}
+
+function mthFinance11ModeChange() {
+  const m = document.getElementById('fi11_mode').value;
+  document.getElementById('fi11_fv_inputs').classList.toggle('mth-hidden', m !== 'fv');
+  document.getElementById('fi11_pv_inputs').classList.toggle('mth-hidden', m !== 'pv');
+  document.getElementById('fi11_eff_inputs').classList.toggle('mth-hidden', m !== 'eff');
+}
+function mthFinance11() {
+  const mode = document.getElementById('fi11_mode').value;
+  const steps = [];
+  let html = '';
+  if (mode === 'fv') {
+    const x = parseFloat(document.getElementById('fi11_x').value);
+    const i = parseFloat(document.getElementById('fi11_i').value);
+    const n = parseFloat(document.getElementById('fi11_n').value);
+    if ([x,i,n].some(v => isNaN(v)) || i === 0) { mthResult('fi11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all (i≠0).</div>'); return; }
+    const F = x * (Math.pow(1+i, n) - 1) / i;
+    steps.push('F = x[(1+i)^n − 1]/i = ' + mthFmt(F));
+    html = '<div class="mth-answer">F = ' + mthFmt(F) + '</div>';
+  } else if (mode === 'pv') {
+    const x = parseFloat(document.getElementById('fi11_px').value);
+    const i = parseFloat(document.getElementById('fi11_pi').value);
+    const n = parseFloat(document.getElementById('fi11_pn').value);
+    if ([x,i,n].some(v => isNaN(v)) || i === 0) { mthResult('fi11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all (i≠0).</div>'); return; }
+    const P = x * (1 - Math.pow(1+i, -n)) / i;
+    steps.push('P = x[1 − (1+i)^(−n)]/i = ' + mthFmt(P));
+    html = '<div class="mth-answer">P = ' + mthFmt(P) + '</div>';
+  } else {
+    const inom = parseFloat(document.getElementById('fi11_inom').value);
+    const m = parseFloat(document.getElementById('fi11_m').value);
+    if ([inom, m].some(v => isNaN(v)) || m === 0) { mthResult('fi11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both (m≠0).</div>'); return; }
+    const ieff = Math.pow(1 + inom/m, m) - 1;
+    steps.push('i_eff = ' + mthFmt(ieff) + ' = ' + mthFmt(ieff*100) + '%');
+    html = '<div class="mth-answer">i_eff = ' + mthFmt(ieff*100) + '%</div>';
+  }
+  mthResult('fi11_result', html);
+  mthShowSteps('fi11_steps', 'fi11_steps_card', steps);
+}
+
+function mthProbability11ModeChange() {
+  document.getElementById('pr11_r_wrap').classList.toggle('mth-hidden', document.getElementById('pr11_mode').value === 'fact');
+}
+function mthProbability11() {
+  const mode = document.getElementById('pr11_mode').value;
+  const n = parseInt(document.getElementById('pr11_n').value);
+  const r = parseInt(document.getElementById('pr11_r').value);
+  const steps = [];
+  const fact = (k) => { let f = 1; for (let i = 2; i <= k; i++) f *= i; return f; };
+  if (isNaN(n) || n < 0) { mthResult('pr11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid n.</div>'); return; }
+  let result, label;
+  if (mode === 'fact') { result = fact(n); label = n + '!'; }
+  else if (mode === 'perm') {
+    if (isNaN(r) || r > n || r < 0) { mthResult('pr11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">0 ≤ r ≤ n needed.</div>'); return; }
+    result = fact(n) / fact(n - r); label = n + 'P' + r;
+  } else {
+    if (isNaN(r) || r > n || r < 0) { mthResult('pr11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">0 ≤ r ≤ n needed.</div>'); return; }
+    result = fact(n) / (fact(r) * fact(n - r)); label = n + 'C' + r;
+  }
+  steps.push(label + ' = ' + result);
+  mthResult('pr11_result', '<div class="mth-answer">' + label + ' = ' + result + '</div>');
+  mthShowSteps('pr11_steps', 'pr11_steps_card', steps);
+}
+
+function mthStatistics11() {
+  const rawX = document.getElementById('st11_x').value.trim();
+  const rawY = document.getElementById('st11_y').value.trim();
+  const X = rawX.split(/[,\s]+/).map(s => parseFloat(s)).filter(n => !isNaN(n));
+  const Y = rawY.split(/[,\s]+/).map(s => parseFloat(s)).filter(n => !isNaN(n));
+  if (X.length === 0 || X.length !== Y.length) { mthResult('st11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">X and Y must have equal length.</div>'); return; }
+  const n = X.length;
+  const mx = X.reduce((a,b)=>a+b,0)/n;
+  const my = Y.reduce((a,b)=>a+b,0)/n;
+  let sxx=0, syy=0, sxy=0;
+  for (let i=0;i<n;i++) { const dx=X[i]-mx, dy=Y[i]-my; sxx += dx*dx; syy += dy*dy; sxy += dx*dy; }
+  const b = sxy/sxx;
+  const a = my - b*mx;
+  const r = sxy / Math.sqrt(sxx * syy);
+  const sx = Math.sqrt(sxx/(n-1));
+  const sy = Math.sqrt(syy/(n-1));
+  const steps = [];
+  steps.push('x̄ = ' + mthFmt(mx) + ', ȳ = ' + mthFmt(my));
+  steps.push('b = Sxy/Sxx = ' + mthFmt(b));
+  steps.push('a = ȳ − b·x̄ = ' + mthFmt(a));
+  steps.push('r = ' + mthFmt(r));
+  const html = '<div class="mth-answer">ŷ = ' + mthFmt(a) + ' + ' + mthFmt(b) + 'x</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">r</span><span class="result-cell-value">' + mthFmt(r) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">σx</span><span class="result-cell-value">' + mthFmt(sx) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">σy</span><span class="result-cell-value">' + mthFmt(sy) + '</span></div>' +
+    '</div>';
+  mthResult('st11_result', html);
+  mthShowSteps('st11_steps', 'st11_steps_card', steps);
+}
+
+function mthAnalytical11() {
+  const mInput = document.getElementById('an11_m').value;
+  const thetaInput = document.getElementById('an11_theta').value;
+  const steps = [];
+  let html = '';
+  if (mInput !== '' && thetaInput === '') {
+    const m = parseFloat(mInput);
+    const theta = Math.atan(m) * 180 / Math.PI;
+    const normalized = theta < 0 ? theta + 180 : theta;
+    steps.push('θ = tan⁻¹(' + mthFmt(m) + ') = ' + mthFmt(normalized) + '°');
+    html = '<div class="mth-answer">θ = ' + mthFmt(normalized) + '°</div>';
+  } else if (thetaInput !== '' && mInput === '') {
+    const theta = parseFloat(thetaInput);
+    const m = Math.tan(theta * Math.PI / 180);
+    steps.push('m = tan(' + mthFmt(theta) + '°) = ' + mthFmt(m));
+    html = '<div class="mth-answer">m = ' + mthFmt(m) + '</div>';
+  } else {
+    mthResult('an11_result','<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">Leave one field blank.</div>');
+    return;
+  }
+  mthResult('an11_result', html);
+  mthShowSteps('an11_steps', 'an11_steps_card', steps);
+}
+
+function mthTrig11ModeChange() {
+  const m = document.getElementById('tr11_mode').value;
+  document.getElementById('tr11_compound').classList.toggle('mth-hidden', m !== 'compound');
+  document.getElementById('tr11_sine').classList.toggle('mth-hidden', m !== 'sine');
+  document.getElementById('tr11_cosine').classList.toggle('mth-hidden', m !== 'cosine');
+  document.getElementById('tr11_area').classList.toggle('mth-hidden', m !== 'area');
+}
+function mthTrig11() {
+  const mode = document.getElementById('tr11_mode').value;
+  const steps = [];
+  let html = '';
+  if (mode === 'compound') {
+    const A = parseFloat(document.getElementById('tr11_A').value);
+    const B = parseFloat(document.getElementById('tr11_B').value);
+    const radA = A * Math.PI / 180, radB = B * Math.PI / 180;
+    const sinAB = Math.sin(radA + radB);
+    const cosAB = Math.cos(radA + radB);
+    steps.push('sin(A+B) = ' + mthFmt(sinAB));
+    steps.push('cos(A+B) = ' + mthFmt(cosAB));
+    html = '<div class="mth-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">sin(A+B)</span><span class="result-cell-value">' + mthFmt(sinAB) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">cos(A+B)</span><span class="result-cell-value">' + mthFmt(cosAB) + '</span></div>' +
+      '</div>';
+  } else if (mode === 'sine') {
+    const a = parseFloat(document.getElementById('tr11_sa').value);
+    const A = parseFloat(document.getElementById('tr11_sA').value);
+    const bInput = document.getElementById('tr11_sb').value;
+    const B = parseFloat(document.getElementById('tr11_sB').value);
+    if (bInput !== '') { steps.push('Check: a/sinA = ' + mthFmt(a/Math.sin(A*Math.PI/180))); }
+    else {
+      const b = a * Math.sin(B*Math.PI/180) / Math.sin(A*Math.PI/180);
+      steps.push('b = a·sinB/sinA = ' + mthFmt(b));
+      html = '<div class="mth-answer">b = ' + mthFmt(b) + '</div>';
+    }
+  } else if (mode === 'cosine') {
+    const b = parseFloat(document.getElementById('tr11_cb').value);
+    const c = parseFloat(document.getElementById('tr11_cc').value);
+    const A = parseFloat(document.getElementById('tr11_cA').value);
+    const a2 = b*b + c*c - 2*b*c*Math.cos(A*Math.PI/180);
+    const a = Math.sqrt(a2);
+    steps.push('a² = ' + mthFmt(a2) + ', a = ' + mthFmt(a));
+    html = '<div class="mth-answer">a = ' + mthFmt(a) + '</div>';
+  } else {
+    const a = parseFloat(document.getElementById('tr11_aa').value);
+    const b = parseFloat(document.getElementById('tr11_ab').value);
+    const C = parseFloat(document.getElementById('tr11_aC').value);
+    const area = 0.5 * a * b * Math.sin(C*Math.PI/180);
+    steps.push('Area = ½ab·sinC = ' + mthFmt(area));
+    html = '<div class="mth-answer">Area = ' + mthFmt(area) + '</div>';
+  }
+  mthResult('tr11_result', html);
+  mthShowSteps('tr11_steps', 'tr11_steps_card', steps);
+}
+
+function mthEuclidean11() {
+  const t = document.getElementById('eu11_theorem').value;
+  const theorems = {
+    '1': { name: 'Perpendicular from centre bisects chord', statement: 'The line drawn from the centre perpendicular to a chord bisects the chord.', converse: 'The line from centre that bisects a chord is perpendicular to it.' },
+    '2': { name: 'Angle at centre', statement: 'The angle at the centre is twice the angle at the circumference subtended by the same arc.' },
+    '3': { name: 'Angle in semicircle', statement: 'The angle subtended by a diameter at the circumference is 90°.' },
+    '4': { name: 'Angles in same segment', statement: 'Angles subtended by the same arc in the same segment are equal.' },
+    '5': { name: 'Cyclic quadrilateral', statement: 'Opposite angles of a cyclic quad are supplementary (sum to 180°).' },
+    '6': { name: 'Tangent perpendicular to radius', statement: 'A tangent is perpendicular to the radius at the point of contact.' },
+    '7': { name: 'Two tangents from same point', statement: 'Two tangents from the same external point are equal in length.' },
+    '8': { name: 'Tan-chord theorem', statement: 'The angle between a tangent and a chord equals the angle in the alternate segment.' }
+  };
+  const th = theorems[t];
+  let html = '<div class="mth-answer multi">' + th.name + '</div>';
+  html += '<div class="result-sub" style="margin-top:12px;">' + th.statement + '</div>';
+  if (th.converse) html += '<div class="result-sub" style="margin-top:8px;"><strong>Converse:</strong> ' + th.converse + '</div>';
+  mthResult('eu11_result', html);
+}
+
+function mthCalcSub(sub) {
+  document.querySelectorAll('.mth-subpill').forEach(p => p.classList.toggle('active', p.getAttribute('data-calc') === sub));
+  document.querySelectorAll('.calc-subpanel').forEach(p => p.classList.add('mth-hidden'));
+  const target = document.getElementById('calc-' + sub);
+  if (target) target.classList.remove('mth-hidden');
+}
+
+function mthFirstPrinciples() {
+  const a = parseFloat(document.getElementById('fp_a').value);
+  const b = parseFloat(document.getElementById('fp_b').value);
+  const c = parseFloat(document.getElementById('fp_c').value);
+  if ([a,b,c].some(v => isNaN(v))) { mthResult('fp_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all.</div>'); return; }
+  const steps = [];
+  steps.push('f(x) = ' + mthFmt(a) + 'x² + ' + mthFmt(b) + 'x + ' + mthFmt(c));
+  steps.push('f(x+h) = ' + mthFmt(a) + '(x+h)² + ' + mthFmt(b) + '(x+h) + ' + mthFmt(c));
+  steps.push('f(x+h) − f(x) = ' + mthFmt(a) + '(2xh + h²) + ' + mthFmt(b) + 'h');
+  steps.push('[f(x+h) − f(x)] / h = ' + mthFmt(2*a) + 'x + ' + mthFmt(a) + 'h + ' + mthFmt(b));
+  steps.push('As h → 0: f\'(x) = ' + mthFmt(2*a) + 'x + ' + mthFmt(b));
+  mthResult('fp_result', '<div class="mth-answer">f\'(x) = ' + mthFmt(2*a) + 'x + ' + mthFmt(b) + '</div>');
+  mthShowSteps('fp_steps', 'fp_steps_card', steps);
+}
+
+function mthDifferentiate() {
+  try {
+    const poly = parsePoly(document.getElementById('df_f').value);
+    const d = polyDerivative(poly);
+    const steps = [];
+    steps.push('f(x) = ' + polyToString(poly));
+    steps.push('f\'(x) = ' + polyToString(d));
+    mthResult('df_result', '<div class="mth-answer">f\'(x) = ' + polyToString(d) + '</div>');
+    mthShowSteps('df_steps', 'df_steps_card', steps);
+  } catch (e) {
+    mthResult('df_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Parse error.</div>');
+  }
+}
+
+function mthTangent() {
+  try {
+    const poly = parsePoly(document.getElementById('tn_f').value);
+    const a = parseFloat(document.getElementById('tn_a').value);
+    const d = polyDerivative(poly);
+    const fa = polyEval(poly, a);
+    const m = polyEval(d, a);
+    const steps = [];
+    steps.push('f(a) = ' + mthFmt(fa));
+    steps.push('m = f\'(a) = ' + mthFmt(m));
+    const c = fa - m * a;
+    const tEq = 'y = ' + mthFmt(m) + 'x + ' + mthFmt(c);
+    steps.push('Tangent: ' + tEq);
+    let nEq = 'undefined';
+    if (m !== 0) {
+      const mn = -1/m;
+      const cn = fa - mn * a;
+      nEq = 'y = ' + mthFmt(mn) + 'x + ' + mthFmt(cn);
+      steps.push('Normal: ' + nEq);
+    }
+    mthResult('tn_result', '<div class="mth-answer multi">Tangent: ' + tEq + '</div><div class="mth-answer multi" style="color:var(--text);">Normal: ' + nEq + '</div>');
+    mthShowSteps('tn_steps', 'tn_steps_card', steps);
+  } catch (e) {
+    mthResult('tn_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Parse error.</div>');
+  }
+}
+
+function mthStationary() {
+  try {
+    const poly = parsePoly(document.getElementById('sp_f').value);
+    const d = polyDerivative(poly);
+    const steps = [];
+    steps.push('f(x) = ' + polyToString(poly));
+    steps.push('f\'(x) = ' + polyToString(d));
+    const dByExp = {};
+    d.forEach(t => { dByExp[t.exp] = (dByExp[t.exp] || 0) + t.coeff; });
+    const a2 = dByExp[2] || 0, a1 = dByExp[1] || 0, a0 = dByExp[0] || 0;
+    const roots = solveQuadratic(a2, a1, a0);
+    const dd = polyDerivative(d);
+    let pointList = [];
+    if (roots.type === 'two') pointList = [roots.x1, roots.x2];
+    else if (roots.type === 'one') pointList = [roots.x];
+    else { mthResult('sp_result','<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">No real solutions.</div>'); return; }
+    let html = '';
+    pointList.forEach(x => {
+      const y = polyEval(poly, x);
+      const y2 = polyEval(dd, x);
+      let type = y2 > 0 ? 'min' : y2 < 0 ? 'max' : 'inflection';
+      steps.push('At x = ' + mthFmt(x) + ': (' + mthFmt(x) + ', ' + mthFmt(y) + ') → ' + type);
+      html += '<div class="mth-answer multi">(' + mthFmt(x) + ', ' + mthFmt(y) + ') — ' + type + '</div>';
+    });
+    mthResult('sp_result', html);
+    mthShowSteps('sp_steps', 'sp_steps_card', steps);
+  } catch (e) {
+    mthResult('sp_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Parse error.</div>');
+  }
+}
+
+function mthCubicSketch() {
+  const a = parseFloat(document.getElementById('cb_a').value);
+  const b = parseFloat(document.getElementById('cb_b').value);
+  const c = parseFloat(document.getElementById('cb_c').value);
+  const d = parseFloat(document.getElementById('cb_d').value);
+  if ([a,b,c,d].some(v => isNaN(v)) || a === 0) { mthResult('cb_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid a≠0, b, c, d.</div>'); return; }
+  const f = [{coeff:a,exp:3},{coeff:b,exp:2},{coeff:c,exp:1},{coeff:d,exp:0}];
+  const d1 = polyDerivative(f);
+  const d2 = polyDerivative(d1);
+  const steps = [];
+  steps.push('f(x) = ' + polyToString(f));
+  steps.push('f\'(x) = ' + polyToString(d1));
+  steps.push('f\'\'(x) = ' + polyToString(d2));
+  steps.push('y-intercept: (0, ' + mthFmt(d) + ')');
+  const inflectX = -b / (3*a);
+  const inflectY = polyEval(f, inflectX);
+  steps.push('Inflection: (' + mthFmt(inflectX) + ', ' + mthFmt(inflectY) + ')');
+  mthResult('cb_result', '<div class="mth-answer multi">y-int (0, ' + mthFmt(d) + ') · Inflection (' + mthFmt(inflectX) + ', ' + mthFmt(inflectY) + ')</div>');
+  mthShowSteps('cb_steps', 'cb_steps_card', steps);
+}
+
+function mthOptimise() {
+  const L = parseFloat(document.getElementById('op_L').value);
+  if (isNaN(L) || L <= 0) { mthResult('op_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid L.</div>'); return; }
+  const A = 12, B = -8*L, C = L*L;
+  const disc = B*B - 4*A*C;
+  if (disc < 0) { mthResult('op_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">No real critical points.</div>'); return; }
+  const x1 = (-B + Math.sqrt(disc)) / (2*A);
+  const x2 = (-B - Math.sqrt(disc)) / (2*A);
+  const valid = [x1, x2].filter(x => x > 0 && x < L/2);
+  const steps = [];
+  steps.push('V(x) = x(L − 2x)² with L = ' + mthFmt(L));
+  steps.push('V\'(x) = 12x² − ' + mthFmt(8*L) + 'x + ' + mthFmt(L*L));
+  let html = '';
+  valid.forEach(x => {
+    const V = x * Math.pow(L - 2*x, 2);
+    steps.push('x = ' + mthFmt(x) + ' → V = ' + mthFmt(V));
+    html += '<div class="mth-answer multi">x = ' + mthFmt(x) + ' → V_max = ' + mthFmt(V) + '</div>';
+  });
+  mthResult('op_result', html);
+  mthShowSteps('op_steps', 'op_steps_card', steps);
+}
+
+function mthRates() {
+  try {
+    const poly = parsePoly(document.getElementById('rt_s').value.replace(/t/g, 'x'));
+    const t = parseFloat(document.getElementById('rt_t').value);
+    const v = polyDerivative(poly);
+    const a = polyDerivative(v);
+    const steps = [];
+    steps.push('s(t) = ' + polyToString(poly).replace(/x/g, 't'));
+    steps.push('v(t) = ' + polyToString(v).replace(/x/g, 't'));
+    steps.push('a(t) = ' + polyToString(a).replace(/x/g, 't'));
+    const sV = polyEval(poly, t);
+    const vV = polyEval(v, t);
+    const aV = polyEval(a, t);
+    steps.push('At t = ' + mthFmt(t) + ': s = ' + mthFmt(sV) + ', v = ' + mthFmt(vV) + ', a = ' + mthFmt(aV));
+    mthResult('rt_result', '<div class="mth-answer">v = ' + mthFmt(vV) + '</div><div class="mth-answer multi" style="color:var(--text);">a = ' + mthFmt(aV) + '</div>');
+    mthShowSteps('rt_steps', 'rt_steps_card', steps);
+  } catch (e) {
+    mthResult('rt_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Parse error.</div>');
+  }
+}
+
+function mthFunctions12() {
+  const t = document.getElementById('f12_type').value;
+  const a = parseFloat(document.getElementById('f12_a').value);
+  const b = parseFloat(document.getElementById('f12_b').value);
+  const steps = [];
+  let eq = '';
+  if (t === 'linear') {
+    const mInv = 1/a, cInv = -b/a;
+    steps.push('Swap x and y, solve for y');
+    eq = 'y = ' + mthFmt(mInv) + 'x + ' + mthFmt(cInv);
+  } else if (t === 'parabola') {
+    steps.push('Swap x and y: x = ' + mthFmt(a) + 'y²');
+    steps.push('y² = x/' + mthFmt(a));
+    eq = 'y = ±√(x/' + mthFmt(a) + ')';
+  } else if (t === 'exponential') {
+    steps.push('Swap: x = ' + mthFmt(a) + '^y');
+    eq = 'y = log_' + mthFmt(a) + '(x)';
+  } else {
+    steps.push('Self-inverse function');
+    eq = 'y = ' + mthFmt(a) + '/x';
+  }
+  steps.push('Inverse: ' + eq);
+  mthResult('f12_result', '<div class="mth-answer multi">' + eq + '</div>');
+  mthShowSteps('f12_steps', 'f12_steps_card', steps);
+}
+
+function mthTrig12ModeChange() {
+  const m = document.getElementById('tr12_mode').value;
+  document.getElementById('tr12_gen_inputs').classList.toggle('mth-hidden', m !== 'gen');
+  document.getElementById('tr12_expr_inputs').classList.toggle('mth-hidden', m !== 'expr');
+}
+function mthTrig12() {
+  const mode = document.getElementById('tr12_mode').value;
+  const steps = [];
+  let html = '';
+  if (mode === 'gen') {
+    const ratio = document.getElementById('tr12_ratio').value;
+    const k = parseFloat(document.getElementById('tr12_k').value);
+    if (isNaN(k)) { mthResult('tr12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter k.</div>'); return; }
+    let base;
+    let general = '';
+    if (ratio === 'sin') {
+      if (Math.abs(k) > 1) { mthResult('tr12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|k| ≤ 1.</div>'); return; }
+      base = Math.asin(k) * 180 / Math.PI;
+      general = 'θ = ' + mthFmt(base) + '° + 360°k OR θ = ' + mthFmt(180 - base) + '° + 360°k';
+    } else if (ratio === 'cos') {
+      if (Math.abs(k) > 1) { mthResult('tr12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|k| ≤ 1.</div>'); return; }
+      base = Math.acos(k) * 180 / Math.PI;
+      general = 'θ = ±' + mthFmt(base) + '° + 360°k';
+    } else {
+      base = Math.atan(k) * 180 / Math.PI;
+      general = 'θ = ' + mthFmt(base) + '° + 180°k';
+    }
+    steps.push('Reference angle: ' + mthFmt(base) + '°');
+    steps.push('General solution: ' + general);
+    html = '<div class="mth-answer multi">' + general + '</div>';
+  } else {
+    const ang = parseFloat(document.getElementById('tr12_ang').value);
+    const fn = document.getElementById('tr12_fn').value;
+    const rad = ang * Math.PI / 180;
+    let val;
+    if (fn === 'cos') val = Math.cos(rad);
+    else if (fn === 'sin') val = Math.sin(rad);
+    else val = Math.tan(rad);
+    steps.push(fn + '(' + ang + '°) = ' + mthFmt(val));
+    html = '<div class="mth-answer multi">' + fn + '(' + ang + '°) = ' + mthFmt(val) + '</div>';
+  }
+  mthResult('tr12_result', html);
+  mthShowSteps('tr12_steps', 'tr12_steps_card', steps);
+}
+
+function mthEuclidean12() {
+  const t = document.getElementById('eu12_theorem').value;
+  const info = {
+    converse_cyclic: { name: 'Converse: prove quad is cyclic', detail: 'If opposite angles of a quadrilateral sum to 180°, the quadrilateral is cyclic.' },
+    converse_tangent: { name: 'Converse: prove line is tangent', detail: 'If a line is perpendicular to a radius at its endpoint on the circle, it is a tangent.' },
+    midpoint: { name: 'Midpoint theorem', detail: 'The line joining the midpoints of two sides of a triangle is parallel to the third side and half its length.' },
+    proportional: { name: 'Proportionality theorem', detail: 'A line parallel to one side of a triangle divides the other two sides proportionally.' },
+    similar: { name: 'Similar triangles', detail: 'Two triangles are similar if their corresponding angles are equal. Corresponding sides are proportional.' },
+    pythagoras: { name: 'Pythagoras', detail: 'In a right-angled triangle, a² + b² = c².' }
+  };
+  const i = info[t];
+  mthResult('eu12_result', '<div class="mth-answer multi">' + i.name + '</div><div class="result-sub" style="margin-top:12px;">' + i.detail + '</div>');
+}
+
+function mthAnalytical12ModeChange() {
+  const m = document.getElementById('an12_mode').value;
+  document.getElementById('an12_circle_inputs').classList.toggle('mth-hidden', m !== 'circle');
+  document.getElementById('an12_general_inputs').classList.toggle('mth-hidden', m !== 'general');
+  document.getElementById('an12_tangent_inputs').classList.toggle('mth-hidden', m !== 'tangent');
+}
+function mthAnalytical12() {
+  const mode = document.getElementById('an12_mode').value;
+  const steps = [];
+  let html = '';
+  if (mode === 'circle') {
+    const a = parseFloat(document.getElementById('an12_a').value);
+    const b = parseFloat(document.getElementById('an12_b').value);
+    const r = parseFloat(document.getElementById('an12_r').value);
+    steps.push('(x − ' + mthFmt(a) + ')² + (y − ' + mthFmt(b) + ')² = ' + mthFmt(r*r));
+    html = '<div class="mth-answer multi">(x − ' + mthFmt(a) + ')² + (y − ' + mthFmt(b) + ')² = ' + mthFmt(r*r) + '</div>' +
+      '<div class="result-sub">Centre (' + mthFmt(a) + ', ' + mthFmt(b) + '), r = ' + mthFmt(r) + '</div>';
+  } else if (mode === 'general') {
+    const D = parseFloat(document.getElementById('an12_D').value);
+    const E = parseFloat(document.getElementById('an12_E').value);
+    const F = parseFloat(document.getElementById('an12_F').value);
+    const a = -D/2, b = -E/2;
+    const r2 = a*a + b*b - F;
+    if (r2 < 0) { mthResult('an12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">r² < 0.</div>'); return; }
+    const r = Math.sqrt(r2);
+    steps.push('Centre (' + mthFmt(a) + ', ' + mthFmt(b) + '), r = ' + mthFmt(r));
+    html = '<div class="mth-answer multi">Centre (' + mthFmt(a) + ', ' + mthFmt(b) + '), r = ' + mthFmt(r) + '</div>';
+  } else {
+    const a = parseFloat(document.getElementById('an12_ta').value);
+    const b = parseFloat(document.getElementById('an12_tb').value);
+    const px = parseFloat(document.getElementById('an12_px').value);
+    const py = parseFloat(document.getElementById('an12_py').value);
+    const dx = px - a, dy = py - b;
+    if (dx === 0) {
+      html = '<div class="mth-answer multi">Tangent: y = ' + mthFmt(py) + '</div>';
+    } else {
+      const mRad = dy / dx;
+      const mTan = -1 / mRad;
+      const c = py - mTan * px;
+      steps.push('Radius gradient ' + mthFmt(mRad) + ', tangent gradient ' + mthFmt(mTan));
+      html = '<div class="mth-answer multi">Tangent: y = ' + mthFmt(mTan) + 'x + ' + mthFmt(c) + '</div>';
+    }
+  }
+  mthResult('an12_result', html);
+  mthShowSteps('an12_steps', 'an12_steps_card', steps);
+}
+
+function mthStatistics12() {
+  const mu = parseFloat(document.getElementById('st12_mu').value);
+  const sigma = parseFloat(document.getElementById('st12_sigma').value);
+  const x = parseFloat(document.getElementById('st12_x').value);
+  if ([mu,sigma,x].some(v => isNaN(v)) || sigma <= 0) { mthResult('st12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid (σ > 0).</div>'); return; }
+  const z = (x - mu) / sigma;
+  function erf(z) {
+    const t = 1 / (1 + 0.3275911 * Math.abs(z));
+    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z*z);
+    return z >= 0 ? y : -y;
+  }
+  const pctBelow = 0.5 * (1 + erf(z / Math.SQRT2)) * 100;
+  const steps = [];
+  steps.push('z = (x − μ)/σ = ' + mthFmt(z));
+  steps.push('% below x ≈ ' + mthFmt(pctBelow) + '%');
+  mthResult('st12_result', '<div class="mth-answer">z = ' + mthFmt(z) + '</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">Below x</span><span class="result-cell-value">' + mthFmt(pctBelow) + '%</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Above x</span><span class="result-cell-value">' + mthFmt(100-pctBelow) + '%</span></div>' +
+    '</div>');
+  mthShowSteps('st12_steps', 'st12_steps_card', steps);
+}
+
+function mthProbability12() {
+  const a = parseFloat(document.getElementById('pb12_a').value) || 0;
+  const b = parseFloat(document.getElementById('pb12_b').value) || 0;
+  const c = parseFloat(document.getElementById('pb12_c').value) || 0;
+  const ab = parseFloat(document.getElementById('pb12_ab').value) || 0;
+  const ac = parseFloat(document.getElementById('pb12_ac').value) || 0;
+  const bc = parseFloat(document.getElementById('pb12_bc').value) || 0;
+  const abc = parseFloat(document.getElementById('pb12_abc').value) || 0;
+  const none = parseFloat(document.getElementById('pb12_none').value) || 0;
+  const total = a + b + c + ab + ac + bc + abc + none;
+  if (total === 0) { mthResult('pb12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Total must be non-zero.</div>'); return; }
+  const PA = (a + ab + ac + abc) / total;
+  const PB = (b + ab + bc + abc) / total;
+  const PC = (c + ac + bc + abc) / total;
+  const PAB = (ab + abc) / total;
+  const PAC = (ac + abc) / total;
+  const PBC = (bc + abc) / total;
+  const PABC = abc / total;
+  const PUnion = (a + b + c + ab + ac + bc + abc) / total;
+  mthResult('pb12_result', '<div class="mth-answer">P(A ∪ B ∪ C) = ' + mthFmt(PUnion) + '</div>' +
+    '<div class="mth-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">P(A)</span><span class="result-cell-value">' + mthFmt(PA) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(B)</span><span class="result-cell-value">' + mthFmt(PB) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(C)</span><span class="result-cell-value">' + mthFmt(PC) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(A∩B)</span><span class="result-cell-value">' + mthFmt(PAB) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(A∩C)</span><span class="result-cell-value">' + mthFmt(PAC) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(B∩C)</span><span class="result-cell-value">' + mthFmt(PBC) + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">P(A∩B∩C)</span><span class="result-cell-value">' + mthFmt(PABC) + '</span></div>' +
+    '</div>');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  mthSetGrade(10);
+});
+</script>
+</body>
+</html>
