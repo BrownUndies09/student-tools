@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemistry Tools - Grade 10, 11 & 12 NSC Calculator</title>
+<meta name="description" content="Free NSC Chemistry calculators for Grade 10, 11 and 12. Mole, stoichiometry, concentration, pH, titrations, equilibrium, electrochemistry, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .chem-tool-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .chem-tool-pill {
+    padding: 7px 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chem-tool-pill:hover { border-color: var(--accent); color: var(--text); }
+  .chem-tool-pill.active {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .chem-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 500px) { .chem-input-grid { grid-template-columns: 1fr; } }
+
+  .chem-answer {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--success);
+    font-family: var(--font-mono);
+    margin: 8px 0;
+    word-break: break-word;
+    line-height: 1.15;
+  }
+  .chem-answer.multi { font-size: 22px; }
+  .chem-input {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+  .chem-step {
+    padding: 12px 16px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .chem-step .step-num {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    color: var(--accent-text);
+    border-radius: 50%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 600;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .chem-step .step-row { display: flex; align-items: flex-start; }
+  .chem-formula {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    margin: 0 2px;
+  }
+  .chem-formula-note {
+    padding: 10px 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .chem-formula-note strong { color: var(--text); }
+  .chem-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .chem-const-note {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+  }
+  .chem-hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Chemistry Tools</h1>
+    <p>NSC Grade 10, 11 &amp; 12 Chemistry calculators with step-by-step working.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab active" id="tabG10" onclick="chemSetGrade(10)">Grade 10</button>
+      <button class="tab" id="tabG11" onclick="chemSetGrade(11)">Grade 11</button>
+      <button class="tab" id="tabG12" onclick="chemSetGrade(12)">Grade 12</button>
+    </div>
+
+    <div id="chemGrade10Tools">
+      <div class="chem-tool-select">
+        <button class="chem-tool-pill active" data-g10-tool="mole" onclick="chemSelectTool10('mole')">Mole Calculator</button>
+        <button class="chem-tool-pill" data-g10-tool="molarvol" onclick="chemSelectTool10('molarvol')">Molar Volume</button>
+        <button class="chem-tool-pill" data-g10-tool="conc" onclick="chemSelectTool10('conc')">Concentration</button>
+        <button class="chem-tool-pill" data-g10-tool="empirical" onclick="chemSelectTool10('empirical')">Empirical / Molecular</button>
+        <button class="chem-tool-pill" data-g10-tool="percentcomp" onclick="chemSelectTool10('percentcomp')">% Composition</button>
+        <button class="chem-tool-pill" data-g10-tool="stoich" onclick="chemSelectTool10('stoich')">Stoichiometry</button>
+        <button class="chem-tool-pill" data-g10-tool="yield" onclick="chemSelectTool10('yield')">% Yield</button>
+      </div>
+    </div>
+
+    <div id="chemGrade11Tools" class="chem-hidden">
+      <div class="chem-tool-select">
+        <button class="chem-tool-pill active" data-g11-tool="enthalpy" onclick="chemSelectTool11('enthalpy')">Enthalpy ΔH</button>
+        <button class="chem-tool-pill" data-g11-tool="rate" onclick="chemSelectTool11('rate')">Reaction Rate</button>
+        <button class="chem-tool-pill" data-g11-tool="kc" onclick="chemSelectTool11('kc')">Equilibrium K_c</button>
+        <button class="chem-tool-pill" data-g11-tool="lechat" onclick="chemSelectTool11('lechat')">Le Chatelier</button>
+        <button class="chem-tool-pill" data-g11-tool="ph" onclick="chemSelectTool11('ph')">pH / pOH</button>
+        <button class="chem-tool-pill" data-g11-tool="titration" onclick="chemSelectTool11('titration')">Titration</button>
+        <button class="chem-tool-pill" data-g11-tool="imf" onclick="chemSelectTool11('imf')">Intermolecular Forces</button>
+        <button class="chem-tool-pill" data-g11-tool="vsepr" onclick="chemSelectTool11('vsepr')">VSEPR Shape</button>
+      </div>
+    </div>
+
+    <div id="chemGrade12Tools" class="chem-hidden">
+      <div class="chem-tool-select">
+        <button class="chem-tool-pill active" data-g12-tool="kc12" onclick="chemSelectTool12('kc12')">K_c Advanced</button>
+        <button class="chem-tool-pill" data-g12-tool="buffer" onclick="chemSelectTool12('buffer')">Buffer pH</button>
+        <button class="chem-tool-pill" data-g12-tool="galvanic" onclick="chemSelectTool12('galvanic')">Galvanic Cell</button>
+        <button class="chem-tool-pill" data-g12-tool="electrolysis" onclick="chemSelectTool12('electrolysis')">Electrolysis</button>
+        <button class="chem-tool-pill" data-g12-tool="redox" onclick="chemSelectTool12('redox')">Oxidation Numbers</button>
+        <button class="chem-tool-pill" data-g12-tool="organic" onclick="chemSelectTool12('organic')">Organic Reactions</button>
+        <button class="chem-tool-pill" data-g12-tool="ph12" onclick="chemSelectTool12('ph12')">Weak Acid pH</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 10 TOOLS ============ -->
+
+  <!-- Mole Calculator -->
+  <div id="tool-mole" class="chem-tool-panel">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Mole equation:</strong>
+        <span class="chem-formula">n = m / M</span><br>
+        n = moles (mol), m = mass (g), M = molar mass (g/mol).<br>
+        Leave the unknown blank. Fill the other two.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Moles n (mol)</label>
+          <input type="number" id="mo_n" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Mass m (g)</label>
+          <input type="number" id="mo_m" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Molar mass M (g/mol)</label>
+          <input type="number" id="mo_M" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemMole()">Solve</button>
+      </div>
+
+      <div class="chem-const-note">Tip: get M from the Molar Mass tool (Sidebar → Molar Mass).</div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="mo_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values above and click Solve.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="mo_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="mo_steps"></div>
+    </div>
+  </div>
+
+  <!-- Molar Volume -->
+  <div id="tool-molarvol" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Molar volume at STP:</strong>
+        <span class="chem-formula">V = n · V_m</span>
+        <span class="chem-formula">V_m = 22,4 dm³/mol</span><br>
+        At STP (0 °C, 1 atm). Leave the unknown blank.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Volume V (dm³)</label>
+          <input type="number" id="mv_V" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Moles n (mol)</label>
+          <input type="number" id="mv_n" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemMolarVol()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="mv_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="mv_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="mv_steps"></div>
+    </div>
+  </div>
+
+  <!-- Concentration -->
+  <div id="tool-conc" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Concentration:</strong>
+        <span class="chem-formula">c = n / V</span><br>
+        c = concentration (mol/dm³), n = moles (mol), V = volume (dm³).<br>
+        Note: 1 dm³ = 1 L = 1000 cm³. Leave the unknown blank.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Concentration c (mol/dm³)</label>
+          <input type="number" id="cc_c" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Moles n (mol)</label>
+          <input type="number" id="cc_n" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Volume V (dm³)</label>
+          <input type="number" id="cc_V" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemConc()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="cc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="cc_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="cc_steps"></div>
+    </div>
+  </div>
+
+  <!-- Empirical / Molecular -->
+  <div id="tool-empirical" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Empirical and molecular formula:</strong><br>
+        Enter percentage composition and (optionally) the molar mass of the compound.<br>
+        <strong>Steps:</strong> divide each % by atomic mass → divide all by smallest → multiply to whole numbers.<br>
+        <strong>Molecular formula:</strong> multiply empirical by (M_actual / M_empirical).
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Element 1 symbol (e.g. C)</label>
+          <input type="text" id="em_e1" class="chem-input" value="C">
+        </div>
+        <div>
+          <label>Element 1 % (or mass)</label>
+          <input type="number" id="em_p1" class="chem-input" step="any" value="40">
+        </div>
+        <div>
+          <label>Element 2 symbol</label>
+          <input type="text" id="em_e2" class="chem-input" value="H">
+        </div>
+        <div>
+          <label>Element 2 % (or mass)</label>
+          <input type="number" id="em_p2" class="chem-input" step="any" value="6.67">
+        </div>
+        <div>
+          <label>Element 3 symbol (optional)</label>
+          <input type="text" id="em_e3" class="chem-input" placeholder="e.g. O">
+        </div>
+        <div>
+          <label>Element 3 % (or mass)</label>
+          <input type="number" id="em_p3" class="chem-input" step="any" placeholder="optional">
+        </div>
+      </div>
+
+      <div>
+        <label>Molar mass of compound (g/mol) — optional, for molecular formula</label>
+        <input type="number" id="em_M" class="chem-input" step="any" placeholder="e.g. 180">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemEmpirical()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Formulas</div>
+      <div id="em_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter composition and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="em_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="em_steps"></div>
+    </div>
+  </div>
+
+  <!-- % Composition -->
+  <div id="tool-percentcomp" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Percentage composition:</strong><br>
+        <span class="chem-formula">% element = (n × M_element) / M_compound × 100</span><br>
+        Enter a chemical formula (e.g. H2O, Ca(OH)2). Uses the same parser as the Molar Mass tool.
+      </div>
+
+      <div>
+        <label>Chemical formula</label>
+        <input type="text" id="pc_formula" class="chem-input" value="C6H12O6">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemPercentComp()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Percentage Composition</div>
+      <div id="pc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter formula and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="pc_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pc_steps"></div>
+    </div>
+  </div>
+
+  <!-- Stoichiometry -->
+  <div id="tool-stoich" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Stoichiometry (mass-to-mass):</strong><br>
+        <span class="chem-formula">n = m / M</span>
+        <span class="chem-formula">mole ratio from balanced equation</span><br>
+        Enter the balanced equation (e.g. <em>2H2 + O2 -> 2H2O</em>) and the mass of one substance.
+      </div>
+
+      <div>
+        <label>Balanced equation</label>
+        <input type="text" id="st_eq" class="chem-input" value="2H2 + O2 -> 2H2O">
+      </div>
+      <div style="margin-top:12px;">
+        <label>Known substance (formula)</label>
+        <input type="text" id="st_from" class="chem-input" value="H2">
+      </div>
+      <div style="margin-top:12px;">
+        <label>Mass of known substance (g)</label>
+        <input type="number" id="st_mass" class="chem-input" step="any" value="4">
+      </div>
+      <div style="margin-top:12px;">
+        <label>Target substance (formula)</label>
+        <input type="text" id="st_to" class="chem-input" value="H2O">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemStoich()">Calculate</button>
+      </div>
+
+      <div class="chem-const-note">Equation format: use → or -&gt; between sides, + between substances. Coefficients allowed.</div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="st_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter equation and values, click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="st_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="st_steps"></div>
+    </div>
+  </div>
+
+  <!-- % Yield -->
+  <div id="tool-yield" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Percentage yield:</strong>
+        <span class="chem-formula">% yield = (actual / theoretical) × 100</span><br>
+        Also computes percentage purity and percentage error.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Actual yield (g)</label>
+          <input type="number" id="yd_actual" class="chem-input" step="any" value="15">
+        </div>
+        <div>
+          <label>Theoretical yield (g)</label>
+          <input type="number" id="yd_theo" class="chem-input" step="any" value="18">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemYield()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="yd_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="yd_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="yd_steps"></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 11 TOOLS ============ -->
+
+  <!-- Enthalpy ΔH -->
+  <div id="tool-enthalpy" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Enthalpy change:</strong>
+        <span class="chem-formula">ΔH = Σ(bonds broken) − Σ(bonds formed)</span>
+        <span class="chem-formula">ΔH = ΣΔH_f(products) − ΣΔH_f(reactants)</span><br>
+        ΔH &lt; 0 → exothermic. ΔH &gt; 0 → endothermic.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="en_mode" class="chem-input" onchange="chemEnthalpyModeChange()">
+          <option value="bond">Bond energies</option>
+          <option value="formation">Standard enthalpies of formation</option>
+        </select>
+      </div>
+
+      <div id="en_bond_inputs">
+        <div>
+          <label>Sum of bonds broken (kJ/mol)</label>
+          <input type="number" id="en_broken" class="chem-input" step="any" value="2644">
+        </div>
+        <div style="margin-top:10px;">
+          <label>Sum of bonds formed (kJ/mol)</label>
+          <input type="number" id="en_formed" class="chem-input" step="any" value="3456">
+        </div>
+      </div>
+
+      <div id="en_form_inputs" class="chem-hidden">
+        <div>
+          <label>Sum of ΔH_f(products) (kJ/mol)</label>
+          <input type="number" id="en_prod" class="chem-input" step="any" value="-393.5">
+        </div>
+        <div style="margin-top:10px;">
+          <label>Sum of ΔH_f(reactants) (kJ/mol)</label>
+          <input type="number" id="en_react" class="chem-input" step="any" value="-110.5">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemEnthalpy()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="en_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="en_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="en_steps"></div>
+    </div>
+  </div>
+
+  <!-- Reaction Rate -->
+  <div id="tool-rate" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Average reaction rate:</strong>
+        <span class="chem-formula">rate = Δc / Δt</span><br>
+        Δc = change in concentration (mol/dm³), Δt = time interval (s).
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Initial concentration c₁ (mol/dm³)</label>
+          <input type="number" id="rt_c1" class="chem-input" step="any" value="1.0">
+        </div>
+        <div>
+          <label>Final concentration c₂ (mol/dm³)</label>
+          <input type="number" id="rt_c2" class="chem-input" step="any" value="0.4">
+        </div>
+        <div>
+          <label>Initial time t₁ (s)</label>
+          <input type="number" id="rt_t1" class="chem-input" step="any" value="0">
+        </div>
+        <div>
+          <label>Final time t₂ (s)</label>
+          <input type="number" id="rt_t2" class="chem-input" step="any" value="30">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemRate()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Rate</div>
+      <div id="rt_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="rt_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="rt_steps"></div>
+    </div>
+  </div>
+
+  <!-- Equilibrium Kc -->
+  <div id="tool-kc" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Equilibrium constant (concentration form):</strong>
+        <span class="chem-formula">K_c = [products]^coeff / [reactants]^coeff</span><br>
+        Enter the equilibrium concentrations of up to 3 products and 3 reactants with their coefficients.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Product 1 concentration (mol/dm³)</label>
+          <input type="number" id="kc_p1" class="chem-input" step="any" value="0.5">
+        </div>
+        <div>
+          <label>Product 1 coefficient</label>
+          <input type="number" id="kc_p1c" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Product 2 (optional)</label>
+          <input type="number" id="kc_p2" class="chem-input" step="any" placeholder="0">
+        </div>
+        <div>
+          <label>Product 2 coefficient</label>
+          <input type="number" id="kc_p2c" class="chem-input" step="any" placeholder="1">
+        </div>
+        <div>
+          <label>Reactant 1 concentration (mol/dm³)</label>
+          <input type="number" id="kc_r1" class="chem-input" step="any" value="0.2">
+        </div>
+        <div>
+          <label>Reactant 1 coefficient</label>
+          <input type="number" id="kc_r1c" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Reactant 2 (optional)</label>
+          <input type="number" id="kc_r2" class="chem-input" step="any" placeholder="0">
+        </div>
+        <div>
+          <label>Reactant 2 coefficient</label>
+          <input type="number" id="kc_r2c" class="chem-input" step="any" placeholder="1">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemKc()">Calculate K_c</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Equilibrium Constant</div>
+      <div id="kc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="kc_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="kc_steps"></div>
+    </div>
+  </div>
+
+  <!-- Le Chatelier -->
+  <div id="tool-lechat" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Le Chatelier's principle:</strong> if a system at equilibrium is disturbed, the system shifts to oppose the disturbance.<br>
+        Select the change being made and see the direction of shift.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Change applied</label>
+        <select id="lc_change" class="chem-input">
+          <option value="add_reactant">Add reactant</option>
+          <option value="add_product">Add product</option>
+          <option value="remove_reactant">Remove reactant</option>
+          <option value="remove_product">Remove product</option>
+          <option value="increase_pressure">Increase pressure</option>
+          <option value="decrease_pressure">Decrease pressure</option>
+          <option value="increase_temp_exo">Increase temperature (exothermic forward)</option>
+          <option value="decrease_temp_exo">Decrease temperature (exothermic forward)</option>
+          <option value="increase_temp_endo">Increase temperature (endothermic forward)</option>
+          <option value="decrease_temp_endo">Decrease temperature (endothermic forward)</option>
+          <option value="catalyst">Add catalyst</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Which side has more gas moles? (for pressure changes)</label>
+        <select id="lc_gas" class="chem-input">
+          <option value="reactants">Reactants have more gas moles</option>
+          <option value="products">Products have more gas moles</option>
+          <option value="equal">Both sides equal</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemLeChat()">Predict Shift</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Prediction</div>
+      <div id="lc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Choose a change and click Predict.</div></div>
+    </div>
+  </div>
+
+  <!-- pH / pOH -->
+  <div id="tool-ph" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>pH and pOH:</strong>
+        <span class="chem-formula">pH = −log[H⁺]</span>
+        <span class="chem-formula">pOH = −log[OH⁻]</span>
+        <span class="chem-formula">pH + pOH = 14 (at 25 °C)</span>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Known quantity</label>
+        <select id="ph_mode" class="chem-input" onchange="chemPhModeChange()">
+          <option value="H">[H⁺] concentration (mol/dm³)</option>
+          <option value="OH">[OH⁻] concentration (mol/dm³)</option>
+          <option value="pH">pH value</option>
+          <option value="pOH">pOH value</option>
+        </select>
+      </div>
+
+      <div>
+        <label id="ph_input_label">[H⁺] concentration (mol/dm³)</label>
+        <input type="number" id="ph_value" class="chem-input" step="any" value="0.01">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemPh()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="ph_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter value and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="ph_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ph_steps"></div>
+    </div>
+  </div>
+
+  <!-- Titration -->
+  <div id="tool-titration" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Titration equation:</strong>
+        <span class="chem-formula">c₁V₁ / n₁ = c₂V₂ / n₂</span><br>
+        n₁ and n₂ are the mole ratios from the balanced equation (e.g. H₂SO₄ vs NaOH: n₁ = 1, n₂ = 2).<br>
+        Leave the unknown blank.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>c₁ (mol/dm³)</label>
+          <input type="number" id="ti_c1" class="chem-input" step="any" value="0.1">
+        </div>
+        <div>
+          <label>V₁ (dm³ or cm³ — same units for both)</label>
+          <input type="number" id="ti_v1" class="chem-input" step="any" value="25">
+        </div>
+        <div>
+          <label>n₁ (mole ratio, substance 1)</label>
+          <input type="number" id="ti_n1" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>c₂ (mol/dm³)</label>
+          <input type="number" id="ti_c2" class="chem-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>V₂ (same units as V₁)</label>
+          <input type="number" id="ti_v2" class="chem-input" step="any" value="20">
+        </div>
+        <div>
+          <label>n₂ (mole ratio, substance 2)</label>
+          <input type="number" id="ti_n2" class="chem-input" step="any" value="1">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemTitration()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="ti_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="ti_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ti_steps"></div>
+    </div>
+  </div>
+
+  <!-- IMF Identifier -->
+  <div id="tool-imf" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Intermolecular forces:</strong><br>
+        • <strong>London (dispersion):</strong> all molecules<br>
+        • <strong>Dipole-dipole:</strong> polar molecules without H bonded to N, O, F<br>
+        • <strong>Hydrogen bonding:</strong> H bonded directly to N, O, or F
+      </div>
+
+      <div>
+        <label>Chemical formula</label>
+        <input type="text" id="imf_formula" class="chem-input" value="H2O">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemIMF()">Identify Forces</button>
+      </div>
+
+      <div class="chem-const-note">Heuristic based on formula. Check polarity for borderline cases.</div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Forces Present</div>
+      <div id="imf_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a formula and click Identify.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="imf_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="imf_steps"></div>
+    </div>
+  </div>
+
+  <!-- VSEPR -->
+  <div id="tool-vsepr" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>VSEPR theory:</strong> electron pairs around the central atom repel each other and arrange to be as far apart as possible.<br>
+        Enter the central atom's bonding pairs and lone pairs to get the shape and bond angle.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Bonding pairs (bonded atoms)</label>
+          <input type="number" id="vs_bp" class="chem-input" step="1" min="0" max="6" value="4">
+        </div>
+        <div>
+          <label>Lone pairs on central atom</label>
+          <input type="number" id="vs_lp" class="chem-input" step="1" min="0" max="3" value="0">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemVSEPR()">Determine Shape</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Shape</div>
+      <div id="vs_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter bonding and lone pairs, click Determine.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="vs_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="vs_steps"></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 12 TOOLS ============ -->
+
+  <!-- Kc Advanced -->
+  <div id="tool-kc12" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Equilibrium with ICE table:</strong><br>
+        Given initial concentrations and the equilibrium concentration of one substance, find K_c.<br>
+        Format: a A + b B ⇌ c C + d D. Use coefficients exactly.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Coefficient of A</label>
+          <input type="number" id="k12_a" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Coefficient of B</label>
+          <input type="number" id="k12_b" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Coefficient of C</label>
+          <input type="number" id="k12_c" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Coefficient of D</label>
+          <input type="number" id="k12_d" class="chem-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Initial [A] (mol/dm³)</label>
+          <input type="number" id="k12_ia" class="chem-input" step="any" value="1.0">
+        </div>
+        <div>
+          <label>Initial [B] (mol/dm³)</label>
+          <input type="number" id="k12_ib" class="chem-input" step="any" value="1.0">
+        </div>
+        <div>
+          <label>Initial [C] (mol/dm³)</label>
+          <input type="number" id="k12_ic" class="chem-input" step="any" value="0">
+        </div>
+        <div>
+          <label>Initial [D] (mol/dm³)</label>
+          <input type="number" id="k12_id" class="chem-input" step="any" value="0">
+        </div>
+        <div>
+          <label>Equilibrium [A] (mol/dm³)</label>
+          <input type="number" id="k12_ea" class="chem-input" step="any" value="0.5">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemKc12()">Calculate K_c</button>
+      </div>
+
+      <div class="chem-const-note">Assumes reaction proceeds forward (A decreases). If not, check signs.</div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">K_c</div>
+      <div id="k12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="k12_steps_card">
+      <div class="result-label">ICE Table Working</div>
+      <div id="k12_steps"></div>
+    </div>
+  </div>
+
+  <!-- Buffer pH -->
+  <div id="tool-buffer" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Henderson-Hasselbalch equation:</strong>
+        <span class="chem-formula">pH = pK_a + log([A⁻] / [HA])</span><br>
+        For a weak acid + conjugate base buffer. pK_a = −log(K_a).
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>K_a of weak acid</label>
+          <input type="number" id="bf_Ka" class="chem-input" step="any" value="1.8e-5">
+        </div>
+        <div>
+          <label>Concentration of conjugate base [A⁻] (mol/dm³)</label>
+          <input type="number" id="bf_A" class="chem-input" step="any" value="0.1">
+        </div>
+        <div>
+          <label>Concentration of weak acid [HA] (mol/dm³)</label>
+          <input type="number" id="bf_HA" class="chem-input" step="any" value="0.1">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemBuffer()">Calculate pH</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">pH</div>
+      <div id="bf_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="bf_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="bf_steps"></div>
+    </div>
+  </div>
+
+  <!-- Galvanic Cell -->
+  <div id="tool-galvanic" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Galvanic cell emf:</strong>
+        <span class="chem-formula">E°_cell = E°_cathode − E°_anode</span><br>
+        Standard reduction potentials at 25 °C. A positive E°_cell means the reaction is spontaneous.<br>
+        Reduction = cathode (gains e⁻). Oxidation = anode (loses e⁻).
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Cathode (reduction half-cell)</label>
+        <select id="gv_cathode" class="chem-input"></select>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Anode (oxidation half-cell)</label>
+        <select id="gv_anode" class="chem-input"></select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemGalvanic()">Calculate E°_cell</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Cell Potential</div>
+      <div id="gv_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick electrodes and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="gv_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="gv_steps"></div>
+    </div>
+  </div>
+
+  <!-- Electrolysis -->
+  <div id="tool-electrolysis" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Electrolysis (Faraday's laws):</strong>
+        <span class="chem-formula">Q = I · t</span>
+        <span class="chem-formula">n(e⁻) = Q / F</span>
+        <span class="chem-formula">m = (M · Q) / (n · F)</span><br>
+        F = 96 500 C/mol, n = electrons transferred per ion, M = molar mass.
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>Current I (A)</label>
+          <input type="number" id="el_I" class="chem-input" step="any" value="2">
+        </div>
+        <div>
+          <label>Time t (s)</label>
+          <input type="number" id="el_t" class="chem-input" step="any" value="3600">
+        </div>
+        <div>
+          <label>Molar mass M (g/mol)</label>
+          <input type="number" id="el_M" class="chem-input" step="any" value="63.5">
+        </div>
+        <div>
+          <label>Electrons n (per ion)</label>
+          <input type="number" id="el_n" class="chem-input" step="any" value="2">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemElectrolysis()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Mass Deposited</div>
+      <div id="el_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="el_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="el_steps"></div>
+    </div>
+  </div>
+
+  <!-- Oxidation Numbers -->
+  <div id="tool-redox" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Oxidation numbers:</strong><br>
+        • Free element: 0<br>
+        • Monatomic ion: its charge<br>
+        • O usually −2, H usually +1<br>
+        • Sum = overall charge of the species<br>
+        This tool assigns oxidation states for a formula you enter.
+      </div>
+
+      <div>
+        <label>Chemical formula (e.g. H2SO4, MnO4-)</label>
+        <input type="text" id="rx_formula" class="chem-input" value="H2SO4">
+      </div>
+      <div style="margin-top:10px;">
+        <label>Overall charge (0 if neutral, e.g. -1 for MnO4⁻)</label>
+        <input type="number" id="rx_charge" class="chem-input" step="any" value="0">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemRedox()">Assign Oxidation Numbers</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Oxidation States</div>
+      <div id="rx_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a formula and click Assign.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="rx_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="rx_steps"></div>
+    </div>
+  </div>
+
+  <!-- Organic Reactions -->
+  <div id="tool-organic" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Organic reaction types (NSC Gr 12):</strong><br>
+        Select the reaction type to see conditions and product pattern.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Reaction type</label>
+        <select id="or_type" class="chem-input">
+          <option value="substitution_alkane">Substitution — alkane + halogen</option>
+          <option value="addition_alkene_hx">Addition — alkene + HX</option>
+          <option value="addition_alkene_h2o">Addition — alkene + H₂O</option>
+          <option value="addition_alkene_h2">Addition — alkene + H₂</option>
+          <option value="elimination">Elimination — alcohol → alkene</option>
+          <option value="esterification">Esterification — alcohol + carboxylic acid</option>
+          <option value="oxidation_alcohol_1">Oxidation — primary alcohol → aldehyde → acid</option>
+          <option value="oxidation_alcohol_2">Oxidation — secondary alcohol → ketone</option>
+          <option value="polymerisation_addition">Addition polymerisation — alkene → polymer</option>
+          <option value="hydrolysis_ester">Hydrolysis — ester → alcohol + acid</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemOrganic()">Show Reaction Info</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Reaction Details</div>
+      <div id="or_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a reaction type and click Show.</div></div>
+    </div>
+  </div>
+
+  <!-- Weak Acid pH -->
+  <div id="tool-ph12" class="chem-tool-panel chem-hidden">
+    <div class="card">
+      <div class="chem-formula-note">
+        <strong>Weak acid pH:</strong>
+        <span class="chem-formula">K_a = [H⁺]² / [HA] (approx)</span>
+        <span class="chem-formula">[H⁺] = √(K_a · c)</span>
+        <span class="chem-formula">pH = −log[H⁺]</span><br>
+        Approximation valid when ionisation is small. For strong acids, use pH = −log(c).
+      </div>
+
+      <div class="chem-input-grid">
+        <div>
+          <label>K_a of the acid</label>
+          <input type="number" id="p12_Ka" class="chem-input" step="any" value="1.8e-5">
+        </div>
+        <div>
+          <label>Initial concentration c (mol/dm³)</label>
+          <input type="number" id="p12_c" class="chem-input" step="any" value="0.1">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="chemPh12()">Calculate pH</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">pH</div>
+      <div id="p12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card chem-hidden" id="p12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="p12_steps"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+/* ============================================================
+   DATA TABLES
+   ============================================================ */
+const ATOMIC_MASSES = {
+  H: 1.008, He: 4.0026, Li: 6.94, Be: 9.0122, B: 10.81, C: 12.011, N: 14.007, O: 15.999,
+  F: 18.998, Ne: 20.180, Na: 22.990, Mg: 24.305, Al: 26.982, Si: 28.085, P: 30.974,
+  S: 32.06, Cl: 35.45, Ar: 39.948, K: 39.098, Ca: 40.078, Sc: 44.956, Ti: 47.867,
+  V: 50.942, Cr: 51.996, Mn: 54.938, Fe: 55.845, Co: 58.933, Ni: 58.693, Cu: 63.546,
+  Zn: 65.38, Ga: 69.723, Ge: 72.630, As: 74.922, Se: 78.971, Br: 79.904, Kr: 83.798,
+  Rb: 85.468, Sr: 87.62, Y: 88.906, Zr: 91.224, Nb: 92.906, Mo: 95.95, Tc: 98, Ru: 101.07,
+  Rh: 102.91, Pd: 106.42, Ag: 107.87, Cd: 112.41, In: 114.82, Sn: 118.71, Sb: 121.76,
+  Te: 127.60, I: 126.90, Xe: 131.29, Cs: 132.91, Ba: 137.33, La: 138.91, Ce: 140.12,
+  Pb: 207.2, Bi: 208.98, U: 238.03, Pt: 195.08, Au: 196.97, Hg: 200.59
+};
+
+const ELECTRODE_POTENTIALS = {
+  'F₂ + 2e⁻ → 2F⁻': 2.87,
+  'Au³⁺ + 3e⁻ → Au': 1.50,
+  'Cl₂ + 2e⁻ → 2Cl⁻': 1.36,
+  'O₂ + 4H⁺ + 4e⁻ → 2H₂O': 1.23,
+  'Ag⁺ + e⁻ → Ag': 0.80,
+  'Fe³⁺ + e⁻ → Fe²⁺': 0.77,
+  'I₂ + 2e⁻ → 2I⁻': 0.54,
+  'Cu²⁺ + 2e⁻ → Cu': 0.34,
+  '2H⁺ + 2e⁻ → H₂': 0.00,
+  'Pb²⁺ + 2e⁻ → Pb': -0.13,
+  'Sn²⁺ + 2e⁻ → Sn': -0.14,
+  'Ni²⁺ + 2e⁻ → Ni': -0.25,
+  'Fe²⁺ + 2e⁻ → Fe': -0.44,
+  'Zn²⁺ + 2e⁻ → Zn': -0.76,
+  'Al³⁺ + 3e⁻ → Al': -1.66,
+  'Mg²⁺ + 2e⁻ → Mg': -2.37,
+  'Na⁺ + e⁻ → Na': -2.71,
+  'Ca²⁺ + 2e⁻ → Ca': -2.87,
+  'K⁺ + e⁻ → K': -2.93,
+  'Li⁺ + e⁻ → Li': -3.05
+};
+
+/* ============================================================
+   SHARED HELPERS
+   ============================================================ */
+function chemFmt(n) {
+  if (!isFinite(n)) return '—';
+  if (n === 0) return '0';
+  if (Number.isInteger(n)) return n.toString();
+  const abs = Math.abs(n);
+  if (abs < 0.001 || abs >= 100000) return parseFloat(n.toExponential(4)).toString();
+  return parseFloat(n.toFixed(6)).toString();
+}
+function chemShowSteps(stepsId, cardId, steps) {
+  const el = document.getElementById(stepsId);
+  if (!el) return;
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="chem-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  const card = document.getElementById(cardId);
+  if (card) card.classList.remove('chem-hidden');
+}
+function chemResult(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
+/* Molar mass parser (same engine as molar.html) */
+function chemMolarMass(formula) {
+  const parts = formula.split('.');
+  let total = 0;
+  parts.forEach(part => { total += chemMolarMassSingle(part); });
+  return total;
+}
+function chemMolarMassSingle(formula) {
+  let coeff = 1;
+  const cm = formula.match(/^(\d+)/);
+  if (cm) { coeff = parseInt(cm[1]); formula = formula.slice(cm[1].length); }
+  let mass = 0;
+  const stack = [{}];
+  let i = 0;
+  while (i < formula.length) {
+    const c = formula[i];
+    if (c === '(' || c === '[') { stack.push({}); i++; }
+    else if (c === ')' || c === ']') {
+      i++;
+      let mult = 1;
+      const m = formula.slice(i).match(/^(\d+)/);
+      if (m) { mult = parseInt(m[1]); i += m[1].length; }
+      const popped = stack.pop();
+      const top = stack[stack.length - 1];
+      Object.keys(popped).forEach(sym => { top[sym] = (top[sym] || 0) + popped[sym] * mult; });
+    } else if (/[A-Z]/.test(c)) {
+      let sym = c;
+      i++;
+      if (i < formula.length && /[a-z]/.test(formula[i])) { sym += formula[i]; i++; }
+      if (!ATOMIC_MASSES[sym]) throw new Error('Unknown element "' + sym + '"');
+      let count = 1;
+      const m = formula.slice(i).match(/^(\d+)/);
+      if (m) { count = parseInt(m[1]); i += m[1].length; }
+      const top = stack[stack.length - 1];
+      top[sym] = (top[sym] || 0) + count;
+    } else { throw new Error('Unexpected character "' + c + '"'); }
+  }
+  const final = stack[0];
+  Object.keys(final).forEach(sym => {
+    mass += ATOMIC_MASSES[sym] * final[sym] * coeff;
+  });
+  return mass;
+}
+function chemElementCounts(formula) {
+  let coeff = 1;
+  const cm = formula.match(/^(\d+)/);
+  if (cm) { coeff = parseInt(cm[1]); formula = formula.slice(cm[1].length); }
+  const stack = [{}];
+  let i = 0;
+  while (i < formula.length) {
+    const c = formula[i];
+    if (c === '(' || c === '[') { stack.push({}); i++; }
+    else if (c === ')' || c === ']') {
+      i++;
+      let mult = 1;
+      const m = formula.slice(i).match(/^(\d+)/);
+      if (m) { mult = parseInt(m[1]); i += m[1].length; }
+      const popped = stack.pop();
+      const top = stack[stack.length - 1];
+      Object.keys(popped).forEach(sym => { top[sym] = (top[sym] || 0) + popped[sym] * mult; });
+    } else if (/[A-Z]/.test(c)) {
+      let sym = c;
+      i++;
+      if (i < formula.length && /[a-z]/.test(formula[i])) { sym += formula[i]; i++; }
+      let count = 1;
+      const m = formula.slice(i).match(/^(\d+)/);
+      if (m) { count = parseInt(m[1]); i += m[1].length; }
+      const top = stack[stack.length - 1];
+      top[sym] = (top[sym] || 0) + count;
+    } else { i++; }
+  }
+  const final = stack[0];
+  const out = {};
+  Object.keys(final).forEach(sym => { out[sym] = final[sym] * coeff; });
+  return out;
+}
+
+/* ============================================================
+   GRADE TABS
+   ============================================================ */
+let chemCurrentGrade = 10;
+let chemCurrentTool10 = 'mole';
+let chemCurrentTool11 = 'enthalpy';
+let chemCurrentTool12 = 'kc12';
+
+function chemSetGrade(g) {
+  chemCurrentGrade = g;
+  document.getElementById('tabG10').classList.toggle('active', g === 10);
+  document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('tabG12').classList.toggle('active', g === 12);
+  document.getElementById('chemGrade10Tools').classList.toggle('chem-hidden', g !== 10);
+  document.getElementById('chemGrade11Tools').classList.toggle('chem-hidden', g !== 11);
+  document.getElementById('chemGrade12Tools').classList.toggle('chem-hidden', g !== 12);
+
+  let currentTool;
+  if (g === 10) currentTool = chemCurrentTool10;
+  else if (g === 11) currentTool = chemCurrentTool11;
+  else currentTool = chemCurrentTool12;
+
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + currentTool) p.classList.remove('chem-hidden');
+    else p.classList.add('chem-hidden');
+  });
+}
+function chemSelectTool10(tool) {
+  chemCurrentTool10 = tool;
+  document.querySelectorAll('#chemGrade10Tools .chem-tool-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-g10-tool') === tool);
+  });
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + tool) p.classList.remove('chem-hidden');
+    else p.classList.add('chem-hidden');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function chemSelectTool11(tool) {
+  chemCurrentTool11 = tool;
+  document.querySelectorAll('#chemGrade11Tools .chem-tool-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-g11-tool') === tool);
+  });
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + tool) p.classList.remove('chem-hidden');
+    else p.classList.add('chem-hidden');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function chemSelectTool12(tool) {
+  chemCurrentTool12 = tool;
+  document.querySelectorAll('#chemGrade12Tools .chem-tool-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-g12-tool') === tool);
+  });
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + tool) p.classList.remove('chem-hidden');
+    else p.classList.add('chem-hidden');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================================
+   GRADE 10 TOOLS
+   ============================================================ */
+
+function chemMole() {
+  let n = document.getElementById('mo_n').value === '' ? null : parseFloat(document.getElementById('mo_n').value);
+  let m = document.getElementById('mo_m').value === '' ? null : parseFloat(document.getElementById('mo_m').value);
+  let M = document.getElementById('mo_M').value === '' ? null : parseFloat(document.getElementById('mo_M').value);
+
+  const steps = [];
+  let html = '';
+
+  if (n === null && m !== null && M !== null && M !== 0) {
+    n = m / M;
+    steps.push('n = m / M');
+    steps.push('n = ' + chemFmt(m) + ' / ' + chemFmt(M) + ' = ' + chemFmt(n) + ' mol');
+    html = '<div class="chem-answer">n = ' + chemFmt(n) + ' mol</div>';
+  } else if (m === null && n !== null && M !== null) {
+    m = n * M;
+    steps.push('m = n × M = ' + chemFmt(n) + ' × ' + chemFmt(M) + ' = ' + chemFmt(m) + ' g');
+    html = '<div class="chem-answer">m = ' + chemFmt(m) + ' g</div>';
+  } else if (M === null && n !== null && m !== null && n !== 0) {
+    M = m / n;
+    steps.push('M = m / n = ' + chemFmt(m) + ' / ' + chemFmt(n) + ' = ' + chemFmt(M) + ' g/mol');
+    html = '<div class="chem-answer">M = ' + chemFmt(M) + ' g/mol</div>';
+  } else {
+    chemResult('mo_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one unknown blank. Fill the other two.</div>');
+    return;
+  }
+
+  chemResult('mo_result', html);
+  chemShowSteps('mo_steps', 'mo_steps_card', steps);
+}
+
+function chemMolarVol() {
+  let V = document.getElementById('mv_V').value === '' ? null : parseFloat(document.getElementById('mv_V').value);
+  let n = document.getElementById('mv_n').value === '' ? null : parseFloat(document.getElementById('mv_n').value);
+  const Vm = 22.4;
+  const steps = [];
+  let html = '';
+
+  if (V === null && n !== null) {
+    V = n * Vm;
+    steps.push('V = n × V_m = ' + chemFmt(n) + ' × 22,4 = ' + chemFmt(V) + ' dm³');
+    html = '<div class="chem-answer">V = ' + chemFmt(V) + ' dm³</div>';
+  } else if (n === null && V !== null) {
+    n = V / Vm;
+    steps.push('n = V / V_m = ' + chemFmt(V) + ' / 22,4 = ' + chemFmt(n) + ' mol');
+    html = '<div class="chem-answer">n = ' + chemFmt(n) + ' mol</div>';
+  } else {
+    chemResult('mv_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one blank. Fill the other.</div>');
+    return;
+  }
+
+  chemResult('mv_result', html);
+  chemShowSteps('mv_steps', 'mv_steps_card', steps);
+}
+
+function chemConc() {
+  let c = document.getElementById('cc_c').value === '' ? null : parseFloat(document.getElementById('cc_c').value);
+  let n = document.getElementById('cc_n').value === '' ? null : parseFloat(document.getElementById('cc_n').value);
+  let V = document.getElementById('cc_V').value === '' ? null : parseFloat(document.getElementById('cc_V').value);
+
+  const steps = [];
+  let html = '';
+
+  if (c === null && n !== null && V !== null && V !== 0) {
+    c = n / V;
+    steps.push('c = n / V = ' + chemFmt(n) + ' / ' + chemFmt(V) + ' = ' + chemFmt(c) + ' mol/dm³');
+    html = '<div class="chem-answer">c = ' + chemFmt(c) + ' mol/dm³</div>';
+  } else if (n === null && c !== null && V !== null) {
+    n = c * V;
+    steps.push('n = c × V = ' + chemFmt(c) + ' × ' + chemFmt(V) + ' = ' + chemFmt(n) + ' mol');
+    html = '<div class="chem-answer">n = ' + chemFmt(n) + ' mol</div>';
+  } else if (V === null && c !== null && n !== null && c !== 0) {
+    V = n / c;
+    steps.push('V = n / c = ' + chemFmt(n) + ' / ' + chemFmt(c) + ' = ' + chemFmt(V) + ' dm³');
+    html = '<div class="chem-answer">V = ' + chemFmt(V) + ' dm³</div>';
+  } else {
+    chemResult('cc_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one unknown blank. Fill the other two.</div>');
+    return;
+  }
+
+  chemResult('cc_result', html);
+  chemShowSteps('cc_steps', 'cc_steps_card', steps);
+}
+
+function chemEmpirical() {
+  const e1 = document.getElementById('em_e1').value.trim();
+  const p1 = parseFloat(document.getElementById('em_p1').value);
+  const e2 = document.getElementById('em_e2').value.trim();
+  const p2 = parseFloat(document.getElementById('em_p2').value);
+  const e3 = document.getElementById('em_e3').value.trim();
+  const p3 = document.getElementById('em_p3').value === '' ? null : parseFloat(document.getElementById('em_p3').value);
+  const M = document.getElementById('em_M').value === '' ? null : parseFloat(document.getElementById('em_M').value);
+
+  const entries = [];
+  if (e1 && !isNaN(p1)) entries.push({ el: e1, pct: p1 });
+  if (e2 && !isNaN(p2)) entries.push({ el: e2, pct: p2 });
+  if (e3 && p3 !== null && !isNaN(p3)) entries.push({ el: e3, pct: p3 });
+
+  if (entries.length < 2) {
+    chemResult('em_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter at least two elements.</div>');
+    return;
+  }
+
+  const steps = [];
+  const moles = entries.map(e => {
+    if (!ATOMIC_MASSES[e.el]) throw new Error('Unknown element ' + e.el);
+    const mol = e.pct / ATOMIC_MASSES[e.el];
+    steps.push(e.el + ': ' + chemFmt(e.pct) + '% / ' + ATOMIC_MASSES[e.el] + ' = ' + chemFmt(mol) + ' mol');
+    return { el: e.el, mol: mol };
+  });
+
+  const smallest = Math.min(...moles.map(m => m.mol));
+  const ratios = moles.map(m => {
+    const r = m.mol / smallest;
+    steps.push(m.el + ': ' + chemFmt(m.mol) + ' / ' + chemFmt(smallest) + ' = ' + chemFmt(r));
+    return { el: m.el, ratio: r };
+  });
+
+  // Try to find small integer multipliers
+  let bestMult = 1;
+  for (let mult = 1; mult <= 6; mult++) {
+    const ok = ratios.every(r => Math.abs(r.ratio * mult - Math.round(r.ratio * mult)) < 0.1);
+    if (ok) { bestMult = mult; break; }
+  }
+
+  const empiricalParts = ratios.map(r => {
+    const n = Math.round(r.ratio * bestMult);
+    return r.el + (n > 1 ? n : '');
+  });
+  const empFormula = empiricalParts.join('');
+
+  steps.push('Multiply ratios by ' + bestMult + ' to get whole numbers.');
+  steps.push('Empirical formula: ' + empFormula);
+
+  let html = '<div class="chem-answer">' + empFormula + '</div>';
+  html += '<div class="result-sub">Empirical formula</div>';
+
+  if (M !== null) {
+    let empMass = 0;
+    const counts = chemElementCounts(empFormula);
+    Object.keys(counts).forEach(el => { empMass += ATOMIC_MASSES[el] * counts[el]; });
+    const factor = M / empMass;
+    steps.push('M_empirical = ' + chemFmt(empMass) + ' g/mol');
+    steps.push('Factor n = M_actual / M_empirical = ' + chemFmt(M) + ' / ' + chemFmt(empMass) + ' = ' + chemFmt(factor));
+    const roundedFactor = Math.round(factor);
+    const molParts = ratios.map(r => {
+      const n = Math.round(r.ratio * bestMult * roundedFactor);
+      return r.el + (n > 1 ? n : '');
+    });
+    const molFormula = molParts.join('');
+    steps.push('Molecular formula: ' + molFormula);
+    html += '<div class="chem-answer multi" style="color:var(--text);">' + molFormula + '</div>';
+    html += '<div class="result-sub">Molecular formula</div>';
+  }
+
+  chemResult('em_result', html);
+  chemShowSteps('em_steps', 'em_steps_card', steps);
+}
+
+function chemPercentComp() {
+  const formula = document.getElementById('pc_formula').value.trim();
+  if (!formula) {
+    chemResult('pc_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a formula.</div>');
+    return;
+  }
+  try {
+    const counts = chemElementCounts(formula);
+    const total = chemMolarMass(formula);
+    const steps = [];
+    steps.push('M(' + formula + ') = ' + chemFmt(total) + ' g/mol');
+    const rows = Object.keys(counts).map(el => {
+      const contribution = ATOMIC_MASSES[el] * counts[el];
+      const pct = (contribution / total) * 100;
+      steps.push(el + ': (' + counts[el] + ' × ' + ATOMIC_MASSES[el] + ') / ' + chemFmt(total) + ' × 100 = ' + chemFmt(pct) + '%');
+      return { el: el, count: counts[el], mass: contribution, pct: pct };
+    }).sort((a, b) => b.pct - a.pct);
+
+    let html = '<div class="chem-answer">M = ' + chemFmt(total) + ' g/mol</div>';
+    html += '<div class="chem-result-grid">';
+    rows.forEach(r => {
+      html += '<div class="result-cell"><span class="result-cell-label">' + r.el + ' (' + r.count + '×)</span><span class="result-cell-value">' + chemFmt(r.pct) + '%</span></div>';
+    });
+    html += '</div>';
+
+    chemResult('pc_result', html);
+    chemShowSteps('pc_steps', 'pc_steps_card', steps);
+  } catch (e) {
+    chemResult('pc_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Error: ' + escapeHtml(e.message) + '</div>');
+  }
+}
+
+function chemStoich() {
+  const eq = document.getElementById('st_eq').value.trim();
+  const from = document.getElementById('st_from').value.trim();
+  const mass = parseFloat(document.getElementById('st_mass').value);
+  const to = document.getElementById('st_to').value.trim();
+
+  if (!eq || !from || !to || isNaN(mass)) {
+    chemResult('st_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+    return;
+  }
+
+  // Parse equation: split on -> or →
+  const eqNorm = eq.replace(/→/g, '->').replace(/⇌/g, '->');
+  const parts = eqNorm.split('->');
+  if (parts.length !== 2) {
+    chemResult('st_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Could not parse equation. Use -> between sides.</div>');
+    return;
+  }
+
+  function parseSide(side) {
+    return side.split('+').map(s => s.trim()).filter(s => s).map(sp => {
+      const m = sp.match(/^(\d+)?\s*(.+)$/);
+      const coeff = m[1] ? parseInt(m[1]) : 1;
+      const formula = m[2].trim();
+      return { coeff: coeff, formula: formula };
+    });
+  }
+
+  const left = parseSide(parts[0]);
+  const right = parseSide(parts[1]);
+
+  const all = left.concat(right);
+  const fromSpecies = all.find(s => s.formula.toLowerCase() === from.toLowerCase());
+  const toSpecies = all.find(s => s.formula.toLowerCase() === to.toLowerCase());
+
+  if (!fromSpecies) {
+    chemResult('st_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Known substance "' + escapeHtml(from) + '" not found in equation.</div>');
+    return;
+  }
+  if (!toSpecies) {
+    chemResult('st_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Target substance "' + escapeHtml(to) + '" not found in equation.</div>');
+    return;
+  }
+
+  try {
+    const Mfrom = chemMolarMass(fromSpecies.formula);
+    const Mto = chemMolarMass(toSpecies.formula);
+    const steps = [];
+    steps.push('Balanced equation: ' + eq);
+    steps.push('Coefficients: ' + fromSpecies.formula + ' = ' + fromSpecies.coeff + ', ' + toSpecies.formula + ' = ' + toSpecies.coeff);
+    steps.push('M(' + fromSpecies.formula + ') = ' + chemFmt(Mfrom) + ' g/mol');
+    steps.push('M(' + toSpecies.formula + ') = ' + chemFmt(Mto) + ' g/mol');
+
+    const nFrom = mass / Mfrom;
+    steps.push('n(' + fromSpecies.formula + ') = m / M = ' + chemFmt(mass) + ' / ' + chemFmt(Mfrom) + ' = ' + chemFmt(nFrom) + ' mol');
+
+    const ratio = toSpecies.coeff / fromSpecies.coeff;
+    const nTo = nFrom * ratio;
+    steps.push('Mole ratio = ' + toSpecies.coeff + ' : ' + fromSpecies.coeff + ' → n(' + toSpecies.formula + ') = n(' + fromSpecies.formula + ') × (' + toSpecies.coeff + '/' + fromSpecies.coeff + ')');
+    steps.push('n(' + toSpecies.formula + ') = ' + chemFmt(nFrom) + ' × ' + chemFmt(ratio) + ' = ' + chemFmt(nTo) + ' mol');
+
+    const mTo = nTo * Mto;
+    steps.push('m(' + toSpecies.formula + ') = n × M = ' + chemFmt(nTo) + ' × ' + chemFmt(Mto) + ' = ' + chemFmt(mTo) + ' g');
+
+    const html =
+      '<div class="chem-answer">m = ' + chemFmt(mTo) + ' g</div>' +
+      '<div class="result-sub">of ' + toSpecies.formula + '</div>' +
+      '<div class="chem-result-grid">' +
+        '<div class="result-cell"><span class="result-cell-label">n(' + fromSpecies.formula + ')</span><span class="result-cell-value">' + chemFmt(nFrom) + ' mol</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">n(' + toSpecies.formula + ')</span><span class="result-cell-value">' + chemFmt(nTo) + ' mol</span></div>' +
+      '</div>';
+
+    chemResult('st_result', html);
+    chemShowSteps('st_steps', 'st_steps_card', steps);
+  } catch (e) {
+    chemResult('st_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Error: ' + escapeHtml(e.message) + '</div>');
+  }
+}
+
+function chemYield() {
+  const actual = parseFloat(document.getElementById('yd_actual').value);
+  const theo = parseFloat(document.getElementById('yd_theo').value);
+
+  if (isNaN(actual) || isNaN(theo) || theo === 0) {
+    chemResult('yd_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields. Theoretical yield must be non-zero.</div>');
+    return;
+  }
+
+  const pct = (actual / theo) * 100;
+  const error = Math.abs(100 - pct);
+  const steps = [];
+  steps.push('% yield = (actual / theoretical) × 100');
+  steps.push('% yield = (' + chemFmt(actual) + ' / ' + chemFmt(theo) + ') × 100 = ' + chemFmt(pct) + '%');
+  steps.push('% error = |100 − ' + chemFmt(pct) + '| = ' + chemFmt(error) + '%');
+
+  let note = '';
+  if (pct > 100) note = 'Yield over 100% — likely impure sample or measurement error.';
+  else if (pct >= 90) note = 'Excellent yield.';
+  else if (pct >= 70) note = 'Good yield.';
+  else if (pct >= 50) note = 'Moderate yield — reaction may be incomplete.';
+  else note = 'Low yield — side reactions or loss during purification likely.';
+  steps.push(note);
+
+  const html =
+    '<div class="chem-answer">' + chemFmt(pct) + '%</div>' +
+    '<div class="result-sub">' + note + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Actual</span><span class="result-cell-value">' + chemFmt(actual) + ' g</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Theoretical</span><span class="result-cell-value">' + chemFmt(theo) + ' g</span></div>' +
+    '</div>';
+
+  chemResult('yd_result', html);
+  chemShowSteps('yd_steps', 'yd_steps_card', steps);
+}
+
+/* ============================================================
+   GRADE 11 TOOLS
+   ============================================================ */
+
+function chemEnthalpyModeChange() {
+  const mode = document.getElementById('en_mode').value;
+  document.getElementById('en_bond_inputs').classList.toggle('chem-hidden', mode !== 'bond');
+  document.getElementById('en_form_inputs').classList.toggle('chem-hidden', mode !== 'formation');
+}
+
+function chemEnthalpy() {
+  const mode = document.getElementById('en_mode').value;
+  const steps = [];
+  let dH = 0;
+
+  if (mode === 'bond') {
+    const broken = parseFloat(document.getElementById('en_broken').value);
+    const formed = parseFloat(document.getElementById('en_formed').value);
+    if ([broken, formed].some(v => isNaN(v))) {
+      chemResult('en_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields.</div>');
+      return;
+    }
+    dH = broken - formed;
+    steps.push('ΔH = Σ(bonds broken) − Σ(bonds formed)');
+    steps.push('ΔH = ' + chemFmt(broken) + ' − ' + chemFmt(formed) + ' = ' + chemFmt(dH) + ' kJ/mol');
+  } else {
+    const prod = parseFloat(document.getElementById('en_prod').value);
+    const react = parseFloat(document.getElementById('en_react').value);
+    if ([prod, react].some(v => isNaN(v))) {
+      chemResult('en_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields.</div>');
+      return;
+    }
+    dH = prod - react;
+    steps.push('ΔH = ΣΔH_f(products) − ΣΔH_f(reactants)');
+    steps.push('ΔH = ' + chemFmt(prod) + ' − ' + chemFmt(react) + ' = ' + chemFmt(dH) + ' kJ/mol');
+  }
+
+  let type = dH < 0 ? 'Exothermic (releases energy)' : dH > 0 ? 'Endothermic (absorbs energy)' : 'Thermally neutral';
+  steps.push(type);
+
+  const html =
+    '<div class="chem-answer">ΔH = ' + chemFmt(dH) + ' kJ/mol</div>' +
+    '<div class="result-sub">' + type + '</div>';
+
+  chemResult('en_result', html);
+  chemShowSteps('en_steps', 'en_steps_card', steps);
+}
+
+function chemRate() {
+  const c1 = parseFloat(document.getElementById('rt_c1').value);
+  const c2 = parseFloat(document.getElementById('rt_c2').value);
+  const t1 = parseFloat(document.getElementById('rt_t1').value);
+  const t2 = parseFloat(document.getElementById('rt_t2').value);
+
+  if ([c1, c2, t1, t2].some(v => isNaN(v)) || t2 === t1) {
+    chemResult('rt_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields. t₁ ≠ t₂.</div>');
+    return;
+  }
+
+  const dc = c2 - c1;
+  const dt = t2 - t1;
+  const rate = Math.abs(dc / dt);
+
+  const steps = [];
+  steps.push('Δc = c₂ − c₁ = ' + chemFmt(c2) + ' − ' + chemFmt(c1) + ' = ' + chemFmt(dc) + ' mol/dm³');
+  steps.push('Δt = t₂ − t₁ = ' + chemFmt(t2) + ' − ' + chemFmt(t1) + ' = ' + chemFmt(dt) + ' s');
+  steps.push('Rate = |Δc / Δt| = |' + chemFmt(dc) + ' / ' + chemFmt(dt) + '| = ' + chemFmt(rate) + ' mol·dm⁻³·s⁻¹');
+
+  const html =
+    '<div class="chem-answer">rate = ' + chemFmt(rate) + '</div>' +
+    '<div class="result-sub">mol·dm⁻³·s⁻¹</div>';
+
+  chemResult('rt_result', html);
+  chemShowSteps('rt_steps', 'rt_steps_card', steps);
+}
+
+function chemKc() {
+  const p1 = parseFloat(document.getElementById('kc_p1').value) || 0;
+  const p1c = parseFloat(document.getElementById('kc_p1c').value) || 1;
+  const p2 = parseFloat(document.getElementById('kc_p2').value) || 0;
+  const p2c = parseFloat(document.getElementById('kc_p2c').value) || 1;
+  const r1 = parseFloat(document.getElementById('kc_r1').value) || 0;
+  const r1c = parseFloat(document.getElementById('kc_r1c').value) || 1;
+  const r2 = parseFloat(document.getElementById('kc_r2').value) || 0;
+  const r2c = parseFloat(document.getElementById('kc_r2c').value) || 1;
+
+  const numerator = Math.pow(p1, p1c) * (p2 > 0 ? Math.pow(p2, p2c) : 1);
+  const denominator = Math.pow(r1, r1c) * (r2 > 0 ? Math.pow(r2, r2c) : 1);
+
+  if (denominator === 0) {
+    chemResult('kc_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Reactant concentration cannot be zero.</div>');
+    return;
+  }
+
+  const Kc = numerator / denominator;
+
+  const steps = [];
+  let numStr = '[' + chemFmt(p1) + ']^' + p1c;
+  if (p2 > 0) numStr += ' · [' + chemFmt(p2) + ']^' + p2c;
+  let denStr = '[' + chemFmt(r1) + ']^' + r1c;
+  if (r2 > 0) denStr += ' · [' + chemFmt(r2) + ']^' + r2c;
+  steps.push('K_c = (' + numStr + ') / (' + denStr + ')');
+  steps.push('Numerator = ' + chemFmt(numerator));
+  steps.push('Denominator = ' + chemFmt(denominator));
+  steps.push('K_c = ' + chemFmt(Kc));
+
+  let shiftNote = '';
+  if (Kc > 1) shiftNote = 'K_c > 1: products favoured at equilibrium.';
+  else if (Kc < 1) shiftNote = 'K_c < 1: reactants favoured at equilibrium.';
+  else shiftNote = 'K_c = 1: reactants and products roughly equal.';
+  steps.push(shiftNote);
+
+  const html =
+    '<div class="chem-answer">K_c = ' + chemFmt(Kc) + '</div>' +
+    '<div class="result-sub">' + shiftNote + '</div>';
+
+  chemResult('kc_result', html);
+  chemShowSteps('kc_steps', 'kc_steps_card', steps);
+}
+
+function chemLeChat() {
+  const change = document.getElementById('lc_change').value;
+  const gas = document.getElementById('lc_gas').value;
+  const steps = [];
+  let direction = '';
+
+  if (change === 'add_reactant') {
+    direction = 'Forward (to products)';
+    steps.push('Adding a reactant increases the concentration on the left.');
+    steps.push('System shifts FORWARD to consume the added reactant.');
+  } else if (change === 'add_product') {
+    direction = 'Reverse (to reactants)';
+    steps.push('Adding a product increases the concentration on the right.');
+    steps.push('System shifts REVERSE to consume the added product.');
+  } else if (change === 'remove_reactant') {
+    direction = 'Reverse (to reactants)';
+    steps.push('Removing a reactant lowers the concentration on the left.');
+    steps.push('System shifts REVERSE to replace the removed reactant.');
+  } else if (change === 'remove_product') {
+    direction = 'Forward (to products)';
+    steps.push('Removing a product lowers the concentration on the right.');
+    steps.push('System shifts FORWARD to replace the removed product.');
+  } else if (change === 'increase_pressure') {
+    if (gas === 'equal') { direction = 'No shift'; steps.push('Both sides have equal gas moles, so pressure change has no net effect.'); }
+    else if (gas === 'reactants') { direction = 'Forward (to products)'; steps.push('Increasing pressure shifts toward the side with FEWER gas moles.'); steps.push('Reactants have more gas → shift FORWARD.'); }
+    else { direction = 'Reverse (to reactants)'; steps.push('Increasing pressure shifts toward the side with FEWER gas moles.'); steps.push('Products have more gas → shift REVERSE.'); }
+  } else if (change === 'decrease_pressure') {
+    if (gas === 'equal') { direction = 'No shift'; steps.push('Both sides have equal gas moles, so pressure change has no net effect.'); }
+    else if (gas === 'reactants') { direction = 'Reverse (to reactants)'; steps.push('Decreasing pressure shifts toward the side with MORE gas moles.'); steps.push('Reactants have more gas → shift REVERSE.'); }
+    else { direction = 'Forward (to products)'; steps.push('Decreasing pressure shifts toward the side with MORE gas moles.'); steps.push('Products have more gas → shift FORWARD.'); }
+  } else if (change === 'increase_temp_exo') {
+    direction = 'Reverse (to reactants)';
+    steps.push('Forward reaction is exothermic (releases heat).');
+    steps.push('Increasing temperature adds heat → shifts AWAY from the heat-releasing direction → REVERSE.');
+  } else if (change === 'decrease_temp_exo') {
+    direction = 'Forward (to products)';
+    steps.push('Forward reaction is exothermic.');
+    steps.push('Decreasing temperature removes heat → shifts TOWARD the heat-releasing direction → FORWARD.');
+  } else if (change === 'increase_temp_endo') {
+    direction = 'Forward (to products)';
+    steps.push('Forward reaction is endothermic (absorbs heat).');
+    steps.push('Increasing temperature adds heat → shifts TOWARD the heat-absorbing direction → FORWARD.');
+  } else if (change === 'decrease_temp_endo') {
+    direction = 'Reverse (to reactants)';
+    steps.push('Forward reaction is endothermic.');
+    steps.push('Decreasing temperature removes heat → shifts AWAY from the heat-absorbing direction → REVERSE.');
+  } else if (change === 'catalyst') {
+    direction = 'No shift';
+    steps.push('A catalyst speeds up BOTH forward and reverse reactions equally.');
+    steps.push('It reduces the time to reach equilibrium but does NOT shift the equilibrium position.');
+  }
+
+  steps.push('Result: ' + direction);
+
+  const html =
+    '<div class="chem-answer multi">Shift: ' + direction + '</div>';
+
+  chemResult('lc_result', html);
+  if (steps.length > 0) chemShowSteps('lc_steps', 'lc_steps_card', steps);
+}
+
+function chemPhModeChange() {
+  const mode = document.getElementById('ph_mode').value;
+  const label = document.getElementById('ph_input_label');
+  const input = document.getElementById('ph_value');
+  if (mode === 'H') { label.textContent = '[H⁺] concentration (mol/dm³)'; input.value = '0.01'; }
+  else if (mode === 'OH') { label.textContent = '[OH⁻] concentration (mol/dm³)'; input.value = '0.01'; }
+  else if (mode === 'pH') { label.textContent = 'pH value'; input.value = '2'; }
+  else { label.textContent = 'pOH value'; input.value = '12'; }
+}
+
+function chemPh() {
+  const mode = document.getElementById('ph_mode').value;
+  const val = parseFloat(document.getElementById('ph_value').value);
+
+  if (isNaN(val) || val <= 0) {
+    chemResult('ph_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a positive value.</div>');
+    return;
+  }
+
+  let H, OH, pH, pOH;
+  const steps = [];
+
+  if (mode === 'H') {
+    H = val;
+    pH = -Math.log10(H);
+    pOH = 14 - pH;
+    OH = Math.pow(10, -pOH);
+    steps.push('pH = −log[H⁺] = −log(' + chemFmt(H) + ') = ' + chemFmt(pH));
+    steps.push('pOH = 14 − pH = ' + chemFmt(pOH));
+    steps.push('[OH⁻] = 10^(−pOH) = ' + chemFmt(OH) + ' mol/dm³');
+  } else if (mode === 'OH') {
+    OH = val;
+    pOH = -Math.log10(OH);
+    pH = 14 - pOH;
+    H = Math.pow(10, -pH);
+    steps.push('pOH = −log[OH⁻] = −log(' + chemFmt(OH) + ') = ' + chemFmt(pOH));
+    steps.push('pH = 14 − pOH = ' + chemFmt(pH));
+    steps.push('[H⁺] = 10^(−pH) = ' + chemFmt(H) + ' mol/dm³');
+  } else if (mode === 'pH') {
+    pH = val;
+    H = Math.pow(10, -pH);
+    pOH = 14 - pH;
+    OH = Math.pow(10, -pOH);
+    steps.push('[H⁺] = 10^(−pH) = ' + chemFmt(H) + ' mol/dm³');
+    steps.push('pOH = 14 − pH = ' + chemFmt(pOH));
+    steps.push('[OH⁻] = 10^(−pOH) = ' + chemFmt(OH) + ' mol/dm³');
+  } else {
+    pOH = val;
+    OH = Math.pow(10, -pOH);
+    pH = 14 - pOH;
+    H = Math.pow(10, -pH);
+    steps.push('[OH⁻] = 10^(−pOH) = ' + chemFmt(OH) + ' mol/dm³');
+    steps.push('pH = 14 − pOH = ' + chemFmt(pH));
+    steps.push('[H⁺] = 10^(−pH) = ' + chemFmt(H) + ' mol/dm³');
+  }
+
+  let nature = pH < 7 ? 'Acidic' : pH > 7 ? 'Basic (alkaline)' : 'Neutral';
+  steps.push('Solution is ' + nature + '.');
+
+  const html =
+    '<div class="chem-answer">pH = ' + chemFmt(pH) + '</div>' +
+    '<div class="chem-answer multi" style="color:var(--text);">pOH = ' + chemFmt(pOH) + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">[H⁺] (M)</span><span class="result-cell-value">' + chemFmt(H) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">[OH⁻] (M)</span><span class="result-cell-value">' + chemFmt(OH) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Nature</span><span class="result-cell-value">' + nature + '</span></div>' +
+    '</div>';
+
+  chemResult('ph_result', html);
+  chemShowSteps('ph_steps', 'ph_steps_card', steps);
+}
+
+function chemTitration() {
+  let c1 = document.getElementById('ti_c1').value === '' ? null : parseFloat(document.getElementById('ti_c1').value);
+  let v1 = document.getElementById('ti_v1').value === '' ? null : parseFloat(document.getElementById('ti_v1').value);
+  const n1 = parseFloat(document.getElementById('ti_n1').value);
+  let c2 = document.getElementById('ti_c2').value === '' ? null : parseFloat(document.getElementById('ti_c2').value);
+  let v2 = document.getElementById('ti_v2').value === '' ? null : parseFloat(document.getElementById('ti_v2').value);
+  const n2 = parseFloat(document.getElementById('ti_n2').value);
+
+  if ([n1, n2].some(v => isNaN(v) || v === 0)) {
+    chemResult('ti_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">n₁ and n₂ must be non-zero.</div>');
+    return;
+  }
+
+  const steps = [];
+  let html = '';
+
+  if (c2 === null && c1 !== null && v1 !== null && v2 !== null && v2 !== 0) {
+    c2 = (c1 * v1 * n2) / (n1 * v2);
+    steps.push('c₂ = (c₁ · V₁ · n₂) / (n₁ · V₂)');
+    steps.push('c₂ = (' + chemFmt(c1) + ' · ' + chemFmt(v1) + ' · ' + n2 + ') / (' + n1 + ' · ' + chemFmt(v2) + ')');
+    steps.push('c₂ = ' + chemFmt(c2) + ' mol/dm³');
+    html = '<div class="chem-answer">c₂ = ' + chemFmt(c2) + ' mol/dm³</div>';
+  } else if (c1 === null && c2 !== null && v1 !== null && v2 !== null && v1 !== 0) {
+    c1 = (c2 * v2 * n1) / (n2 * v1);
+    steps.push('c₁ = (c₂ · V₂ · n₁) / (n₂ · V₁)');
+    steps.push('c₁ = (' + chemFmt(c2) + ' · ' + chemFmt(v2) + ' · ' + n1 + ') / (' + n2 + ' · ' + chemFmt(v1) + ')');
+    steps.push('c₁ = ' + chemFmt(c1) + ' mol/dm³');
+    html = '<div class="chem-answer">c₁ = ' + chemFmt(c1) + ' mol/dm³</div>';
+  } else if (v2 === null && c1 !== null && v1 !== null && c2 !== null && c2 !== 0) {
+    v2 = (c1 * v1 * n2) / (n1 * c2);
+    steps.push('V₂ = (c₁ · V₁ · n₂) / (n₁ · c₂)');
+    steps.push('V₂ = (' + chemFmt(c1) + ' · ' + chemFmt(v1) + ' · ' + n2 + ') / (' + n1 + ' · ' + chemFmt(c2) + ')');
+    steps.push('V₂ = ' + chemFmt(v2) + ' (same units as V₁)');
+    html = '<div class="chem-answer">V₂ = ' + chemFmt(v2) + '</div>';
+  } else if (v1 === null && c2 !== null && v2 !== null && c1 !== null && c1 !== 0) {
+    v1 = (c2 * v2 * n1) / (n2 * c1);
+    steps.push('V₁ = (c₂ · V₂ · n₁) / (n₂ · c₁)');
+    steps.push('V₁ = (' + chemFmt(c2) + ' · ' + chemFmt(v2) + ' · ' + n1 + ') / (' + n2 + ' · ' + chemFmt(c1) + ')');
+    steps.push('V₁ = ' + chemFmt(v1) + ' (same units as V₂)');
+    html = '<div class="chem-answer">V₁ = ' + chemFmt(v1) + '</div>';
+  } else {
+    chemResult('ti_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave exactly one of c₁, V₁, c₂, V₂ blank.</div>');
+    return;
+  }
+
+  steps.push('Titration equation: c₁V₁ / n₁ = c₂V₂ / n₂');
+  chemResult('ti_result', html);
+  chemShowSteps('ti_steps', 'ti_steps_card', steps);
+}
+
+function chemIMF() {
+  const formula = document.getElementById('imf_formula').value.trim();
+  if (!formula) {
+    chemResult('imf_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a formula.</div>');
+    return;
+  }
+
+  const steps = [];
+  const forces = [];
+
+  steps.push('All molecules experience London (dispersion) forces.');
+  forces.push('London (dispersion)');
+
+  // Check for H bonded to N, O, F → hydrogen bonding
+  const hBondPattern = /H[0-9]*(?:N|O|F)/i;
+  const hasHBond = /(?:N|O|F)H[0-9]*(?!\w)/i.test(formula) || /H[0-9]*(?:N|O|F)/i.test(formula);
+
+  if (hasHBond) {
+    steps.push('Formula contains H bonded directly to N, O, or F → HYDROGEN BONDING.');
+    forces.push('Hydrogen bonding');
+  }
+
+  // Check polarity heuristics
+  const elements = Object.keys(chemElementCounts(formula));
+  const isDiatomicHomonuclear = elements.length === 1;
+
+  // Common nonpolar molecules
+  const nonpolarList = ['CH4', 'C2H6', 'C3H8', 'C4H10', 'CO2', 'CCl4', 'BF3', 'C6H6'];
+  const isKnownNonpolar = nonpolarList.some(f => f.toLowerCase() === formula.toLowerCase());
+
+  if (!hasHBond && !isDiatomicHomonuclear && !isKnownNonpolar) {
+    steps.push('Molecule likely contains polar bonds and is asymmetric → DIPOLE-DIPOLE forces.');
+    forces.push('Dipole-dipole');
+  } else if (isDiatomicHominuclear) {
+    steps.push('Homonuclear diatomic molecule (e.g. O₂, N₂) → nonpolar, only London forces.');
+  } else if (isKnownNonpolar) {
+    steps.push('Symmetrical or known nonpolar molecule → only London forces.');
+  }
+
+  let html = '<div class="chem-answer multi">' + forces.join(' · ') + '</div>';
+
+  chemResult('imf_result', html);
+  chemShowSteps('imf_steps', 'imf_steps_card', steps);
+}
+
+function chemVSEPR() {
+  const bp = parseInt(document.getElementById('vs_bp').value);
+  const lp = parseInt(document.getElementById('vs_lp').value);
+
+  if (isNaN(bp) || isNaN(lp) || bp < 0 || lp < 0) {
+    chemResult('vs_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter non-negative integers.</div>');
+    return;
+  }
+
+  const total = bp + lp;
+  const steps = [];
+  let shape = '';
+  let angle = '';
+  let example = '';
+
+  if (total === 2 && lp === 0) { shape = 'Linear'; angle = '180°'; example = 'CO₂, BeCl₂'; }
+  else if (total === 3 && lp === 0) { shape = 'Trigonal planar'; angle = '120°'; example = 'BF₃'; }
+  else if (total === 3 && lp === 1) { shape = 'Bent (V-shaped)'; angle = '~117°'; example = 'SO₂'; }
+  else if (total === 4 && lp === 0) { shape = 'Tetrahedral'; angle = '109.5°'; example = 'CH₄'; }
+  else if (total === 4 && lp === 1) { shape = 'Trigonal pyramidal'; angle = '~107°'; example = 'NH₃'; }
+  else if (total === 4 && lp === 2) { shape = 'Bent (V-shaped)'; angle = '~104.5°'; example = 'H₂O'; }
+  else if (total === 5 && lp === 0) { shape = 'Trigonal bipyramidal'; angle = '90° / 120°'; example = 'PCl₅'; }
+  else if (total === 5 && lp === 1) { shape = 'Seesaw'; angle = '~89° / 117°'; example = 'SF₄'; }
+  else if (total === 5 && lp === 2) { shape = 'T-shaped'; angle = '~87°'; example = 'ClF₃'; }
+  else if (total === 6 && lp === 0) { shape = 'Octahedral'; angle = '90°'; example = 'SF₆'; }
+  else if (total === 6 && lp === 1) { shape = 'Square pyramidal'; angle = '~85°'; example = 'BrF₅'; }
+  else if (total === 6 && lp === 2) { shape = 'Square planar'; angle = '90°'; example = 'XeF₄'; }
+  else { shape = 'Complex / unusual geometry'; angle = '—'; example = '—'; }
+
+  steps.push('Bonding pairs: ' + bp);
+  steps.push('Lone pairs: ' + lp);
+  steps.push('Total electron domains: ' + total);
+  steps.push('Shape (based on VSEPR): ' + shape);
+  steps.push('Ideal bond angle: ' + angle);
+  if (example !== '—') steps.push('Typical example: ' + example);
+  if (lp > 0) steps.push('Lone pairs reduce bond angles slightly due to stronger repulsion.');
+
+  const html =
+    '<div class="chem-answer multi">' + shape + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Bond angle</span><span class="result-cell-value">' + angle + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Example</span><span class="result-cell-value">' + example + '</span></div>' +
+    '</div>';
+
+  chemResult('vs_result', html);
+  chemShowSteps('vs_steps', 'vs_steps_card', steps);
+}
+
+/* ============================================================
+   GRADE 12 TOOLS
+   ============================================================ */
+
+function chemKc12() {
+  const a = parseFloat(document.getElementById('k12_a').value) || 1;
+  const b = parseFloat(document.getElementById('k12_b').value) || 1;
+  const c = parseFloat(document.getElementById('k12_c').value) || 1;
+  const d = parseFloat(document.getElementById('k12_d').value) || 1;
+  const ia = parseFloat(document.getElementById('k12_ia').value);
+  const ib = parseFloat(document.getElementById('k12_ib').value);
+  const ic = parseFloat(document.getElementById('k12_ic').value) || 0;
+  const id = parseFloat(document.getElementById('k12_id').value) || 0;
+  const ea = parseFloat(document.getElementById('k12_ea').value);
+
+  if ([ia, ib, ea].some(v => isNaN(v))) {
+    chemResult('k12_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill initial [A], initial [B], and equilibrium [A].</div>');
+    return;
+  }
+
+  // Change in A
+  const deltaA = ea - ia;
+  const x = -deltaA / a; // x = extent of reaction per coefficient
+
+  const eB = ib - b * x;
+  const eC = ic + c * x;
+  const eD = id + d * x;
+
+  if (eB < 0 || eC < 0 || eD < 0) {
+    chemResult('k12_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Negative concentration — check that A decreases (forward reaction).</div>');
+    return;
+  }
+
+  const numerator = Math.pow(eC, c) * Math.pow(eD, d);
+  const denominator = Math.pow(ea, a) * Math.pow(eB, b);
+
+  if (denominator === 0) {
+    chemResult('k12_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Reactant concentration cannot be zero.</div>');
+    return;
+  }
+
+  const Kc = numerator / denominator;
+
+  const steps = [];
+  steps.push('Reaction: ' + a + 'A + ' + b + 'B ⇌ ' + c + 'C + ' + d + 'D');
+  steps.push('ICE TABLE');
+  steps.push('[A]: initial = ' + chemFmt(ia) + ', equilibrium = ' + chemFmt(ea) + ', change = ' + chemFmt(deltaA));
+  steps.push('x (per coefficient) = −Δ[A] / a = ' + chemFmt(x));
+  steps.push('[B]_eq = ' + chemFmt(ib) + ' − ' + b + '×' + chemFmt(x) + ' = ' + chemFmt(eB));
+  steps.push('[C]_eq = ' + chemFmt(ic) + ' + ' + c + '×' + chemFmt(x) + ' = ' + chemFmt(eC));
+  steps.push('[D]_eq = ' + chemFmt(id) + ' + ' + d + '×' + chemFmt(x) + ' = ' + chemFmt(eD));
+  steps.push('K_c = ([C]^' + c + ' · [D]^' + d + ') / ([A]^' + a + ' · [B]^' + b + ')');
+  steps.push('K_c = ' + chemFmt(Kc));
+
+  const html =
+    '<div class="chem-answer">K_c = ' + chemFmt(Kc) + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">[A]_eq</span><span class="result-cell-value">' + chemFmt(ea) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">[B]_eq</span><span class="result-cell-value">' + chemFmt(eB) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">[C]_eq</span><span class="result-cell-value">' + chemFmt(eC) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">[D]_eq</span><span class="result-cell-value">' + chemFmt(eD) + '</span></div>' +
+    '</div>';
+
+  chemResult('k12_result', html);
+  chemShowSteps('k12_steps', 'k12_steps_card', steps);
+}
+
+function chemBuffer() {
+  const Ka = parseFloat(document.getElementById('bf_Ka').value);
+  const A = parseFloat(document.getElementById('bf_A').value);
+  const HA = parseFloat(document.getElementById('bf_HA').value);
+
+  if ([Ka, A, HA].some(v => isNaN(v) || v <= 0)) {
+    chemResult('bf_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter positive values for all fields.</div>');
+    return;
+  }
+
+  const pKa = -Math.log10(Ka);
+  const ratio = A / HA;
+  const pH = pKa + Math.log10(ratio);
+
+  const steps = [];
+  steps.push('pK_a = −log(K_a) = −log(' + chemFmt(Ka) + ') = ' + chemFmt(pKa));
+  steps.push('pH = pK_a + log([A⁻] / [HA])');
+  steps.push('[A⁻] / [HA] = ' + chemFmt(A) + ' / ' + chemFmt(HA) + ' = ' + chemFmt(ratio));
+  steps.push('log(ratio) = ' + chemFmt(Math.log10(ratio)));
+  steps.push('pH = ' + chemFmt(pKa) + ' + ' + chemFmt(Math.log10(ratio)) + ' = ' + chemFmt(pH));
+
+  let note = '';
+  if (Math.abs(pH - pKa) < 0.5) note = 'Good buffer range (pH ≈ pK_a).';
+  else note = 'Weaker buffering — pH is far from pK_a.';
+  steps.push(note);
+
+  const html =
+    '<div class="chem-answer">pH = ' + chemFmt(pH) + '</div>' +
+    '<div class="result-sub">' + note + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">pK_a</span><span class="result-cell-value">' + chemFmt(pKa) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Ratio [A⁻]/[HA]</span><span class="result-cell-value">' + chemFmt(ratio) + '</span></div>' +
+    '</div>';
+
+  chemResult('bf_result', html);
+  chemShowSteps('bf_steps', 'bf_steps_card', steps);
+}
+
+function chemInitGalvanic() {
+  const cat = document.getElementById('gv_cathode');
+  const an = document.getElementById('gv_anode');
+  if (!cat || !an) return;
+  const keys = Object.keys(ELECTRODE_POTENTIALS);
+  cat.innerHTML = '';
+  an.innerHTML = '';
+  keys.forEach(k => {
+    const o1 = document.createElement('option');
+    o1.value = k; o1.textContent = k + '  (E° = ' + ELECTRODE_POTENTIALS[k] + ' V)';
+    cat.appendChild(o1);
+    const o2 = document.createElement('option');
+    o2.value = k; o2.textContent = k + '  (E° = ' + ELECTRODE_POTENTIALS[k] + ' V)';
+    an.appendChild(o2);
+  });
+  // Defaults: Cu cathode, Zn anode
+  cat.value = 'Cu²⁺ + 2e⁻ → Cu';
+  an.value = 'Zn²⁺ + 2e⁻ → Zn';
+}
+
+function chemGalvanic() {
+  const catKey = document.getElementById('gv_cathode').value;
+  const anKey = document.getElementById('gv_anode').value;
+  const Ecath = ELECTRODE_POTENTIALS[catKey];
+  const Ean = ELECTRODE_POTENTIALS[anKey];
+
+  if (Ecath === undefined || Ean === undefined) {
+    chemResult('gv_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Pick valid electrodes.</div>');
+    return;
+  }
+
+  const Ecell = Ecath - Ean;
+
+  const steps = [];
+  steps.push('Cathode (reduction): ' + catKey + '  E° = ' + Ecath + ' V');
+  steps.push('Anode (oxidation): ' + anKey + '  E° = ' + Ean + ' V');
+  steps.push('E°_cell = E°_cathode − E°_anode = ' + Ecath + ' − (' + Ean + ') = ' + chemFmt(Ecell) + ' V');
+
+  let spont = Ecell > 0 ? 'SPONTANEOUS (galvanic cell works)' : 'NON-SPONTANEOUS — swap electrodes';
+  steps.push(spont);
+
+  const html =
+    '<div class="chem-answer">E°_cell = ' + chemFmt(Ecell) + ' V</div>' +
+    '<div class="result-sub">' + spont + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Cathode E°</span><span class="result-cell-value">' + Ecath + ' V</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Anode E°</span><span class="result-cell-value">' + Ean + ' V</span></div>' +
+    '</div>';
+
+  chemResult('gv_result', html);
+  chemShowSteps('gv_steps', 'gv_steps_card', steps);
+}
+
+function chemElectrolysis() {
+  const I = parseFloat(document.getElementById('el_I').value);
+  const t = parseFloat(document.getElementById('el_t').value);
+  const M = parseFloat(document.getElementById('el_M').value);
+  const n = parseFloat(document.getElementById('el_n').value);
+  const F = 96500;
+
+  if ([I, t, M, n].some(v => isNaN(v)) || n === 0) {
+    chemResult('el_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields. n cannot be zero.</div>');
+    return;
+  }
+
+  const Q = I * t;
+  const molE = Q / F;
+  const molSub = molE / n;
+  const mass = molSub * M;
+
+  const steps = [];
+  steps.push('Q = I · t = (' + chemFmt(I) + ')(' + chemFmt(t) + ') = ' + chemFmt(Q) + ' C');
+  steps.push('n(e⁻) = Q / F = ' + chemFmt(Q) + ' / 96 500 = ' + chemFmt(molE) + ' mol');
+  steps.push('n(substance) = n(e⁻) / n = ' + chemFmt(molE) + ' / ' + n + ' = ' + chemFmt(molSub) + ' mol');
+  steps.push('m = n × M = ' + chemFmt(molSub) + ' × ' + chemFmt(M) + ' = ' + chemFmt(mass) + ' g');
+
+  const html =
+    '<div class="chem-answer">m = ' + chemFmt(mass) + ' g</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Charge Q</span><span class="result-cell-value">' + chemFmt(Q) + ' C</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">n(e⁻)</span><span class="result-cell-value">' + chemFmt(molE) + ' mol</span></div>' +
+    '</div>';
+
+  chemResult('el_result', html);
+  chemShowSteps('el_steps', 'el_steps_card', steps);
+}
+
+function chemRedox() {
+  const formula = document.getElementById('rx_formula').value.trim();
+  const totalCharge = parseFloat(document.getElementById('rx_charge').value) || 0;
+
+  if (!formula) {
+    chemResult('rx_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a formula.</div>');
+    return;
+  }
+
+  try {
+    const counts = chemElementCounts(formula);
+    const steps = [];
+    const result = {};
+
+    // Basic rules: O = -2, H = +1, halogens = -1 (usually), group 1 = +1, group 2 = +2
+    const group1 = ['Li', 'Na', 'K', 'Rb', 'Cs'];
+    const group2 = ['Be', 'Mg', 'Ca', 'Sr', 'Ba'];
+    const halogens = ['F', 'Cl', 'Br', 'I'];
+
+    // Try known oxidation rules
+    if (counts.O) {
+      result.O = -2;
+      steps.push('O = −2 (usual oxidation state, except peroxides)');
+    }
+    if (counts.H) {
+      result.H = +1;
+      steps.push('H = +1 (usual oxidation state, except metal hydrides)');
+    }
+    group1.forEach(el => {
+      if (counts[el]) { result[el] = +1; steps.push(el + ' = +1 (Group 1 metal)'); }
+    });
+    group2.forEach(el => {
+      if (counts[el]) { result[el] = +2; steps.push(el + ' = +2 (Group 2 metal)'); }
+    });
+
+    // Unknown elements: solve from charge balance
+    let knownSum = 0;
+    const unknowns = [];
+    Object.keys(counts).forEach(el => {
+      if (result[el] !== undefined) {
+        knownSum += result[el] * counts[el];
+      } else {
+        unknowns.push(el);
+      }
+    });
+
+    if (unknowns.length === 1) {
+      const el = unknowns[0];
+      const ox = (totalCharge - knownSum) / counts[el];
+      result[el] = ox;
+      steps.push(el + ': solve from charge balance → ' + chemFmt(ox));
+    } else if (unknowns.length > 1) {
+      // Try halogens = -1
+      unknowns.forEach(el => {
+        if (halogens.includes(el)) {
+          result[el] = -1;
+          knownSum += -1 * counts[el];
+          steps.push(el + ' = −1 (halogen, assumed)');
+        }
+      });
+      const remaining = unknowns.filter(el => result[el] === undefined);
+      if (remaining.length === 1) {
+        const el = remaining[0];
+        const ox = (totalCharge - knownSum) / counts[el];
+        result[el] = ox;
+        steps.push(el + ': solve from charge balance → ' + chemFmt(ox));
+      } else if (remaining.length > 1) {
+        steps.push('Multiple unknown elements — cannot solve uniquely. Assume common oxidation states.');
+      }
+    }
+
+    steps.push('Sum of oxidation numbers must equal total charge = ' + chemFmt(totalCharge));
+
+    let html = '<div class="chem-answer multi">Oxidation states</div>';
+    html += '<div class="chem-result-grid">';
+    Object.keys(result).forEach(el => {
+      html += '<div class="result-cell"><span class="result-cell-label">' + el + ' × ' + counts[el] + '</span><span class="result-cell-value">' + chemFmt(result[el]) + '</span></div>';
+    });
+    html += '</div>';
+
+    chemResult('rx_result', html);
+    chemShowSteps('rx_steps', 'rx_steps_card', steps);
+  } catch (e) {
+    chemResult('rx_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Error: ' + escapeHtml(e.message) + '</div>');
+  }
+}
+
+function chemOrganic() {
+  const type = document.getElementById('or_type').value;
+  const info = {
+    substitution_alkane: {
+      name: 'Substitution (alkane + halogen)',
+      conditions: 'UV light (or heat)',
+      pattern: 'R–H + X₂ → R–X + HX',
+      steps: ['Free radical mechanism.', 'One H atom is replaced by a halogen atom.', 'Produces a haloalkane and hydrogen halide.']
+    },
+    addition_alkene_hx: {
+      name: 'Addition (alkene + hydrogen halide)',
+      conditions: 'Room temperature',
+      pattern: 'R–CH=CH–R\' + HX → R–CHX–CH₂–R\'',
+      steps: ['Double bond breaks.', 'H adds to one carbon, X to the other.', 'Follows Markovnikov\'s rule for unsymmetrical alkenes.']
+    },
+    addition_alkene_h2o: {
+      name: 'Hydration (alkene + water)',
+      conditions: 'Acid catalyst (H₂SO₄ or H₃PO₄), heat',
+      pattern: 'R–CH=CH₂ + H₂O → R–CH(OH)–CH₃',
+      steps: ['Water adds across the double bond.', 'Product is an alcohol.', 'Industrial method for ethanol from ethene.']
+    },
+    addition_alkene_h2: {
+      name: 'Hydrogenation (alkene + H₂)',
+      conditions: 'Pt, Pd, or Ni catalyst',
+      pattern: 'R–CH=CH–R\' + H₂ → R–CH₂–CH₂–R\'',
+      steps: ['Both H atoms add to the double bond.', 'Converts alkene to alkane.', 'Used in margarine production.']
+    },
+    elimination: {
+      name: 'Elimination (alcohol → alkene)',
+      conditions: 'Concentrated H₂SO₄ or hot Al₂O₃, high temperature',
+      pattern: 'R–CH₂–CH₂–OH → R–CH=CH₂ + H₂O',
+      steps: ['Water is eliminated.', 'Double bond forms.', 'Reverse of hydration.']
+    },
+    esterification: {
+      name: 'Esterification (alcohol + carboxylic acid)',
+      conditions: 'Concentrated H₂SO₄ catalyst, heat',
+      pattern: 'R–COOH + R\'–OH ⇌ R–COO–R\' + H₂O',
+      steps: ['Condensation reaction — water is eliminated.', 'Product is an ester (fruity smell).', 'Reversible reaction.']
+    },
+    oxidation_alcohol_1: {
+      name: 'Oxidation of primary alcohol',
+      conditions: 'K₂Cr₂O₇ / H⁺ (acidified dichromate), heat',
+      pattern: 'R–CH₂–OH → R–CHO → R–COOH',
+      steps: ['Primary alcohol → aldehyde (distil).', 'Aldehyde → carboxylic acid (reflux).', 'Colour change: orange Cr₂O₇²⁻ → green Cr³⁺.']
+    },
+    oxidation_alcohol_2: {
+      name: 'Oxidation of secondary alcohol',
+      conditions: 'K₂Cr₂O₇ / H⁺, heat',
+      pattern: 'R–CH(OH)–R\' → R–C(=O)–R\'',
+      steps: ['Secondary alcohol → ketone.', 'Cannot be oxidised further without breaking C–C bond.', 'Orange → green colour change.']
+    },
+    polymerisation_addition: {
+      name: 'Addition polymerisation (alkene → polymer)',
+      conditions: 'High pressure, catalyst, heat',
+      pattern: 'n(CH₂=CH₂) → –(CH₂–CH₂)ₙ–',
+      steps: ['Many alkene monomers join.', 'No atoms lost.', 'Product is a saturated polymer.']
+    },
+    hydrolysis_ester: {
+      name: 'Hydrolysis of ester',
+      conditions: 'Acid or base (with NaOH → saponification), heat',
+      pattern: 'R–COO–R\' + H₂O → R–COOH + R\'–OH',
+      steps: ['Ester breaks into alcohol and carboxylic acid.', 'Base hydrolysis produces a carboxylate salt (soap).', 'Reverse of esterification.']
+    }
+  };
+
+  const i = info[type];
+  if (!i) { chemResult('or_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Unknown reaction type.</div>'); return; }
+
+  let html = '<div class="chem-answer multi">' + i.name + '</div>';
+  html += '<div class="chem-result-grid">' +
+    '<div class="result-cell"><span class="result-cell-label">Conditions</span><span class="result-cell-value" style="font-size:12px;">' + i.conditions + '</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Pattern</span><span class="result-cell-value" style="font-size:11px; font-family:var(--font-mono);">' + i.pattern + '</span></div>' +
+  '</div>';
+
+  chemResult('or_result', html);
+
+  const steps = [i.pattern].concat(i.steps);
+  chemShowSteps('or_steps', 'or_steps_card', steps);
+}
+
+function chemPh12() {
+  const Ka = parseFloat(document.getElementById('p12_Ka').value);
+  const c = parseFloat(document.getElementById('p12_c').value);
+
+  if ([Ka, c].some(v => isNaN(v) || v <= 0)) {
+    chemResult('p12_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter positive values.</div>');
+    return;
+  }
+
+  const H = Math.sqrt(Ka * c);
+  const pH = -Math.log10(H);
+  const pctIon = (H / c) * 100;
+
+  const steps = [];
+  steps.push('[H⁺] ≈ √(K_a · c) = √(' + chemFmt(Ka) + ' × ' + chemFmt(c) + ')');
+  steps.push('[H⁺] = ' + chemFmt(H) + ' mol/dm³');
+  steps.push('pH = −log[H⁺] = ' + chemFmt(pH));
+  steps.push('Percentage ionisation = [H⁺] / c × 100 = ' + chemFmt(pctIon) + '%');
+
+  let note = '';
+  if (pctIon < 5) note = 'Approximation valid (weak ionisation).';
+  else note = 'Ionisation > 5% — approximation is rough. Use ICE table for higher accuracy.';
+  steps.push(note);
+
+  const html =
+    '<div class="chem-answer">pH = ' + chemFmt(pH) + '</div>' +
+    '<div class="result-sub">' + note + '</div>' +
+    '<div class="chem-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">[H⁺]</span><span class="result-cell-value">' + chemFmt(H) + ' M</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">% ionised</span><span class="result-cell-value">' + chemFmt(pctIon) + '%</span></div>' +
+    '</div>';
+
+  chemResult('p12_result', html);
+  chemShowSteps('p12_steps', 'p12_steps_card', steps);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+  chemSetGrade(10);
+  chemInitGalvanic();
+});
+</script>
+</body>
+</html>
