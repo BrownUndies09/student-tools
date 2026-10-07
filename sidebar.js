@@ -39,23 +39,14 @@ const SIDEBAR_TOOLS = [
   {
     group: 'NSC Mathematics',
     tools: [
-      { label: 'Calculus', icon: '📉', href: 'calculus.html' },
-      { label: 'Trigonometry', icon: '📐', href: 'trig.html' },
-      { label: 'Euclidean Geometry', icon: '🔺', href: 'euclidean.html' },
-      { label: 'Functions', icon: '📈', href: 'functions.html' },
-      { label: 'Financial Maths', icon: '💰', href: 'finance.html' },
-      { label: 'Analytical Geometry', icon: '📊', href: 'analytical.html' },
-      { label: 'Sequences & Series', icon: '🔢', href: 'sequences.html' },
-      { label: 'Algebra', icon: '✖️', href: 'algebra.html' },
-      { label: 'Statistics', icon: '📊', href: 'statistics.html' },
-      { label: 'Probability', icon: '🎲', href: 'probability.html' }
+      { label: 'Maths (Gr 10–12)', icon: '📐', href: 'maths.html' }
     ]
   },
   {
     group: 'NSC Physical Sciences',
     tools: [
-      { label: 'Physics', icon: '⚡', href: 'physics.html' },
-      { label: 'Chemistry', icon: '🧪', href: 'chemistry.html' }
+      { label: 'Physics (Gr 10–12)', icon: '⚡', href: 'physics.html' },
+      { label: 'Chemistry (Gr 10–12)', icon: '🧪', href: 'chemistry.html' }
     ]
   },
   {
