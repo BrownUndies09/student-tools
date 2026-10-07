@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Sciences Tools - Grade 10, 11 & 12 NSC Calculator</title>
+<meta name="description" content="Free NSC Life Sciences tools for Grade 10, 11 and 12. Genetics, DNA, meiosis, photosynthesis, respiration, ecology, nervous system, homeostasis, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .ls-tool-select { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .ls-tool-pill {
+    padding: 7px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: 100px; font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .ls-tool-pill:hover { border-color: var(--accent); color: var(--text); }
+  .ls-tool-pill.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  .ls-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .ls-input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 500px) { .ls-input-grid, .ls-input-grid-3 { grid-template-columns: 1fr; } }
+  .ls-answer {
+    font-size: 26px; font-weight: 700; letter-spacing: -1px; color: var(--success);
+    font-family: var(--font-mono); margin: 8px 0; word-break: break-word; line-height: 1.2;
+  }
+  .ls-answer.multi { font-size: 18px; }
+  .ls-input { font-family: var(--font-mono); font-size: 15px; padding: 12px 14px; }
+  .ls-step {
+    padding: 12px 16px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm); margin-bottom: 8px; font-family: var(--font-mono);
+    font-size: 13px; color: var(--text); line-height: 1.65;
+  }
+  .ls-step .step-num {
+    display: inline-block; width: 22px; height: 22px; background: var(--accent);
+    color: var(--accent-text); border-radius: 50%; font-size: 11px; text-align: center;
+    line-height: 22px; font-weight: 600; margin-right: 10px; flex-shrink: 0;
+  }
+  .ls-step .step-row { display: flex; align-items: flex-start; }
+  .ls-formula {
+    display: inline-block; padding: 2px 8px; background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--text); margin: 0 2px;
+  }
+  .ls-formula-note {
+    padding: 10px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent); border-radius: 10px; font-size: 12px;
+    color: var(--text-muted); line-height: 1.7; margin-bottom: 12px;
+  }
+  .ls-formula-note strong { color: var(--text); }
+  .ls-result-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .ls-hidden { display: none !important; }
+  .ls-subpills {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; padding: 8px;
+    background: var(--glass-strong); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  }
+  .ls-subpill {
+    padding: 5px 11px; background: transparent; border: none; border-radius: 100px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .ls-subpill:hover { color: var(--text); }
+  .ls-subpill.active { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+  .ls-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .ls-table th, .ls-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .ls-table th { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Life Sciences Tools</h1>
+    <p>NSC Grade 10, 11 &amp; 12 Life Sciences tools with step-by-step working.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab active" id="tabG10" onclick="lsSetGrade(10)">Grade 10</button>
+      <button class="tab" id="tabG11" onclick="lsSetGrade(11)">Grade 11</button>
+      <button class="tab" id="tabG12" onclick="lsSetGrade(12)">Grade 12</button>
+    </div>
+
+    <div id="lsGrade10Tools">
+      <div class="ls-tool-select">
+        <button class="ls-tool-pill active" data-g10="biomolecule" onclick="lsSelect10('biomolecule')">Biomolecules</button>
+        <button class="ls-tool-pill" data-g10="foodtest" onclick="lsSelect10('foodtest')">Food Tests</button>
+        <button class="ls-tool-pill" data-g10="enzyme" onclick="lsSelect10('enzyme')">Enzymes</button>
+        <button class="ls-tool-pill" data-g10="organelle" onclick="lsSelect10('organelle')">Cell Organelles</button>
+        <button class="ls-tool-pill" data-g10="microscope" onclick="lsSelect10('microscope')">Microscope Magnification</button>
+        <button class="ls-tool-pill" data-g10="osmosis" onclick="lsSelect10('osmosis')">Osmosis &amp; Diffusion</button>
+        <button class="ls-tool-pill" data-g10="mitosis" onclick="lsSelect10('mitosis')">Mitosis</button>
+        <button class="ls-tool-pill" data-g10="planttissue" onclick="lsSelect10('planttissue')">Plant Tissues</button>
+        <button class="ls-tool-pill" data-g10="transpiration" onclick="lsSelect10('transpiration')">Transpiration</button>
+        <button class="ls-tool-pill" data-g10="foodweb" onclick="lsSelect10('foodweb')">Food Web</button>
+      </div>
+    </div>
+
+    <div id="lsGrade11Tools" class="ls-hidden">
+      <div class="ls-tool-select">
+        <button class="ls-tool-pill active" data-g11="microorg" onclick="lsSelect11('microorg')">Microorganisms</button>
+        <button class="ls-tool-pill" data-g11="plantgroup" onclick="lsSelect11('plantgroup')">Plant Groups</button>
+        <button class="ls-tool-pill" data-g11="animphyla" onclick="lsSelect11('animphyla')">Animal Phyla</button>
+        <button class="ls-tool-pill" data-g11="photosynth" onclick="lsSelect11('photosynth')">Photosynthesis</button>
+        <button class="ls-tool-pill" data-g11="respiration" onclick="lsSelect11('respiration')">Cellular Respiration</button>
+        <button class="ls-tool-pill" data-g11="nutrition" onclick="lsSelect11('nutrition')">Animal Nutrition</button>
+        <button class="ls-tool-pill" data-g11="gasexchange" onclick="lsSelect11('gasexchange')">Gas Exchange</button>
+        <button class="ls-tool-pill" data-g11="excretion" onclick="lsSelect11('excretion')">Excretion</button>
+        <button class="ls-tool-pill" data-g11="popphase" onclick="lsSelect11('popphase')">Population Ecology</button>
+        <button class="ls-tool-pill" data-g11="markrecap" onclick="lsSelect11('markrecap')">Mark-Recapture</button>
+      </div>
+    </div>
+
+    <div id="lsGrade12Tools" class="ls-hidden">
+      <div class="ls-tool-select">
+        <button class="ls-tool-pill active" data-g12="dnarna" onclick="lsSelect12('dnarna')">DNA &amp; RNA</button>
+        <button class="ls-tool-pill" data-g12="punnett" onclick="lsSelect12('punnett')">Punnett Square</button>
+        <button class="ls-tool-pill" data-g12="bloodtype" onclick="lsSelect12('bloodtype')">Blood Types</button>
+        <button class="ls-tool-pill" data-g12="pedigree" onclick="lsSelect12('pedigree')">Pedigree Analyser</button>
+        <button class="ls-tool-pill" data-g12="meiosis" onclick="lsSelect12('meiosis')">Meiosis</button>
+        <button class="ls-tool-pill" data-g12="karyotype" onclick="lsSelect12('karyotype')">Karyotype Analyser</button>
+        <button class="ls-tool-pill" data-g12="evolution" onclick="lsSelect12('evolution')">Evolution</button>
+        <button class="ls-tool-pill" data-g12="population" onclick="lsSelect12('population')">Population Ecology</button>
+        <button class="ls-tool-pill" data-g12="dna-profile" onclick="lsSelect12('dna-profile')">DNA Profiling</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GRADE 10 ==================== -->
+
+  <!-- Biomolecules -->
+  <div id="tool-biomolecule" class="ls-tool-panel">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Biomolecules:</strong> Identify the type of biomolecule from a description or formula.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Describe the molecule (keywords)</label>
+        <input type="text" id="bm_desc" class="ls-input" placeholder="e.g. fatty acids and glycerol, or amino acids, or glucose">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsBiomolecule()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="bm_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a description and click Identify.</div></div>
+    </div>
+    <div class="card ls-hidden" id="bm_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="bm_steps"></div>
+    </div>
+  </div>
+
+  <!-- Food Tests -->
+  <div id="tool-foodtest" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Food test reagents:</strong><br>
+        Benedict's/Fehling's → reducing sugars (blue → brick-red)<br>
+        Iodine solution → starch (brown → blue-black)<br>
+        Biuret / Millon's → protein (blue → violet / red)<br>
+        Ether/ethanol emulsion → lipids (white emulsion)
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Reagent used</label>
+        <select id="ft_reagent" class="ls-input">
+          <option value="benedicts">Benedict's / Fehling's</option>
+          <option value="iodine">Iodine solution</option>
+          <option value="biuret">Biuret / Millon's</option>
+          <option value="ether">Ether / ethanol</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Colour observed</label>
+        <input type="text" id="ft_colour" class="ls-input" placeholder="e.g. brick-red, blue-black, violet, white emulsion">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsFoodTest()">Interpret</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Interpretation</div>
+      <div id="ft_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter reagent and colour, click Interpret.</div></div>
+    </div>
+  </div>
+
+  <!-- Enzymes -->
+  <div id="tool-enzyme" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Enzyme activity:</strong> temperature and pH affect enzyme activity. Enzymes denature above optimum temperature.
+      </div>
+      <div class="ls-input-grid">
+        <div>
+          <label>Optimum temperature (°C)</label>
+          <input type="number" id="en_opt" class="ls-input" step="any" value="37">
+        </div>
+        <div>
+          <label>Test temperature (°C)</label>
+          <input type="number" id="en_test" class="ls-input" step="any" value="60">
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsEnzyme()">Predict Activity</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Prediction</div>
+      <div id="en_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Predict.</div></div>
+    </div>
+    <div class="card ls-hidden" id="en_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="en_steps"></div>
+    </div>
+  </div>
+
+  <!-- Cell Organelles -->
+  <div id="tool-organelle" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">Look up an organelle's function and whether it's in plant cells, animal cells, or both.</div>
+      <div style="margin-bottom:10px;">
+        <label>Organelle</label>
+        <input type="text" id="or_name" class="ls-input" placeholder="e.g. mitochondria, nucleus, chloroplast, ribosome" value="mitochondria">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsOrganelle()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="or_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter an organelle and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <!-- Microscope Magnification -->
+  <div id="tool-microscope" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <span class="ls-formula">Magnification = eyepiece × objective</span><br>
+        <span class="ls-formula">Actual size = measured length / magnification</span>
+      </div>
+      <div class="ls-input-grid">
+        <div><label>Eyepiece magnification (×)</label><input type="number" id="ms_eye" class="ls-input" step="any" value="10"></div>
+        <div><label>Objective magnification (×)</label><input type="number" id="ms_obj" class="ls-input" step="any" value="40"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsMicroscope()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Overall Magnification</div>
+      <div id="ms_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card ls-hidden" id="ms_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ms_steps"></div>
+    </div>
+  </div>
+
+  <!-- Osmosis & Diffusion -->
+  <div id="tool-osmosis" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Predict cell behaviour</strong> based on the solute concentration of the surrounding solution compared to the cell.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Surrounding solution</label>
+        <select id="os_sol" class="ls-input">
+          <option value="hypotonic">Hypotonic (lower solute than cell)</option>
+          <option value="isotonic">Isotonic (same solute)</option>
+          <option value="hypertonic">Hypertonic (higher solute than cell)</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Cell type</label>
+        <select id="os_type" class="ls-input">
+          <option value="plant">Plant cell</option>
+          <option value="animal">Animal cell</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsOsmosis()">Predict</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Prediction</div>
+      <div id="os_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick conditions and click Predict.</div></div>
+    </div>
+  </div>
+
+  <!-- Mitosis -->
+  <div id="tool-mitosis" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">Identify the phase of mitosis based on observable features, or calculate chromosome numbers.</div>
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="mi_mode" class="ls-input" onchange="lsMitosisModeChange()">
+          <option value="identify">Identify phase from features</option>
+          <option value="chromosomes">Chromosome number calculator</option>
+        </select>
+      </div>
+      <div id="mi_identify_inputs">
+        <div style="margin-bottom:10px;">
+          <label>Observable feature</label>
+          <select id="mi_feature" class="ls-input">
+            <option value="chromosomes_visible">Chromosomes condensing, nuclear membrane breaking down</option>
+            <option value="chromosomes_equator">Chromosomes lined up at equator</option>
+            <option value="chromatids_poles">Chromatids being pulled to poles</option>
+            <option value="nuclear_reforming">Nuclear membrane reforming, cleavage furrow</option>
+          </select>
+        </div>
+      </div>
+      <div id="mi_chromosomes_inputs" class="ls-hidden">
+        <label>Chromosome number in original cell</label>
+        <input type="number" id="mi_orig" class="ls-input" step="1" value="46">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsMitosis()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="mi_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick mode and enter data.</div></div>
+    </div>
+  </div>
+
+  <!-- Plant Tissues -->
+  <div id="tool-planttissue" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">Identify plant tissue from a description or match function to tissue.</div>
+      <div style="margin-bottom:10px;">
+        <label>Tissue name or function</label>
+        <input type="text" id="pt_query" class="ls-input" placeholder="e.g. xylem, phloem, epidermis, parenchyma, collenchyma" value="xylem">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPlantTissue()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="pt_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter tissue and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <!-- Transpiration -->
+  <div id="tool-transpiration" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Transpiration:</strong> movement of water vapour from leaves through stomata. Affected by light intensity, temperature, humidity, wind.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Conditions</label>
+        <select id="tr_cond" class="ls-input">
+          <option value="bright_dry_windy">Bright, dry, windy day</option>
+          <option value="dark_humid_still">Dark, humid, still air</option>
+          <option value="moderate">Moderate conditions</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsTranspiration()">Predict Rate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Predicted Rate</div>
+      <div id="tr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick conditions and click Predict.</div></div>
+    </div>
+    <div class="card ls-hidden" id="tr_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="tr_steps"></div>
+    </div>
+  </div>
+
+  <!-- Food Web -->
+  <div id="tool-foodweb" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Trophic levels:</strong> Producer (Level 1) → Primary consumer (Level 2) → Secondary consumer (Level 3) → Tertiary consumer (Level 4).<br>
+        <strong>10% rule:</strong> only ~10% of energy transfers between levels.
+      </div>
+      <div class="ls-input-grid">
+        <div><label>Energy at producer level (kJ)</label><input type="number" id="fw_energy" class="ls-input" step="any" value="10000"></div>
+        <div><label>Number of levels to show</label><input type="number" id="fw_levels" class="ls-input" step="1" min="1" max="5" value="4"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsFoodWeb()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Energy Pyramid</div>
+      <div id="fw_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+  </div>
+
+  <!-- ==================== GRADE 11 ==================== -->
+
+  <!-- Microorganisms -->
+  <div id="tool-microorg" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">Identify the kingdom or type of microorganism from a description.</div>
+      <div style="margin-bottom:10px;">
+        <label>Description or name</label>
+        <input type="text" id="mo_query" class="ls-input" placeholder="e.g. bacteria, virus, fungi, protista, HIV, yeast" value="bacteria">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsMicroorg()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="mo_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter description and click Identify.</div></div>
+    </div>
+  </div>
+
+  <!-- Plant Groups -->
+  <div id="tool-plantgroup" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">Identify the plant group from a description.</div>
+      <div style="margin-bottom:10px;">
+        <label>Description or name</label>
+        <input type="text" id="pg_query" class="ls-input" placeholder="e.g. moss, fern, pine, flowering plant" value="fern">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPlantGroup()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="pg_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter description and click Identify.</div></div>
+    </div>
+  </div>
+
+  <!-- Animal Phyla -->
+  <div id="tool-animphyla" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Animal phyla comparison:</strong> symmetry (radial/bilateral), germ layers (diploblastic/triploblastic), coelom (acoelomate/pseudocoelomate/coelomate), gut (one-opening/two-opening).
+      </div>
+      <div class="ls-input-grid">
+        <div>
+          <label>Symmetry</label>
+          <select id="ap_sym" class="ls-input">
+            <option value="radial">Radial</option>
+            <option value="bilateral">Bilateral</option>
+          </select>
+        </div>
+        <div>
+          <label>Germ layers</label>
+          <select id="ap_germ" class="ls-input">
+            <option value="diplo">Diploblastic</option>
+            <option value="triplo">Triploblastic</option>
+          </select>
+        </div>
+        <div>
+          <label>Coelom</label>
+          <select id="ap_coelom" class="ls-input">
+            <option value="acoelomate">Acoelomate</option>
+            <option value="pseudo">Pseudocoelomate</option>
+            <option value="coelomate">Coelomate</option>
+          </select>
+        </div>
+        <div>
+          <label>Gut</label>
+          <select id="ap_gut" class="ls-input">
+            <option value="one">One-opening (blind)</option>
+            <option value="two">Two-opening (mouth + anus)</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsAnimalPhyla()">Match Phyla</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Matching Phyla</div>
+      <div id="ap_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick features and click Match.</div></div>
+    </div>
+  </div>
+
+  <!-- Photosynthesis -->
+  <div id="tool-photosynth" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <span class="ls-formula">6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂</span><br>
+        <strong>Light phase:</strong> thylakoid; water split, ATP + NADPH made, O₂ released.<br>
+        <strong>Dark phase:</strong> stroma; CO₂ fixed into glucose using ATP + NADPH.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Rate-limiting factor</label>
+        <select id="ps_factor" class="ls-input">
+          <option value="light">Light intensity</option>
+          <option value="co2">CO₂ concentration</option>
+          <option value="temp">Temperature</option>
+        </select>
+      </div>
+      <div class="ls-input-grid">
+        <div><label>Current level</label><input type="number" id="ps_level" class="ls-input" step="any" value="50"></div>
+        <div><label>New level</label><input type="number" id="ps_new" class="ls-input" step="any" value="75"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPhotosynthesis()">Predict Effect</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Prediction</div>
+      <div id="ps_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick factor and values, click Predict.</div></div>
+    </div>
+    <div class="card ls-hidden" id="ps_steps_card">
+      <div class="result-label">Explanation</div>
+      <div id="ps_steps"></div>
+    </div>
+  </div>
+
+  <!-- Cellular Respiration -->
+  <div id="tool-respiration" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Aerobic:</strong> C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ~36 ATP<br>
+        <strong>Anaerobic (muscle):</strong> C₆H₁₂O₆ → 2 lactic acid + 2 ATP<br>
+        <strong>Anaerobic (yeast):</strong> C₆H₁₂O₆ → 2 ethanol + 2CO₂ + 2 ATP
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Type of respiration</label>
+        <select id="rs_type" class="ls-input" onchange="lsRespirationChange()">
+          <option value="aerobic">Aerobic</option>
+          <option value="anaerobic_muscle">Anaerobic (muscle)</option>
+          <option value="anaerobic_yeast">Anaerobic (yeast)</option>
+        </select>
+      </div>
+      <div>
+        <label>Glucose molecules broken down</label>
+        <input type="number" id="rs_glucose" class="ls-input" step="any" value="1">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsRespiration()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Products</div>
+      <div id="rs_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick type and click Calculate.</div></div>
+    </div>
+    <div class="card ls-hidden" id="rs_steps_card">
+      <div class="result-label">Working</div>
+      <div id="rs_steps"></div>
+    </div>
+  </div>
+
+  <!-- Animal Nutrition -->
+  <div id="tool-nutrition" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Digestive enzymes:</strong><br>
+        Amylase → starch → maltose<br>
+        Protease (pepsin, trypsin) → protein → amino acids<br>
+        Lipase → fats → fatty acids + glycerol
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Food substrate</label>
+        <select id="nu_sub" class="ls-input">
+          <option value="starch">Starch</option>
+          <option value="protein">Protein</option>
+          <option value="fat">Fat / lipid</option>
+          <option value="maltose">Maltose</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsNutrition()">Match Enzyme</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="nu_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick substrate and click Match.</div></div>
+    </div>
+  </div>
+
+  <!-- Gas Exchange -->
+  <div id="tool-gasexchange" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Lung volumes:</strong><br>
+        Tidal volume ≈ 500 mL (normal breath)<br>
+        Vital capacity = max in − max out<br>
+        Residual volume ≈ 1200 mL (never leaves lungs)
+      </div>
+      <div class="ls-input-grid">
+        <div><label>Tidal volume (mL)</label><input type="number" id="ge_tv" class="ls-input" step="any" value="500"></div>
+        <div><label>Breaths per minute</label><input type="number" id="ge_bpm" class="ls-input" step="any" value="14"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsGasExchange()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="ge_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card ls-hidden" id="ge_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ge_steps"></div>
+    </div>
+  </div>
+
+  <!-- Excretion -->
+  <div id="tool-excretion" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Nephron process:</strong> Filtration (glomerulus) → Reabsorption (tubules) → Secretion → Excretion.<br>
+        <strong>ADH:</strong> increases water reabsorption when blood is too concentrated.<br>
+        <strong>Aldosterone:</strong> increases Na⁺ reabsorption.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Blood condition</label>
+        <select id="ex_cond" class="ls-input">
+          <option value="too_concentrated">Blood too concentrated (dehydration)</option>
+          <option value="too_dilute">Blood too dilute (overhydration)</option>
+          <option value="high_salt">Blood sodium too high</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsExcretion()">Predict Response</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Response</div>
+      <div id="ex_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick condition and click Predict.</div></div>
+    </div>
+    <div class="card ls-hidden" id="ex_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="ex_steps"></div>
+    </div>
+  </div>
+
+  <!-- Population Ecology -->
+  <div id="tool-popphase" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Population growth phases:</strong> Lag → Exponential (log) → Deceleration → Stationary (carrying capacity).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Growth phase</label>
+        <select id="pp_phase" class="ls-input">
+          <option value="lag">Lag phase</option>
+          <option value="exponential">Exponential phase</option>
+          <option value="deceleration">Deceleration phase</option>
+          <option value="stationary">Stationary phase</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPopPhase()">Describe</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Description</div>
+      <div id="pp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick phase and click Describe.</div></div>
+    </div>
+  </div>
+
+  <!-- Mark-Recapture -->
+  <div id="tool-markrecap" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Petersen index:</strong> <span class="ls-formula">P = (F × S) / M</span><br>
+        F = first catch (marked and released)<br>
+        S = second catch total<br>
+        M = number of marked in second catch
+      </div>
+      <div class="ls-input-grid">
+        <div><label>First catch marked (F)</label><input type="number" id="mr_f" class="ls-input" step="any" value="50"></div>
+        <div><label>Second catch total (S)</label><input type="number" id="mr_s" class="ls-input" step="any" value="75"></div>
+        <div><label>Marked in second (M)</label><input type="number" id="mr_m" class="ls-input" step="any" value="15"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsMarkRecap()">Calculate Population</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Estimated Population</div>
+      <div id="mr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card ls-hidden" id="mr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="mr_steps"></div>
+    </div>
+  </div>
+
+  <!-- ==================== GRADE 12 ==================== -->
+
+  <!-- DNA & RNA -->
+  <div id="tool-dnarna" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>DNA → mRNA transcription:</strong> A→U, T→A, C→G, G→C<br>
+        <strong>mRNA → tRNA translation:</strong> codon table converts to amino acids.<br>
+        Enter a DNA template strand to see mRNA and the amino acid chain.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>DNA template strand (5'→3')</label>
+        <input type="text" id="dr_dna" class="ls-input" placeholder="e.g. TACGGCAT" value="TACGGCTAA">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsDnaRna()">Transcribe &amp; Translate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Results</div>
+      <div id="dr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter DNA and click Translate.</div></div>
+    </div>
+    <div class="card ls-hidden" id="dr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="dr_steps"></div>
+    </div>
+  </div>
+
+  <!-- Punnett Square -->
+  <div id="tool-punnett" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Punnett square:</strong> Cross two genotypes to find offspring ratios.<br>
+        Enter parental genotypes using uppercase (dominant) and lowercase (recessive) letters.<br>
+        Example: Aa × Aa (monohybrid), AaBb × AaBb (dihybrid).
+      </div>
+      <div class="ls-input-grid">
+        <div>
+          <label>Parent 1 genotype</label>
+          <input type="text" id="pu_p1" class="ls-input" value="Aa">
+        </div>
+        <div>
+          <label>Parent 2 genotype</label>
+          <input type="text" id="pu_p2" class="ls-input" value="Aa">
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPunnett()">Cross</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Offspring</div>
+      <div id="pu_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter parents and click Cross.</div></div>
+    </div>
+    <div class="card ls-hidden" id="pu_steps_card">
+      <div class="result-label">Genotype &amp; Phenotype Ratios</div>
+      <div id="pu_steps"></div>
+    </div>
+  </div>
+
+  <!-- Blood Types -->
+  <div id="tool-bloodtype" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>ABO blood groups:</strong> 3 alleles — I^A, I^B, i.<br>
+        I^A and I^B are codominant; i is recessive.<br>
+        Phenotypes: A (I^A I^A or I^A i), B (I^B I^B or I^B i), AB (I^A I^B), O (ii).
+      </div>
+      <div class="ls-input-grid">
+        <div>
+          <label>Mother's blood group</label>
+          <select id="bt_m" class="ls-input">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="AB">AB</option>
+            <option value="O">O</option>
+          </select>
+        </div>
+        <div>
+          <label>Father's blood group</label>
+          <select id="bt_f" class="ls-input">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="AB">AB</option>
+            <option value="O">O</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsBloodType()">Predict Offspring</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Possible Offspring</div>
+      <div id="bt_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick parents and click Predict.</div></div>
+    </div>
+  </div>
+
+  <!-- Pedigree Analyser -->
+  <div id="tool-pedigree" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Pedigree analysis:</strong> determine inheritance mode from family patterns.<br>
+        • Both parents unaffected → affected child: recessive<br>
+        • Affected parent (any sex) → all daughters affected: X-linked dominant<br>
+        • More males affected, mothers carriers: X-linked recessive
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Observation pattern</label>
+        <select id="pd_pattern" class="ls-input">
+          <option value="both_unaffected">Both unaffected parents have affected child</option>
+          <option value="affects_males_mostly">Affects mostly males, mothers are carriers</option>
+          <option value="affects_all_daughters">Affected father passes to all daughters</option>
+          <option value="every_generation">Appears in every generation equally</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPedigree()">Identify Mode</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Inheritance Mode</div>
+      <div id="pd_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick pattern and click Identify.</div></div>
+    </div>
+    <div class="card ls-hidden" id="pd_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="pd_steps"></div>
+    </div>
+  </div>
+
+  <!-- Meiosis -->
+  <div id="tool-meiosis" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Meiosis:</strong> one diploid cell → four haploid cells.<br>
+        Track chromosome numbers through the phases.
+      </div>
+      <div>
+        <label>Diploid chromosome number (2n) of original cell</label>
+        <input type="number" id="me_2n" class="ls-input" step="2" value="46">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsMeiosis()">Track Chromosomes</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Chromosome Numbers</div>
+      <div id="me_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter 2n and click Track.</div></div>
+    </div>
+    <div class="card ls-hidden" id="me_steps_card">
+      <div class="result-label">Phase by Phase</div>
+      <div id="me_steps"></div>
+    </div>
+  </div>
+
+  <!-- Karyotype Analyser -->
+  <div id="tool-karyotype" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Karyotype interpretation:</strong> normal human = 46 chromosomes (44 autosomes + 2 sex chromosomes).<br>
+        Down syndrome: trisomy 21 → 47 chromosomes.<br>
+        Turner syndrome: 45, X. Klinefelter: 47, XXY.
+      </div>
+      <div class="ls-input-grid">
+        <div>
+          <label>Total chromosome count</label>
+          <input type="number" id="ka_count" class="ls-input" step="1" value="47">
+        </div>
+        <div>
+          <label>Sex chromosome pattern</label>
+          <select id="ka_sex" class="ls-input">
+            <option value="XX">XX (female)</option>
+            <option value="XY">XY (male)</option>
+            <option value="X">X only</option>
+            <option value="XXY">XXY</option>
+            <option value="XYY">XYY</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsKaryotype()">Interpret</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Interpretation</div>
+      <div id="ka_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Interpret.</div></div>
+    </div>
+    <div class="card ls-hidden" id="ka_steps_card">
+      <div class="result-label">Reasoning</div>
+      <div id="ka_steps"></div>
+    </div>
+  </div>
+
+  <!-- Evolution -->
+  <div id="tool-evolution" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">Identify type of evidence for evolution or mode of speciation.</div>
+      <div style="margin-bottom:10px;">
+        <label>Topic</label>
+        <select id="ev_topic" class="ls-input">
+          <option value="fossil">Fossil evidence</option>
+          <option value="biogeography">Biogeographic evidence</option>
+          <option value="dna">Genetic evidence (DNA/mitochondrial)</option>
+          <option value="homologous">Homologous structures</option>
+          <option value="speciation">Speciation (natural selection)</option>
+          <option value="reproductive_isolation">Reproductive isolation</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsEvolution()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Explanation</div>
+      <div id="ev_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a topic and click Explain.</div></div>
+    </div>
+  </div>
+
+  <!-- Population Ecology -->
+  <div id="tool-population" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>Population calculations:</strong><br>
+        • Population growth rate: (births + immigration) − (deaths + emigration)<br>
+        • Percentage increase: (new − old) / old × 100<br>
+        • Carrying capacity: maximum sustainable population
+      </div>
+      <div class="ls-input-grid-3">
+        <div><label>Births</label><input type="number" id="po_b" class="ls-input" step="any" value="40"></div>
+        <div><label>Immigration</label><input type="number" id="po_i" class="ls-input" step="any" value="5"></div>
+        <div><label>Deaths</label><input type="number" id="po_d" class="ls-input" step="any" value="15"></div>
+        <div><label>Emigration</label><input type="number" id="po_e" class="ls-input" step="any" value="3"></div>
+        <div><label>Initial population</label><input type="number" id="po_n" class="ls-input" step="any" value="1000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsPopulation()">Calculate Growth</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="po_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card ls-hidden" id="po_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="po_steps"></div>
+    </div>
+  </div>
+
+  <!-- DNA Profiling -->
+  <div id="tool-dna-profile" class="ls-tool-panel ls-hidden">
+    <div class="card">
+      <div class="ls-formula-note">
+        <strong>DNA profiling:</strong> compare banding patterns to identify suspects, establish paternity, or trace ancestry.<br>
+        The suspect whose bands match ALL the evidence bands is linked to the scene.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Number of matching bands</label>
+        <input type="number" id="dp_match" class="ls-input" step="1" value="5">
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Total bands in evidence sample</label>
+        <input type="number" id="dp_total" class="ls-input" step="1" value="6">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="lsDnaProfile()">Analyse</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Conclusion</div>
+      <div id="dp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Analyse.</div></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+/* Shared */
+function lsFmt(n) {
+  if (!isFinite(n)) return '—';
+  if (n === 0) return '0';
+  if (Number.isInteger(n)) return n.toString();
+  const abs = Math.abs(n);
+  if (abs < 0.0001 || abs >= 100000) return parseFloat(n.toExponential(4)).toString();
+  return parseFloat(n.toFixed(6)).toString();
+}
+function lsShowSteps(stepsId, cardId, steps) {
+  const el = document.getElementById(stepsId);
+  if (!el) return;
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="ls-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  const card = document.getElementById(cardId);
+  if (card) card.classList.remove('ls-hidden');
+}
+function lsResult(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+/* Grade switching */
+let lsGrade = 10;
+let lsTool10 = 'biomolecule';
+let lsTool11 = 'microorg';
+let lsTool12 = 'dnarna';
+
+function lsSetGrade(g) {
+  lsGrade = g;
+  document.getElementById('tabG10').classList.toggle('active', g === 10);
+  document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('tabG12').classList.toggle('active', g === 12);
+  document.getElementById('lsGrade10Tools').classList.toggle('ls-hidden', g !== 10);
+  document.getElementById('lsGrade11Tools').classList.toggle('ls-hidden', g !== 11);
+  document.getElementById('lsGrade12Tools').classList.toggle('ls-hidden', g !== 12);
+  let current = g === 10 ? lsTool10 : g === 11 ? lsTool11 : lsTool12;
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    p.classList.toggle('ls-hidden', p.id !== 'tool-' + current);
+  });
+}
+function lsSelect10(t) { lsTool10 = t; lsSetGrade(10); window.scrollTo({top:0,behavior:'smooth'}); }
+function lsSelect11(t) { lsTool11 = t; lsSetGrade(11); window.scrollTo({top:0,behavior:'smooth'}); }
+function lsSelect12(t) { lsTool12 = t; lsSetGrade(12); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ============== GRADE 10 ============== */
+
+function lsBiomolecule() {
+  const desc = document.getElementById('bm_desc').value.toLowerCase();
+  const steps = [];
+  let type = 'Unknown';
+  let detail = '';
+  if (/amino acid|protein|peptide/.test(desc)) {
+    type = 'Protein';
+    detail = 'Proteins are made of amino acid monomers. They contain C, H, O, and N (sometimes S).';
+    steps.push('Detected: amino acids / peptide bonds → protein.');
+  } else if (/fatty acid|glycerol|lipid|fat|oil/.test(desc)) {
+    type = 'Lipid (fat)';
+    detail = 'Lipids are made of fatty acids and glycerol. They contain C, H, O (less O than carbs).';
+    steps.push('Detected: fatty acids + glycerol → lipid.');
+  } else if (/glucose|sugar|monosaccharide|sucrose|starch|glycogen|cellulose|carbohydrate/.test(desc)) {
+    type = 'Carbohydrate';
+    detail = 'Carbohydrates are made of monosaccharides (e.g. glucose). They contain C, H, O in ratio 1:2:1.';
+    steps.push('Detected: sugar / monosaccharide → carbohydrate.');
+  } else if (/dna|rna|nucleotide|nucleic/.test(desc)) {
+    type = 'Nucleic acid';
+    detail = 'Nucleic acids are made of nucleotides (sugar + phosphate + nitrogenous base). They contain C, H, O, N, P.';
+    steps.push('Detected: nucleotide / DNA / RNA → nucleic acid.');
+  } else {
+    steps.push('Could not identify from description. Try keywords like amino acids, fatty acids, glucose, nucleotide.');
+  }
+  lsResult('bm_result', '<div class="ls-answer multi">' + type + '</div><div class="result-sub">' + detail + '</div>');
+  lsShowSteps('bm_steps', 'bm_steps_card', steps);
+}
+
+function lsFoodTest() {
+  const reagent = document.getElementById('ft_reagent').value;
+  const colour = document.getElementById('ft_colour').value.toLowerCase();
+  let result = '';
+  let detail = '';
+  if (reagent === 'benedicts') {
+    if (/brick|red|orange|green|yellow/.test(colour)) { result = 'Reducing sugar present'; detail = 'Positive Benedict\'s test: brick-red precipitate forms on heating.'; }
+    else if (/blue/.test(colour)) { result = 'No reducing sugar'; detail = 'Negative: reagent stays blue.'; }
+  } else if (reagent === 'iodine') {
+    if (/blue.black|dark|black/.test(colour)) { result = 'Starch present'; detail = 'Positive iodine test: brown iodine turns blue-black with starch.'; }
+    else if (/brown|yellow/.test(colour)) { result = 'No starch'; detail = 'Negative: iodine stays brown-yellow.'; }
+  } else if (reagent === 'biuret') {
+    if (/violet|purple|red|pink/.test(colour)) { result = 'Protein present'; detail = 'Positive Biuret/Millon\'s: violet or red colour.'; }
+    else if (/blue/.test(colour)) { result = 'No protein'; detail = 'Negative: reagent stays blue.'; }
+  } else if (reagent === 'ether') {
+    if (/white|emulsion|cloudy/.test(colour)) { result = 'Lipid present'; detail = 'Positive emulsion test: white emulsion forms.'; }
+    else if (/clear|transparent/.test(colour)) { result = 'No lipid'; detail = 'Negative: solution stays clear.'; }
+  }
+  if (!result) result = 'Unable to interpret';
+  lsResult('ft_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+}
+
+function lsEnzyme() {
+  const opt = parseFloat(document.getElementById('en_opt').value);
+  const test = parseFloat(document.getElementById('en_test').value);
+  const steps = [];
+  let result = '';
+  let detail = '';
+  if (test < opt - 10) {
+    result = 'Low activity';
+    detail = 'Temperature below optimum: molecules move slowly, fewer collisions between enzyme and substrate.';
+    steps.push('Test temperature (' + test + '°C) is below optimum (' + opt + '°C).');
+    steps.push('Low kinetic energy → fewer enzyme-substrate collisions → slower reaction.');
+  } else if (test >= opt - 10 && test <= opt + 5) {
+    result = 'Optimal activity';
+    detail = 'Temperature near optimum: maximum rate of enzyme-substrate collisions.';
+    steps.push('Test temperature (' + test + '°C) is near optimum (' + opt + '°C).');
+    steps.push('Peak rate: enzymes and substrates collide most frequently.');
+  } else {
+    result = 'Denatured — no activity';
+    detail = 'Temperature above optimum: enzymes denature, active site changes shape, substrate no longer fits.';
+    steps.push('Test temperature (' + test + '°C) exceeds optimum (' + opt + '°C).');
+    steps.push('Enzyme denatures: hydrogen bonds break, active site loses shape.');
+    steps.push('Substrate can no longer bind → no reaction.');
+  }
+  lsResult('en_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+  lsShowSteps('en_steps', 'en_steps_card', steps);
+}
+
+function lsOrganelle() {
+  const query = document.getElementById('or_name').value.toLowerCase().trim();
+  const db = {
+    'mitochondri': { name: 'Mitochondrion', fn: 'Site of aerobic cellular respiration. Releases ATP energy.', loc: 'Both plant and animal cells' },
+    'nucleus': { name: 'Nucleus', fn: 'Contains DNA. Controls all cell activities.', loc: 'Both' },
+    'chloroplast': { name: 'Chloroplast', fn: 'Site of photosynthesis. Contains chlorophyll.', loc: 'Plant cells only' },
+    'ribosome': { name: 'Ribosome', fn: 'Site of protein synthesis.', loc: 'Both' },
+    'vacuole': { name: 'Vacuole', fn: 'Stores water, nutrients, waste. Large central vacuole in plants.', loc: 'Both (larger in plants)' },
+    'cell wall': { name: 'Cell wall', fn: 'Rigid outer layer providing support and shape.', loc: 'Plant cells only' },
+    'cell membrane': { name: 'Cell membrane', fn: 'Controls what enters/leaves the cell. Selectively permeable.', loc: 'Both' },
+    'golgi': { name: 'Golgi apparatus', fn: 'Modifies, packages, and secretes proteins.', loc: 'Both' },
+    'endoplasmic': { name: 'Endoplasmic reticulum', fn: 'Transports materials within the cell. Rough ER has ribosomes.', loc: 'Both' },
+    'lysosome': { name: 'Lysosome', fn: 'Contains digestive enzymes. Breaks down waste.', loc: 'Animal cells mainly' },
+    'cytoplasm': { name: 'Cytoplasm', fn: 'Jelly-like fluid where chemical reactions occur.', loc: 'Both' },
+    'nucleolus': { name: 'Nucleolus', fn: 'Makes ribosomes.', loc: 'Both' },
+    'vesicle': { name: 'Vesicle', fn: 'Transports materials within the cell.', loc: 'Both' }
+  };
+  let found = null;
+  for (const key in db) {
+    if (query.includes(key) || key.includes(query)) { found = db[key]; break; }
+  }
+  if (found) {
+    lsResult('or_result',
+      '<div class="ls-answer multi">' + found.name + '</div>' +
+      '<div class="ls-result-grid">' +
+        '<div class="result-cell"><span class="result-cell-label">Function</span><span class="result-cell-value" style="font-size:12px;">' + found.fn + '</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">Found in</span><span class="result-cell-value">' + found.loc + '</span></div>' +
+      '</div>');
+  } else {
+    lsResult('or_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Not found. Try: mitochondria, nucleus, chloroplast, ribosome, vacuole, lysosome, golgi.</div>');
+  }
+}
+
+function lsMicroscope() {
+  const eye = parseFloat(document.getElementById('ms_eye').value);
+  const obj = parseFloat(document.getElementById('ms_obj').value);
+  if ([eye, obj].some(v => isNaN(v))) { lsResult('ms_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both fields.</div>'); return; }
+  const total = eye * obj;
+  const steps = [];
+  steps.push('Magnification = eyepiece × objective');
+  steps.push(total + ' = ' + eye + ' × ' + obj);
+  lsResult('ms_result', '<div class="ls-answer">×' + total + '</div><div class="result-sub">Overall magnification</div>');
+  lsShowSteps('ms_steps', 'ms_steps_card', steps);
+}
+
+function lsOsmosis() {
+  const sol = document.getElementById('os_sol').value;
+  const type = document.getElementById('os_type').value;
+  let result = '';
+  let detail = '';
+  if (sol === 'hypotonic') {
+    if (type === 'plant') { result = 'Turgid'; detail = 'Water enters cell. Vacuole swells, pushes against cell wall. Cell becomes turgid (normal for plants).'; }
+    else { result = 'Lysis (bursts)'; detail = 'Water enters rapidly. Animal cell has no cell wall → swells and bursts (cytolysis).'; }
+  } else if (sol === 'isotonic') {
+    result = 'Normal';
+    detail = 'Water moves in and out at equal rate. No net change.';
+  } else {
+    if (type === 'plant') { result = 'Plasmolysed'; detail = 'Water leaves cell. Vacuole shrinks, membrane pulls away from cell wall. Cell becomes flaccid then plasmolysed.'; }
+    else { result = 'Shriveled (crenated)'; detail = 'Water leaves cell. Cell shrinks and shrivels.'; }
+  }
+  lsResult('os_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+}
+
+function lsMitosisModeChange() {
+  const mode = document.getElementById('mi_mode').value;
+  document.getElementById('mi_identify_inputs').classList.toggle('ls-hidden', mode !== 'identify');
+  document.getElementById('mi_chromosomes_inputs').classList.toggle('ls-hidden', mode !== 'chromosomes');
+}
+
+function lsMitosis() {
+  const mode = document.getElementById('mi_mode').value;
+  if (mode === 'identify') {
+    const feature = document.getElementById('mi_feature').value;
+    const map = {
+      chromosomes_visible: { phase: 'Prophase', desc: 'Chromosomes condense and become visible. Nuclear membrane breaks down. Spindle fibres form.' },
+      chromosomes_equator: { phase: 'Metaphase', desc: 'Chromosomes line up at the equator. Spindle fibres attach to centromeres.' },
+      chromatids_poles: { phase: 'Anaphase', desc: 'Sister chromatids separate and are pulled to opposite poles.' },
+      nuclear_reforming: { phase: 'Telophase', desc: 'Nuclear membrane reforms around each set of chromosomes. Cleavage furrow / cell plate forms.' }
+    };
+    const info = map[feature];
+    lsResult('mi_result', '<div class="ls-answer multi">' + info.phase + '</div><div class="result-sub">' + info.desc + '</div>');
+  } else {
+    const orig = parseInt(document.getElementById('mi_orig').value);
+    if (isNaN(orig)) { lsResult('mi_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter chromosome number.</div>'); return; }
+    lsResult('mi_result',
+      '<div class="ls-answer multi">Original: ' + orig + ' → Each daughter: ' + orig + '</div>' +
+      '<div class="result-sub">Mitosis produces two genetically identical diploid daughter cells. Chromosome number stays the same.</div>');
+  }
+}
+
+function lsPlantTissue() {
+  const query = document.getElementById('pt_query').value.toLowerCase().trim();
+  const db = {
+    'xylem': 'Transports water and mineral salts from roots to leaves. Cells are dead at maturity, lignified.',
+    'phloem': 'Transports manufactured food (sucrose) from leaves to rest of plant. Cells are alive.',
+    'epidermis': 'Protective outer layer. In leaves, has a waxy cuticle to reduce water loss.',
+    'parenchyma': 'Thin-walled living cells. Store food, heal wounds, fill spaces.',
+    'collenchyma': 'Living cells with thickened corners. Provide flexible support in young stems.',
+    'sclerenchyma': 'Dead cells with lignified walls. Provide rigid support.',
+    'cambium': 'Meristematic tissue. Divides to produce new xylem and phloem (secondary growth).',
+    'meristem': 'Undifferentiated tissue capable of cell division. Found at root and shoot tips.'
+  };
+  let found = null;
+  for (const key in db) {
+    if (query.includes(key) || key.includes(query)) { found = { name: key, fn: db[key] }; break; }
+  }
+  if (found) {
+    lsResult('pt_result', '<div class="ls-answer multi" style="text-transform:capitalize;">' + found.name + '</div><div class="result-sub">' + found.fn + '</div>');
+  } else {
+    lsResult('pt_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: xylem, phloem, epidermis, parenchyma, collenchyma, sclerenchyma.</div>');
+  }
+}
+
+function lsTranspiration() {
+  const cond = document.getElementById('tr_cond').value;
+  const steps = [];
+  let rate, detail;
+  if (cond === 'bright_dry_windy') {
+    rate = 'High';
+    detail = 'Bright light opens stomata; dry air increases water potential gradient; wind removes water vapour, increasing gradient further.';
+    steps.push('Light → stomata open.');
+    steps.push('Low humidity → steep water potential gradient.');
+    steps.push('Wind → removes saturated air around leaf.');
+  } else if (cond === 'dark_humid_still') {
+    rate = 'Low';
+    detail = 'Dark closes stomata; humid air reduces gradient; still air keeps saturated layer around leaf.';
+    steps.push('Dark → stomata close.');
+    steps.push('High humidity → shallow gradient.');
+    steps.push('Still air → no removal of water vapour.');
+  } else {
+    rate = 'Moderate';
+    detail = 'Some factors increase, others decrease transpiration. Net effect is moderate.';
+  }
+  lsResult('tr_result', '<div class="ls-answer multi">' + rate + '</div><div class="result-sub">' + detail + '</div>');
+  lsShowSteps('tr_steps', 'tr_steps_card', steps);
+}
+
+function lsFoodWeb() {
+  const energy = parseFloat(document.getElementById('fw_energy').value);
+  const levels = parseInt(document.getElementById('fw_levels').value);
+  if (isNaN(energy) || isNaN(levels) || levels < 1 || levels > 5) {
+    lsResult('fw_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter energy and 1–5 levels.</div>');
+    return;
+  }
+  const names = ['Producers', 'Primary consumers', 'Secondary consumers', 'Tertiary consumers', 'Quaternary consumers'];
+  let rows = '';
+  let current = energy;
+  for (let i = 0; i < levels; i++) {
+    rows += '<div class="ls-result-grid" style="padding:8px; margin-top:6px; border-top:1px solid var(--border);">' +
+      '<div class="result-cell"><span class="result-cell-label">' + names[i] + '</span><span class="result-cell-value">' + lsFmt(current) + ' kJ</span></div>' +
+    '</div>';
+    current *= 0.1;
+  }
+  lsResult('fw_result',
+    '<div class="ls-answer multi">10% rule applied</div>' +
+    '<div class="result-sub">Only ~10% of energy transfers between trophic levels.</div>' +
+    rows);
+}
+
+/* ============== GRADE 11 ============== */
+
+function lsMicroorg() {
+  const query = document.getElementById('mo_query').value.toLowerCase().trim();
+  const db = {
+    'bacteria': { name: 'Kingdom Monera', fn: 'Prokaryotic, unicellular, no true nucleus. Reproduce by binary fission. Some are decomposers, some cause disease (cholera, TB).' },
+    'virus': { name: 'Viruses (non-living)', fn: 'Acellular, no cytoplasm or organelles. Cannot reproduce on their own — must use a host cell. Cause HIV, flu, COVID-19.' },
+    'fungi': { name: 'Kingdom Fungi', fn: 'Eukaryotic. Cell walls of chitin. Heterotrophic (absorb food). Yeast (unicellular), mushrooms, bread mould (multicellular).' },
+    'fungus': { name: 'Kingdom Fungi', fn: 'Eukaryotic. Cell walls of chitin. Heterotrophic. Yeast, mushroom, bread mould.' },
+    'protista': { name: 'Kingdom Protista', fn: 'Eukaryotic, mostly unicellular. Includes protozoa (Amoeba, Plasmodium) and algae. Plasmodium causes malaria.' },
+    'yeast': { name: 'Kingdom Fungi (Yeast)', fn: 'Unicellular fungus. Used in bread-making and brewing (fermentation → CO₂ + ethanol).' },
+    'hiv': { name: 'Virus (HIV)', fn: 'Attacks the immune system (T-helper cells). Causes AIDS. No cure, only management.' },
+    'malaria': { name: 'Protist (Plasmodium)', fn: 'Plasmodium falciparum causes malaria. Transmitted by female Anopheles mosquito.' },
+    'amoeba': { name: 'Kingdom Protista (Amoeba)', fn: 'Unicellular protist. Moves using pseudopodia. Reproduces by binary fission.' }
+  };
+  let found = null;
+  for (const key in db) {
+    if (query.includes(key)) { found = db[key]; break; }
+  }
+  if (found) {
+    lsResult('mo_result', '<div class="ls-answer multi">' + found.name + '</div><div class="result-sub">' + found.fn + '</div>');
+  } else {
+    lsResult('mo_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: bacteria, virus, fungi, protista, yeast, HIV, malaria.</div>');
+  }
+}
+
+function lsPlantGroup() {
+  const query = document.getElementById('pg_query').value.toLowerCase().trim();
+  const db = {
+    'moss': { name: 'Bryophytes', desc: 'No true roots, stems, or leaves. Dependent on water for fertilisation. Dominant gametophyte. Includes mosses and liverworts.' },
+    'bryophyte': { name: 'Bryophytes', desc: 'No vascular tissue. No true roots/stems/leaves. Water needed for fertilisation.' },
+    'fern': { name: 'Pteridophytes', desc: 'Vascular tissue present. Has true roots, stems, leaves (fronds). Still needs water for fertilisation. Dominant sporophyte.' },
+    'pteridophyte': { name: 'Pteridophytes', desc: 'Vascular, seedless. Reproduce by spores. Water needed for fertilisation. Ferns.' },
+    'pine': { name: 'Gymnosperms', desc: 'Naked seeds (not enclosed in ovary). No flowers. Wind-pollinated. Examples: pine, cycad.' },
+    'gymnosperm': { name: 'Gymnosperms', desc: 'Seeds exposed on cones. No flowers or fruit.' },
+    'flower': { name: 'Angiosperms', desc: 'Seeds enclosed in ovary (fruit). Flowers present. Most diverse plant group.' },
+    'angiosperm': { name: 'Angiosperms', desc: 'Flowering plants. Seeds enclosed in fruit.' }
+  };
+  let found = null;
+  for (const key in db) {
+    if (query.includes(key)) { found = db[key]; break; }
+  }
+  if (found) {
+    lsResult('pg_result', '<div class="ls-answer multi">' + found.name + '</div><div class="result-sub">' + found.desc + '</div>');
+  } else {
+    lsResult('pg_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: moss, fern, pine, flower.</div>');
+  }
+}
+
+function lsAnimalPhyla() {
+  const sym = document.getElementById('ap_sym').value;
+  const germ = document.getElementById('ap_germ').value;
+  const coelom = document.getElementById('ap_coelom').value;
+  const gut = document.getElementById('ap_gut').value;
+  const matches = [];
+  if (sym === 'radial' && germ === 'diplo') matches.push('Cnidaria (Hydra, jellyfish, coral)', 'Porifera (sponges — no true symmetry)');
+  if (sym === 'bilateral' && germ === 'triplo' && coelom === 'acoelomate' && gut === 'one') matches.push('Platyhelminthes (flatworms, tapeworms)');
+  if (sym === 'bilateral' && germ === 'triplo' && coelom === 'pseudo') matches.push('Nematoda (roundworms)');
+  if (sym === 'bilateral' && germ === 'triplo' && coelom === 'coelomate' && gut === 'two') matches.push('Annelida (earthworms)', 'Arthropoda (insects, crabs)', 'Chordata (fish, mammals)');
+  if (sym === 'bilateral' && germ === 'triplo' && coelom === 'coelomate' && gut === 'one') matches.push('Mollusca (snails — mostly two-opening, filter feeders can have one)');
+  lsResult('ap_result',
+    '<div class="ls-answer multi">' + (matches.length ? matches.join(' · ') : 'No exact match') + '</div>' +
+    '<div class="result-sub">' + (matches.length ? 'Matching phyla based on the four features.' : 'Try different combinations.') + '</div>');
+}
+
+function lsPhotosynthesis() {
+  const factor = document.getElementById('ps_factor').value;
+  const level = parseFloat(document.getElementById('ps_level').value);
+  const newLevel = parseFloat(document.getElementById('ps_new').value);
+  const steps = [];
+  let result = '', detail = '';
+  if (newLevel > level) {
+    result = 'Rate increases (until plateau)';
+    detail = 'Increasing ' + factor + ' from ' + level + ' to ' + newLevel + ' raises the rate of photosynthesis, until another factor becomes limiting.';
+    steps.push('Increasing ' + factor + ' increases rate of light or dark phase.');
+    steps.push('Rate will plateau when another factor (CO₂, light, or temperature) becomes limiting.');
+  } else if (newLevel < level) {
+    result = 'Rate decreases';
+    detail = 'Decreasing ' + factor + ' lowers the rate of photosynthesis.';
+    steps.push('Decreasing ' + factor + ' slows the rate-limiting step.');
+  } else {
+    result = 'No change';
+    detail = 'Level unchanged.';
+  }
+  lsResult('ps_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+  lsShowSteps('ps_steps', 'ps_steps_card', steps);
+}
+
+function lsRespirationChange() {
+  // no-op — placeholder for future
+}
+function lsRespiration() {
+  const type = document.getElementById('rs_type').value;
+  const n = parseFloat(document.getElementById('rs_glucose').value) || 1;
+  const steps = [];
+  let result = '', detail = '';
+  if (type === 'aerobic') {
+    result = (n * 6) + ' CO₂ + ' + (n * 6) + ' H₂O + ' + (n * 36) + ' ATP';
+    detail = 'Aerobic respiration: glucose + oxygen → carbon dioxide + water + ~36 ATP per glucose.';
+    steps.push(n + ' glucose + ' + (n * 6) + ' O₂ → ' + (n * 6) + ' CO₂ + ' + (n * 6) + ' H₂O + ' + (n * 36) + ' ATP');
+  } else if (type === 'anaerobic_muscle') {
+    result = (n * 2) + ' lactic acid + ' + (n * 2) + ' ATP';
+    detail = 'Anaerobic respiration in muscle: glucose → lactic acid + 2 ATP per glucose.';
+    steps.push(n + ' glucose → ' + (n * 2) + ' lactic acid + ' + (n * 2) + ' ATP');
+  } else {
+    result = (n * 2) + ' ethanol + ' + (n * 2) + ' CO₂ + ' + (n * 2) + ' ATP';
+    detail = 'Anaerobic respiration in yeast: glucose → ethanol + carbon dioxide + 2 ATP per glucose.';
+    steps.push(n + ' glucose → ' + (n * 2) + ' ethanol + ' + (n * 2) + ' CO₂ + ' + (n * 2) + ' ATP');
+  }
+  lsResult('rs_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+  lsShowSteps('rs_steps', 'rs_steps_card', steps);
+}
+
+function lsNutrition() {
+  const sub = document.getElementById('nu_sub').value;
+  const map = {
+    'starch': { enzyme: 'Amylase (salivary + pancreatic)', product: 'Maltose', where: 'Mouth (salivary amylase), small intestine (pancreatic amylase)', ph: 'Neutral (mouth), slightly alkaline (SI)' },
+    'protein': { enzyme: 'Pepsin (stomach), Trypsin (pancreas)', product: 'Amino acids (via peptides)', where: 'Stomach (pepsin), small intestine (trypsin)', ph: 'Acidic (stomach pH 2), alkaline (SI)' },
+    'fat': { enzyme: 'Lipase (pancreas)', product: 'Fatty acids + glycerol', where: 'Small intestine (after bile emulsification)', ph: 'Alkaline (bile + pancreatic juice)' },
+    'maltose': { enzyme: 'Maltase (small intestine)', product: 'Glucose', where: 'Small intestine', ph: 'Alkaline' }
+  };
+  const info = map[sub];
+  lsResult('nu_result',
+    '<div class="ls-answer multi">' + info.enzyme + '</div>' +
+    '<div class="ls-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">End product</span><span class="result-cell-value">' + info.product + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Where</span><span class="result-cell-value" style="font-size:11px;">' + info.where + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Optimal pH</span><span class="result-cell-value" style="font-size:11px;">' + info.ph + '</span></div>' +
+    '</div>');
+}
+
+function lsGasExchange() {
+  const tv = parseFloat(document.getElementById('ge_tv').value);
+  const bpm = parseFloat(document.getElementById('ge_bpm').value);
+  if ([tv, bpm].some(v => isNaN(v))) { lsResult('ge_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both fields.</div>'); return; }
+  const minuteVolume = tv * bpm;
+  const steps = [];
+  steps.push('Pulmonary ventilation = tidal volume × breaths per minute');
+  steps.push('= ' + tv + ' × ' + bpm + ' = ' + lsFmt(minuteVolume) + ' mL/min');
+  steps.push('= ' + lsFmt(minuteVolume / 1000) + ' L/min');
+  lsResult('ge_result', '<div class="ls-answer">' + lsFmt(minuteVolume) + ' mL/min</div><div class="result-sub">Pulmonary ventilation rate</div>');
+  lsShowSteps('ge_steps', 'ge_steps_card', steps);
+}
+
+function lsExcretion() {
+  const cond = document.getElementById('ex_cond').value;
+  const steps = [];
+  let result = '', detail = '';
+  if (cond === 'too_concentrated') {
+    result = '↑ ADH secretion → more water reabsorbed → concentrated urine';
+    detail = 'Osmoreceptors in hypothalamus detect high solute concentration. Posterior pituitary releases more ADH. Collecting duct becomes more permeable to water.';
+    steps.push('Hypothalamus detects high blood concentration.');
+    steps.push('Posterior pituitary releases more ADH.');
+    steps.push('Collecting duct reabsorbs more water.');
+    steps.push('Result: small volume of concentrated urine.');
+  } else if (cond === 'too_dilute') {
+    result = '↓ ADH secretion → less water reabsorbed → dilute urine';
+    detail = 'Osmoreceptors detect low solute concentration. Less ADH released. Collecting duct becomes less permeable to water.';
+    steps.push('Hypothalamus detects dilute blood.');
+    steps.push('Less ADH released.');
+    steps.push('Less water reabsorbed.');
+    steps.push('Result: large volume of dilute urine.');
+  } else {
+    result = '↑ Aldosterone → more Na⁺ reabsorbed';
+    detail = 'Adrenal cortex releases aldosterone. Distal tubule reabsorbs more sodium ions, water follows.';
+    steps.push('Adrenal gland detects low Na⁺.');
+    steps.push('Aldosterone secreted.');
+    steps.push('Na⁺ reabsorbed from distal tubule.');
+  }
+  lsResult('ex_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+  lsShowSteps('ex_steps', 'ex_steps_card', steps);
+}
+
+function lsPopPhase() {
+  const phase = document.getElementById('pp_phase').value;
+  const map = {
+    lag: 'Lag phase: population grows slowly. Organisms are adjusting to the environment. Few individuals reproducing.',
+    exponential: 'Exponential (log) phase: rapid growth. Resources are abundant. Birth rate exceeds death rate.',
+    deceleration: 'Deceleration phase: growth rate slows. Resources becoming limited. Environmental resistance increases.',
+    stationary: 'Stationary phase: population at carrying capacity. Birth rate = death rate. Resources fully utilised.'
+  };
+  lsResult('pp_result', '<div class="ls-answer multi" style="font-size:16px; line-height:1.5;">' + map[phase] + '</div>');
+}
+
+function lsMarkRecap() {
+  const F = parseFloat(document.getElementById('mr_f').value);
+  const S = parseFloat(document.getElementById('mr_s').value);
+  const M = parseFloat(document.getElementById('mr_m').value);
+  if ([F, S, M].some(v => isNaN(v)) || M === 0) {
+    lsResult('mr_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields. M must not be 0.</div>');
+    return;
+  }
+  const P = (F * S) / M;
+  const steps = [];
+  steps.push('P = (F × S) / M');
+  steps.push('P = (' + F + ' × ' + S + ') / ' + M);
+  steps.push('P = ' + lsFmt(F * S) + ' / ' + M);
+  steps.push('P = ' + lsFmt(P));
+  lsResult('mr_result', '<div class="ls-answer">' + lsFmt(P) + '</div><div class="result-sub">Estimated population size (Petersen index)</div>');
+  lsShowSteps('mr_steps', 'mr_steps_card', steps);
+}
+
+/* ============== GRADE 12 ============== */
+
+function lsDnaRna() {
+  const dna = document.getElementById('dr_dna').value.toUpperCase().replace(/[^ATGC]/g, '');
+  if (dna.length < 3) { lsResult('dr_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid DNA sequence (A, T, G, C).</div>'); return; }
+  const complement = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
+  const transcription = { 'A': 'U', 'T': 'A', 'G': 'C', 'C': 'G' };
+  let mrna = '';
+  for (const base of dna) mrna += transcription[base];
+  const codonTable = {
+    'UUU':'Phe','UUC':'Phe','UUA':'Leu','UUG':'Leu','CUU':'Leu','CUC':'Leu','CUA':'Leu','CUG':'Leu',
+    'AUU':'Ile','AUC':'Ile','AUA':'Ile','AUG':'Met (START)','GUU':'Val','GUC':'Val','GUA':'Val','GUG':'Val',
+    'UCU':'Ser','UCC':'Ser','UCA':'Ser','UCG':'Ser','CCU':'Pro','CCC':'Pro','CCA':'Pro','CCG':'Pro',
+    'ACU':'Thr','ACC':'Thr','ACA':'Thr','ACG':'Thr','GCU':'Ala','GCC':'Ala','GCA':'Ala','GCG':'Ala',
+    'UAU':'Tyr','UAC':'Tyr','UAA':'STOP','UAG':'STOP','CAU':'His','CAC':'His','CAA':'Gln','CAG':'Gln',
+    'AAU':'Asn','AAC':'Asn','AAA':'Lys','AAG':'Lys','GAU':'Asp','GAC':'Asp','GAA':'Glu','GAG':'Glu',
+    'UGU':'Cys','UGC':'Cys','UGA':'STOP','UGG':'Trp','CGU':'Arg','CGC':'Arg','CGA':'Arg','CGG':'Arg',
+    'AGU':'Ser','AGC':'Ser','AGA':'Arg','AGG':'Arg','GGU':'Gly','GGC':'Gly','GGA':'Gly','GGG':'Gly'
+  };
+  const codons = [];
+  for (let i = 0; i < mrna.length - 2; i += 3) codons.push(mrna.substr(i, 3));
+  const proteins = codons.map(c => codonTable[c] || '?');
+  const proteinStr = proteins.join(' — ');
+
+  const steps = [];
+  steps.push('DNA template: ' + dna);
+  steps.push('mRNA (transcription, T→A, A→U, C→G, G→C): ' + mrna);
+  steps.push('Codons: ' + codons.join(' | '));
+  steps.push('Amino acids: ' + proteinStr);
+
+  lsResult('dr_result',
+    '<div class="ls-answer multi">mRNA: ' + mrna + '</div>' +
+    '<div class="ls-result-grid">' +
+      '<div class="result-cell" style="grid-column:1/-1;"><span class="result-cell-label">Protein chain</span><span class="result-cell-value" style="font-size:13px;">' + proteinStr + '</span></div>' +
+    '</div>');
+  lsShowSteps('dr_steps', 'dr_steps_card', steps);
+}
+
+function lsPunnett() {
+  const p1 = document.getElementById('pu_p1').value.trim();
+  const p2 = document.getElementById('pu_p2').value.trim();
+  if (!p1 || !p2) { lsResult('pu_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter both parents.</div>'); return; }
+  function gametes(geno) {
+    // Supports single-gene (2 letters) or dihybrid (4 letters)
+    if (geno.length === 2) {
+      return [geno[0], geno[1]];
+    } else if (geno.length === 4) {
+      return [geno[0]+geno[2], geno[0]+geno[3], geno[1]+geno[2], geno[1]+geno[3]];
+    } else if (geno.length === 1) {
+      return [geno[0]];
+    }
+    return [geno];
+  }
+  const g1 = gametes(p1);
+  const g2 = gametes(p2);
+  const offspring = [];
+  const counts = {};
+  const gridHtml = [];
+  gridHtml.push('<table class="ls-table"><thead><tr><th>×</th>');
+  g2.forEach(g => gridHtml.push('<th>' + g + '</th>'));
+  gridHtml.push('</tr></thead><tbody>');
+  g1.forEach(a => {
+    gridHtml.push('<tr><th>' + a + '</th>');
+    g2.forEach(b => {
+      // Combine alleles with same-letter grouping (Aa not aA)
+      let combined;
+      if (a.length <= 2 && b.length <= 2) {
+        // Sort each allele pair so dominant comes first within each gene
+        const sortPair = (x, y) => {
+          const upper1 = x.toUpperCase();
+          const upper2 = y.toUpperCase();
+          if (upper1 === upper2) {
+            // Same letter — dominant first
+            if (x === x.toUpperCase()) return x + y;
+            return y + x;
+          }
+          return x + y;
+        };
+        combined = '';
+        for (let i = 0; i < a.length; i++) {
+          combined += sortPair(a[i], b[i]);
+        }
+      } else {
+        combined = a + b;
+      }
+      offspring.push(combined);
+      counts[combined] = (counts[combined] || 0) + 1;
+      gridHtml.push('<td>' + combined + '</td>');
+    });
+    gridHtml.push('</tr>');
+  });
+  gridHtml.push('</tbody></table>');
+
+  // Build summary
+  const total = offspring.length;
+  const summary = Object.keys(counts).sort().map(g => {
+    const pct = ((counts[g] / total) * 100).toFixed(1);
+    return g + ': ' + counts[g] + '/' + total + ' (' + pct + '%)';
+  }).join('<br>');
+
+  lsResult('pu_result', gridHtml.join('') + '<div style="margin-top:12px;">' + summary + '</div>');
+  document.getElementById('pu_steps_card').classList.remove('ls-hidden');
+  document.getElementById('pu_steps').innerHTML = '<div class="ls-step">Cross ' + p1 + ' × ' + p2 + ' — ' + total + ' possible offspring genotypes shown above.</div>';
+}
+
+function lsBloodType() {
+  const m = document.getElementById('bt_m').value;
+  const f = document.getElementById('bt_f').value;
+  const genotypes = {
+    'A': [['IA','IA'], ['IA','i']],
+    'B': [['IB','IB'], ['IB','i']],
+    'AB': [['IA','IB']],
+    'O': [['i','i']]
+  };
+  const offspringTypes = new Set();
+  genotypes[m].forEach(mg => {
+    genotypes[f].forEach(fg => {
+      // Produce 4 gamete combinations
+      const combos = [];
+      mg.forEach(a => fg.forEach(b => {
+        const pair = [a, b].sort().join('');
+        combos.push(pair);
+      }));
+      combos.forEach(c => {
+        let pheno;
+        if (c.includes('IA') && c.includes('IB')) pheno = 'AB';
+        else if (c.includes('IA')) pheno = 'A';
+        else if (c.includes('IB')) pheno = 'B';
+        else pheno = 'O';
+        offspringTypes.add(pheno);
+      });
+    });
+  });
+  const list = Array.from(offspringTypes).sort().join(', ');
+  lsResult('bt_result', '<div class="ls-answer multi">' + list + '</div><div class="result-sub">Possible blood groups for offspring</div>');
+}
+
+function lsPedigree() {
+  const pattern = document.getElementById('pd_pattern').value;
+  const map = {
+    both_unaffected: { mode: 'Autosomal recessive', why: 'Both unaffected parents have affected child. This means the parents are carriers (heterozygous) and the trait skips a generation.' },
+    affects_males_mostly: { mode: 'X-linked recessive', why: 'Males have only one X chromosome so a single recessive allele causes the trait. Mothers are carriers and pass it to sons.' },
+    affects_all_daughters: { mode: 'X-linked dominant', why: 'Affected father passes his X chromosome to all daughters (they inherit the dominant allele). Sons get his Y, so unaffected.' },
+    every_generation: { mode: 'Autosomal dominant', why: 'Trait appears in every generation, affects males and females equally. Affected individual has at least one affected parent.' }
+  };
+  const info = map[pattern];
+  lsResult('pd_result', '<div class="ls-answer multi">' + info.mode + '</div><div class="result-sub">' + info.why + '</div>');
+}
+
+function lsMeiosis() {
+  const n = parseInt(document.getElementById('me_2n').value);
+  if (isNaN(n) || n <= 0) { lsResult('me_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid 2n.</div>'); return; }
+  const steps = [];
+  steps.push('Interphase (before meiosis): 2n = ' + n + ' chromosomes, each with 2 chromatids = ' + (n * 2) + ' chromatids');
+  steps.push('Prophase I: homologous chromosomes pair (bivalents), crossing over occurs.');
+  steps.push('Anaphase I: homologous chromosomes separate → each pole gets n = ' + (n / 2) + ' chromosomes (each still 2 chromatids).');
+  steps.push('Telophase I: two cells, each with n = ' + (n / 2) + ' chromosomes, but each chromosome still has 2 chromatids.');
+  steps.push('Anaphase II: sister chromatids separate → each cell gets ' + (n / 2) + ' chromosomes (single chromatid).');
+  steps.push('Telophase II: four haploid cells, each with n = ' + (n / 2) + ' chromosomes.');
+  lsResult('me_result',
+    '<div class="ls-answer multi">4 cells, each n = ' + (n / 2) + '</div>' +
+    '<div class="result-sub">Meiosis halves the chromosome number.</div>');
+  lsShowSteps('me_steps', 'me_steps_card', steps);
+}
+
+function lsKaryotype() {
+  const count = parseInt(document.getElementById('ka_count').value);
+  const sex = document.getElementById('ka_sex').value;
+  const steps = [];
+  let result = '', detail = '';
+  if (isNaN(count)) { lsResult('ka_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter chromosome count.</div>'); return; }
+  if (count === 46 && sex === 'XX') { result = 'Normal female'; detail = '46 chromosomes, XX. No abnormality detected.'; }
+  else if (count === 46 && sex === 'XY') { result = 'Normal male'; detail = '46 chromosomes, XY. No abnormality detected.'; }
+  else if (count === 47 && sex === 'XX') { result = 'Down syndrome (female)'; detail = 'Trisomy 21: an extra copy of chromosome 21. Result of non-disjunction during meiosis.'; steps.push('Extra chromosome 21 detected.'); steps.push('Failure of homologous chromosomes or sister chromatids to separate.'); }
+  else if (count === 47 && sex === 'XY') { result = 'Down syndrome (male)'; detail = 'Trisomy 21 with XY. Result of non-disjunction during meiosis.'; }
+  else if (count === 47 && sex === 'XXY') { result = 'Klinefelter syndrome'; detail = 'Male with extra X chromosome. Reduced fertility.'; }
+  else if (count === 45 && sex === 'X') { result = 'Turner syndrome'; detail = 'Female with only one X chromosome. Sterile, short stature.'; }
+  else { result = 'Atypical count: ' + count + ', ' + sex; detail = 'Consult a genetics reference for this combination.'; }
+  lsResult('ka_result', '<div class="ls-answer multi">' + result + '</div><div class="result-sub">' + detail + '</div>');
+  if (steps.length) lsShowSteps('ka_steps', 'ka_steps_card', steps);
+}
+
+function lsEvolution() {
+  const topic = document.getElementById('ev_topic').value;
+  const map = {
+    fossil: { name: 'Fossil evidence', detail: 'Fossils show progressive change in organisms over time. Transitional fossils (e.g. Archaeopteryx) show intermediate features between two groups.' },
+    biogeography: { name: 'Biogeographic evidence', detail: 'Distribution of species supports continental drift. Similar fossils found on continents that were once joined (e.g. Africa and South America).' },
+    dna: { name: 'Genetic evidence', detail: 'Comparing DNA sequences shows relatedness. The more similar the DNA, the more recently two species shared a common ancestor. Mitochondrial DNA traces female ancestry.' },
+    homologous: { name: 'Homologous structures', detail: 'Structures with the same basic plan but different functions (e.g. human arm, bat wing, whale flipper) indicate a common ancestor.' },
+    speciation: { name: 'Speciation through natural selection', detail: 'A population becomes reproductively isolated. Different selection pressures cause divergence. Eventually the two populations cannot interbreed.' },
+    reproductive_isolation: { name: 'Reproductive isolation mechanisms', detail: 'Prevent species from interbreeding: (1) breeding at different times, (2) different courtship behaviour, (3) incompatible gametes, (4) infertile or sterile offspring.' }
+  };
+  const info = map[topic];
+  lsResult('ev_result', '<div class="ls-answer multi">' + info.name + '</div><div class="result-sub">' + info.detail + '</div>');
+}
+
+function lsPopulation() {
+  const b = parseFloat(document.getElementById('po_b').value) || 0;
+  const i = parseFloat(document.getElementById('po_i').value) || 0;
+  const d = parseFloat(document.getElementById('po_d').value) || 0;
+  const e = parseFloat(document.getElementById('po_e').value) || 0;
+  const n = parseFloat(document.getElementById('po_n').value) || 0;
+  const growth = (b + i) - (d + e);
+  const newPop = n + growth;
+  const pctChange = n > 0 ? ((growth / n) * 100) : 0;
+  const steps = [];
+  steps.push('Population growth = (births + immigration) − (deaths + emigration)');
+  steps.push('= (' + b + ' + ' + i + ') − (' + d + ' + ' + e + ')');
+  steps.push('= ' + (b + i) + ' − ' + (d + e) + ' = ' + growth);
+  steps.push('New population = ' + n + ' + ' + growth + ' = ' + newPop);
+  steps.push('Percentage change = ' + lsFmt(pctChange) + '%');
+  lsResult('po_result',
+    '<div class="ls-answer">' + newPop + '</div>' +
+    '<div class="result-sub">Net change: ' + (growth >= 0 ? '+' : '') + growth + ' individuals (' + lsFmt(pctChange) + '%)</div>');
+  lsShowSteps('po_steps', 'po_steps_card', steps);
+}
+
+function lsDnaProfile() {
+  const match = parseInt(document.getElementById('dp_match').value);
+  const total = parseInt(document.getElementById('dp_total').value);
+  if (isNaN(match) || isNaN(total) || total === 0) { lsResult('dp_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid values.</div>'); return; }
+  const pct = (match / total) * 100;
+  let conclusion = '';
+  if (match === total) conclusion = 'POSITIVE MATCH — suspect is linked to the crime scene. All evidence bands are present in the suspect profile.';
+  else if (pct >= 80) conclusion = 'HIGH SIMILARITY — likely match, but confirm with additional markers.';
+  else if (pct >= 50) conclusion = 'PARTIAL MATCH — inconclusive. More markers needed.';
+  else conclusion = 'NO MATCH — suspect does not match the evidence sample.';
+  lsResult('dp_result',
+    '<div class="ls-answer multi">' + conclusion + '</div>' +
+    '<div class="ls-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Match score</span><span class="result-cell-value">' + lsFmt(pct) + '%</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Bands matched</span><span class="result-cell-value">' + match + ' / ' + total + '</span></div>' +
+    '</div>');
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', function () {
+  lsSetGrade(10);
+});
+</script>
+</body>
+</html>
