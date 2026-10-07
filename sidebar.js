@@ -50,6 +50,12 @@ const SIDEBAR_TOOLS = [
     ]
   },
   {
+    group: 'NSC Life Sciences',
+    tools: [
+      { label: 'Life Sciences (Gr 10–12)', icon: '🧬', href: 'lifesciences.html' }
+    ]
+  },
+  {
     group: 'Planning Tools',
     tools: [
       { label: 'Study Schedule', icon: '📅', href: 'schedule.html' }
@@ -64,7 +70,6 @@ function buildSidebar() {
   const currentPath = window.location.pathname.replace(/\/+$/, '');
   const currentPage = currentPath.split('/').pop() || 'index.html';
 
-  // Find which group contains the current page
   let activeGroupIndex = -1;
   SIDEBAR_TOOLS.forEach((group, idx) => {
     if (group.tools.some(t => t.href === currentPage)) {
@@ -72,17 +77,14 @@ function buildSidebar() {
     }
   });
 
-  // If no group matches (e.g., homepage), default to first group
   if (activeGroupIndex === -1) activeGroupIndex = 0;
 
-  // Check localStorage for last opened group
   let storedIndex = -1;
   try {
     const stored = localStorage.getItem('sidebarOpenGroup');
     if (stored !== null) storedIndex = parseInt(stored);
   } catch (e) {}
 
-  // Priority: current page's group > stored group > first group
   const initialOpenIndex = activeGroupIndex !== -1 ? activeGroupIndex : (storedIndex >= 0 ? storedIndex : 0);
 
   let linksHtml = '';
@@ -132,11 +134,8 @@ function toggleGroup(index, event) {
   if (!target) return;
 
   const isCurrentlyOpen = target.classList.contains('open');
-
-  // Close all groups
   allGroups.forEach(g => g.classList.remove('open'));
 
-  // If target was closed, open it. If it was open, leave everything closed.
   if (!isCurrentlyOpen) {
     target.classList.add('open');
     try { localStorage.setItem('sidebarOpenGroup', index); } catch (e) {}
