@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Tools - Grade 10 & 11 NSC Calculator</title>
+<meta name="description" content="Free NSC Physics calculators for Grade 10 and 11. Motion, vectors, waves, EM radiation, energy, Newton's Laws, Coulomb's Law, optics, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .phys-tool-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .phys-tool-pill {
+    padding: 7px 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .phys-tool-pill:hover { border-color: var(--accent); color: var(--text); }
+  .phys-tool-pill.active {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .phys-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 500px) { .phys-input-grid { grid-template-columns: 1fr; } }
+
+  .phys-answer {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--success);
+    font-family: var(--font-mono);
+    margin: 8px 0;
+    word-break: break-word;
+    line-height: 1.15;
+  }
+  .phys-answer.multi { font-size: 22px; }
+  .phys-input {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+  .phys-step {
+    padding: 12px 16px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .phys-step .step-num {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    color: var(--accent-text);
+    border-radius: 50%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 600;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .phys-step .step-row { display: flex; align-items: flex-start; }
+  .phys-formula {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    margin: 0 2px;
+  }
+  .phys-formula-note {
+    padding: 10px 14px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .phys-formula-note strong { color: var(--text); }
+  .phys-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .phys-const-note {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+  }
+  .phys-hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Physics Tools</h1>
+    <p>NSC Grade 10 &amp; 11 Physics calculators with step-by-step working.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab active" id="tabG10" onclick="physSetGrade(10)">Grade 10</button>
+      <button class="tab" id="tabG11" onclick="physSetGrade(11)">Grade 11</button>
+    </div>
+
+    <div id="physGrade10Tools">
+      <div class="phys-tool-select">
+        <button class="phys-tool-pill active" data-g10-tool="motion1d" onclick="physSelectTool10('motion1d')">Motion 1D</button>
+        <button class="phys-tool-pill" data-g10-tool="graphs" onclick="physSelectTool10('graphs')">Motion Graphs</button>
+        <button class="phys-tool-pill" data-g10-tool="vectors" onclick="physSelectTool10('vectors')">Vector Addition</button>
+        <button class="phys-tool-pill" data-g10-tool="waves" onclick="physSelectTool10('waves')">Waves</button>
+        <button class="phys-tool-pill" data-g10-tool="emr" onclick="physSelectTool10('emr')">EM Radiation</button>
+        <button class="phys-tool-pill" data-g10-tool="energy" onclick="physSelectTool10('energy')">Mechanical Energy</button>
+        <button class="phys-tool-pill" data-g10-tool="charge" onclick="physSelectTool10('charge')">Charge Quantisation</button>
+      </div>
+    </div>
+
+    <div id="physGrade11Tools" class="phys-hidden">
+      <div class="phys-tool-select">
+        <button class="phys-tool-pill active" data-g11-tool="newton" onclick="physSelectTool11('newton')">Newton's Laws</button>
+        <button class="phys-tool-pill" data-g11-tool="workenergy" onclick="physSelectTool11('workenergy')">Work-Energy</button>
+        <button class="phys-tool-pill" data-g11-tool="power" onclick="physSelectTool11('power')">Power</button>
+        <button class="phys-tool-pill" data-g11-tool="coulomb" onclick="physSelectTool11('coulomb')">Coulomb's Law</button>
+        <button class="phys-tool-pill" data-g11-tool="efield" onclick="physSelectTool11('efield')">Electric Field</button>
+        <button class="phys-tool-pill" data-g11-tool="emf" onclick="physSelectTool11('emf')">Internal Resistance</button>
+        <button class="phys-tool-pill" data-g11-tool="snell" onclick="physSelectTool11('snell')">Snell's Law</button>
+        <button class="phys-tool-pill" data-g11-tool="lens" onclick="physSelectTool11('lens')">Lens Formula</button>
+        <button class="phys-tool-pill" data-g11-tool="magnetic" onclick="physSelectTool11('magnetic')">Magnetic Force</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 10 TOOLS ============ -->
+
+  <!-- Motion 1D -->
+  <div id="tool-motion1d" class="phys-tool-panel">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Equations of motion (uniform acceleration):</strong><br>
+        <span class="phys-formula">v_f = v_i + aΔt</span>
+        <span class="phys-formula">Δx = v_iΔt + ½aΔt²</span>
+        <span class="phys-formula">v_f² = v_i² + 2aΔx</span><br>
+        Leave the unknown field blank. Fill in the other four (or three if using equation 3).
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Initial velocity v_i (m/s)</label>
+          <input type="number" id="m1_vi" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Final velocity v_f (m/s)</label>
+          <input type="number" id="m1_vf" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Acceleration a (m/s²)</label>
+          <input type="number" id="m1_a" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Time Δt (s)</label>
+          <input type="number" id="m1_t" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Displacement Δx (m)</label>
+          <input type="number" id="m1_x" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physMotion1D()">Solve</button>
+        <button class="btn btn-secondary" onclick="physClearMotion1D()">Clear</button>
+      </div>
+
+      <div class="phys-const-note">Convention: take right/up as positive, left/down as negative.</div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="m1_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values above and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="m1_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="m1_steps"></div>
+    </div>
+  </div>
+
+  <!-- Motion Graphs -->
+  <div id="tool-graphs" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Reading motion graphs:</strong><br>
+        <strong>Position-time graph:</strong> gradient = velocity. Horizontal line = at rest.<br>
+        <strong>Velocity-time graph:</strong> gradient = acceleration. Area under graph = displacement.<br>
+        Enter two points on the line to get the gradient and the meaning.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Point 1 — t₁ (s)</label>
+          <input type="number" id="g_t1" class="phys-input" step="any" value="0">
+        </div>
+        <div>
+          <label>Point 1 — y₁ (m or m/s)</label>
+          <input type="number" id="g_y1" class="phys-input" step="any" value="0">
+        </div>
+        <div>
+          <label>Point 2 — t₂ (s)</label>
+          <input type="number" id="g_t2" class="phys-input" step="any" value="4">
+        </div>
+        <div>
+          <label>Point 2 — y₂ (m or m/s)</label>
+          <input type="number" id="g_y2" class="phys-input" step="any" value="12">
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Graph type</label>
+        <select id="g_type" class="phys-input">
+          <option value="pt">Position-time (m vs s)</option>
+          <option value="vt">Velocity-time (m/s vs s)</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physGraphs()">Analyse</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Analysis</div>
+      <div id="g_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter two points and click Analyse.</div></div>
+    </div>
+  </div>
+
+  <!-- Vector Addition -->
+  <div id="tool-vectors" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Vector components and resultant:</strong><br>
+        <span class="phys-formula">R_x = ΣF_x</span>
+        <span class="phys-formula">R_y = ΣF_y</span>
+        <span class="phys-formula">|R| = √(R_x² + R_y²)</span>
+        <span class="phys-formula">θ = tan⁻¹(R_y / R_x)</span><br>
+        Add up to 4 vectors. Each is given as magnitude + direction in degrees (0° = east, 90° = north).
+      </div>
+
+      <div id="vec_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Vector 1 — magnitude</label>
+            <input type="number" id="v1m" class="phys-input" step="any" value="5">
+          </div>
+          <div>
+            <label>Vector 1 — angle (°)</label>
+            <input type="number" id="v1a" class="phys-input" step="any" value="0">
+          </div>
+          <div>
+            <label>Vector 2 — magnitude</label>
+            <input type="number" id="v2m" class="phys-input" step="any" value="3">
+          </div>
+          <div>
+            <label>Vector 2 — angle (°)</label>
+            <input type="number" id="v2a" class="phys-input" step="any" value="90">
+          </div>
+          <div>
+            <label>Vector 3 — magnitude (optional)</label>
+            <input type="number" id="v3m" class="phys-input" step="any" placeholder="0">
+          </div>
+          <div>
+            <label>Vector 3 — angle (°)</label>
+            <input type="number" id="v3a" class="phys-input" step="any" placeholder="0">
+          </div>
+          <div>
+            <label>Vector 4 — magnitude (optional)</label>
+            <input type="number" id="v4m" class="phys-input" step="any" placeholder="0">
+          </div>
+          <div>
+            <label>Vector 4 — angle (°)</label>
+            <input type="number" id="v4a" class="phys-input" step="any" placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physVectors()">Calculate Resultant</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Resultant Vector</div>
+      <div id="v_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter vectors and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="v_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="v_steps"></div>
+    </div>
+  </div>
+
+  <!-- Waves -->
+  <div id="tool-waves" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Wave equation:</strong>
+        <span class="phys-formula">v = fλ</span>
+        <span class="phys-formula">f = 1/T</span><br>
+        Leave the unknown blank. Fill the other two.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Wave speed v (m/s)</label>
+          <input type="number" id="w_v" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Frequency f (Hz)</label>
+          <input type="number" id="w_f" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Wavelength λ (m)</label>
+          <input type="number" id="w_l" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Period T (s) — optional</label>
+          <input type="number" id="w_t" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physWaves()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="w_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="w_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="w_steps"></div>
+    </div>
+  </div>
+
+  <!-- EM Radiation -->
+  <div id="tool-emr" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Photon energy and EM spectrum:</strong>
+        <span class="phys-formula">E = hf</span>
+        <span class="phys-formula">E = hc / λ</span>
+        <span class="phys-formula">c = fλ</span><br>
+        Constants: h = 6,63 × 10⁻³⁴ J·s, c = 3,00 × 10⁸ m/s.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Known quantity</label>
+        <select id="emr_mode" class="phys-input" onchange="physEMRModeChange()">
+          <option value="freq">Frequency f (Hz)</option>
+          <option value="wave">Wavelength λ (m)</option>
+          <option value="energy">Photon energy E (J)</option>
+        </select>
+      </div>
+
+      <div>
+        <label id="emr_input_label">Frequency f (Hz)</label>
+        <input type="number" id="emr_value" class="phys-input" step="any" value="5e14">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physEMR()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Photon Properties</div>
+      <div id="emr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a value and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="emr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="emr_steps"></div>
+    </div>
+  </div>
+
+  <!-- Mechanical Energy -->
+  <div id="tool-energy" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Mechanical energy:</strong>
+        <span class="phys-formula">E_p = mgh</span>
+        <span class="phys-formula">E_k = ½mv²</span>
+        <span class="phys-formula">E_m = E_p + E_k</span><br>
+        Conservation (no friction): E_m at top = E_m at bottom. Take g = 9,8 m/s².
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Mass m (kg)</label>
+          <input type="number" id="e_m" class="phys-input" step="any" value="2">
+        </div>
+        <div>
+          <label>Height h (m)</label>
+          <input type="number" id="e_h" class="phys-input" step="any" value="5">
+        </div>
+        <div>
+          <label>Velocity v (m/s)</label>
+          <input type="number" id="e_v" class="phys-input" step="any" value="0">
+        </div>
+        <div>
+          <label>g (m/s²)</label>
+          <input type="number" id="e_g" class="phys-input" step="any" value="9.8">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physEnergy()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Energy</div>
+      <div id="e_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="e_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="e_steps"></div>
+    </div>
+  </div>
+
+  <!-- Charge Quantisation -->
+  <div id="tool-charge" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Charge quantisation:</strong>
+        <span class="phys-formula">Q = n · q_e</span>
+        <span class="phys-formula">q_e = 1,6 × 10⁻¹⁹ C</span><br>
+        Also supports contact of identical spheres:
+        <span class="phys-formula">Q_new = (Q₁ + Q₂) / 2</span>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="q_mode" class="phys-input" onchange="physChargeModeChange()">
+          <option value="quantise">Find charge from number of electrons</option>
+          <option value="spheres">Contact of two identical spheres</option>
+        </select>
+      </div>
+
+      <div id="q_quantise_inputs">
+        <label>Number of electrons n</label>
+        <input type="number" id="q_n" class="phys-input" step="any" value="6.25e18">
+      </div>
+
+      <div id="q_spheres_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Charge Q₁ (C)</label>
+            <input type="number" id="q_q1" class="phys-input" step="any" value="4e-6">
+          </div>
+          <div>
+            <label>Charge Q₂ (C)</label>
+            <input type="number" id="q_q2" class="phys-input" step="any" value="-2e-6">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physCharge()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="q_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="q_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="q_steps"></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 11 TOOLS ============ -->
+
+  <!-- Newton's Laws -->
+  <div id="tool-newton" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Newton's Second Law:</strong>
+        <span class="phys-formula">F_net = ma</span><br>
+        <strong>Friction:</strong>
+        <span class="phys-formula">f = μN</span>
+        <span class="phys-formula">N = mg (horizontal)</span>
+        <span class="phys-formula">N = mg·cosθ (incline)</span><br>
+        Leave the unknown blank. Fill the other two.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Net force F_net (N)</label>
+          <input type="number" id="n_f" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Mass m (kg)</label>
+          <input type="number" id="n_m" class="phys-input" step="any" value="5">
+        </div>
+        <div>
+          <label>Acceleration a (m/s²)</label>
+          <input type="number" id="n_a" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="result-label" style="margin-bottom:10px;">Optional: Friction on a horizontal surface</div>
+      <div class="phys-input-grid">
+        <div>
+          <label>Coefficient of friction μ</label>
+          <input type="number" id="n_mu" class="phys-input" step="any" placeholder="optional">
+        </div>
+        <div>
+          <label>Mass for N (kg)</label>
+          <input type="number" id="n_m2" class="phys-input" step="any" placeholder="optional">
+        </div>
+        <div>
+          <label>g (m/s²)</label>
+          <input type="number" id="n_g" class="phys-input" step="any" value="9.8">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physNewton()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="n_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="n_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="n_steps"></div>
+    </div>
+  </div>
+
+  <!-- Work-Energy -->
+  <div id="tool-workenergy" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Work:</strong>
+        <span class="phys-formula">W = F·Δx·cosθ</span><br>
+        <strong>Work-Energy Theorem:</strong>
+        <span class="phys-formula">W_net = ΔE_k = ½mv_f² − ½mv_i²</span>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="we_mode" class="phys-input" onchange="physWorkModeChange()">
+          <option value="work">Work done by a force</option>
+          <option value="theorem">Work-Energy Theorem</option>
+        </select>
+      </div>
+
+      <div id="we_work_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Force F (N)</label>
+            <input type="number" id="we_f" class="phys-input" step="any" value="20">
+          </div>
+          <div>
+            <label>Displacement Δx (m)</label>
+            <input type="number" id="we_x" class="phys-input" step="any" value="5">
+          </div>
+          <div>
+            <label>Angle θ between F and Δx (°)</label>
+            <input type="number" id="we_theta" class="phys-input" step="any" value="0">
+          </div>
+        </div>
+      </div>
+
+      <div id="we_theorem_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Mass m (kg)</label>
+            <input type="number" id="we_m" class="phys-input" step="any" value="2">
+          </div>
+          <div>
+            <label>Initial velocity v_i (m/s)</label>
+            <input type="number" id="we_vi" class="phys-input" step="any" value="0">
+          </div>
+          <div>
+            <label>Final velocity v_f (m/s)</label>
+            <input type="number" id="we_vf" class="phys-input" step="any" value="6">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physWorkEnergy()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="we_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="we_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="we_steps"></div>
+    </div>
+  </div>
+
+  <!-- Power -->
+  <div id="tool-power" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Power:</strong>
+        <span class="phys-formula">P = W / Δt</span>
+        <span class="phys-formula">P = F·v (constant velocity)</span><br>
+        Leave the unknown blank. Fill the other two.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Power P (W)</label>
+          <input type="number" id="p_p" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Work W (J)</label>
+          <input type="number" id="p_w" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+        <div>
+          <label>Time Δt (s)</label>
+          <input type="number" id="p_t" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physPower()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="p_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="p_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="p_steps"></div>
+    </div>
+  </div>
+
+  <!-- Coulomb's Law -->
+  <div id="tool-coulomb" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Coulomb's Law:</strong>
+        <span class="phys-formula">F = k·|Q₁·Q₂| / r²</span><br>
+        k = 9,0 × 10⁹ N·m²·C⁻²<br>
+        Result: magnitude of force. Direction: like charges repel, opposite charges attract.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Charge Q₁ (C)</label>
+          <input type="number" id="c_q1" class="phys-input" step="any" value="2e-6">
+        </div>
+        <div>
+          <label>Charge Q₂ (C)</label>
+          <input type="number" id="c_q2" class="phys-input" step="any" value="3e-6">
+        </div>
+        <div>
+          <label>Distance r (m)</label>
+          <input type="number" id="c_r" class="phys-input" step="any" value="0.5">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physCoulomb()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Force</div>
+      <div id="c_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="c_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="c_steps"></div>
+    </div>
+  </div>
+
+  <!-- Electric Field -->
+  <div id="tool-efield" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Electric field:</strong>
+        <span class="phys-formula">E = F / q</span>
+        <span class="phys-formula">E = k·Q / r²</span><br>
+        Leave the unknown blank.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="ef_mode" class="phys-input" onchange="physEFieldModeChange()">
+          <option value="force">Find E from force on a test charge</option>
+          <option value="point">Find E from a point charge</option>
+        </select>
+      </div>
+
+      <div id="ef_force_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Force F (N)</label>
+            <input type="number" id="ef_f" class="phys-input" step="any" value="0.5">
+          </div>
+          <div>
+            <label>Test charge q (C)</label>
+            <input type="number" id="ef_q" class="phys-input" step="any" value="2e-6">
+          </div>
+        </div>
+      </div>
+
+      <div id="ef_point_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Source charge Q (C)</label>
+            <input type="number" id="ef_Q" class="phys-input" step="any" value="5e-6">
+          </div>
+          <div>
+            <label>Distance r (m)</label>
+            <input type="number" id="ef_r" class="phys-input" step="any" value="0.3">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physEField()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Electric Field</div>
+      <div id="ef_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="ef_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ef_steps"></div>
+    </div>
+  </div>
+
+  <!-- Internal Resistance -->
+  <div id="tool-emf" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Emf and internal resistance:</strong>
+        <span class="phys-formula">ε = I(R + r)</span>
+        <span class="phys-formula">ε = V_terminal + I·r</span><br>
+        Leave the unknown blank. Fill the other three.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Emf ε (V)</label>
+          <input type="number" id="emf_e" class="phys-input" step="any" value="12">
+        </div>
+        <div>
+          <label>Current I (A)</label>
+          <input type="number" id="emf_i" class="phys-input" step="any" value="2">
+        </div>
+        <div>
+          <label>External resistance R (Ω)</label>
+          <input type="number" id="emf_R" class="phys-input" step="any" value="5.5">
+        </div>
+        <div>
+          <label>Internal resistance r (Ω)</label>
+          <input type="number" id="emf_r" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physEMF()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="emf_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="emf_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="emf_steps"></div>
+    </div>
+  </div>
+
+  <!-- Snell's Law -->
+  <div id="tool-snell" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Snell's Law and refraction:</strong>
+        <span class="phys-formula">n₁·sinθ₁ = n₂·sinθ₂</span>
+        <span class="phys-formula">n = c / v</span>
+        <span class="phys-formula">sinθ_c = n₂ / n₁ (n₁ > n₂)</span><br>
+        Leave the unknown blank. Angles in degrees.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Refractive index n₁</label>
+          <input type="number" id="s_n1" class="phys-input" step="any" value="1">
+        </div>
+        <div>
+          <label>Angle of incidence θ₁ (°)</label>
+          <input type="number" id="s_t1" class="phys-input" step="any" value="45">
+        </div>
+        <div>
+          <label>Refractive index n₂</label>
+          <input type="number" id="s_n2" class="phys-input" step="any" value="1.5">
+        </div>
+        <div>
+          <label>Angle of refraction θ₂ (°)</label>
+          <input type="number" id="s_t2" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physSnell()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="s_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="s_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="s_steps"></div>
+    </div>
+  </div>
+
+  <!-- Lens Formula -->
+  <div id="tool-lens" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Lens formula:</strong>
+        <span class="phys-formula">1/f = 1/v + 1/u</span>
+        <span class="phys-formula">m = −v / u</span><br>
+        Sign convention: u is positive (object side), v is positive for real image, negative for virtual. f is positive for convex, negative for concave.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Focal length f (m)</label>
+          <input type="number" id="l_f" class="phys-input" step="any" value="0.2">
+        </div>
+        <div>
+          <label>Object distance u (m)</label>
+          <input type="number" id="l_u" class="phys-input" step="any" value="0.5">
+        </div>
+        <div>
+          <label>Image distance v (m)</label>
+          <input type="number" id="l_v" class="phys-input" step="any" placeholder="leave blank if unknown">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physLens()">Solve</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="l_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Solve.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="l_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="l_steps"></div>
+    </div>
+  </div>
+
+  <!-- Magnetic Force -->
+  <div id="tool-magnetic" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Magnetic force:</strong>
+        <span class="phys-formula">F = B·I·L·sinθ (current-carrying wire)</span>
+        <span class="phys-formula">F = q·v·B·sinθ (moving charge)</span><br>
+        θ is the angle between the field and the current/velocity.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="mag_mode" class="phys-input" onchange="physMagModeChange()">
+          <option value="wire">Current-carrying wire</option>
+          <option value="charge">Moving charge</option>
+        </select>
+      </div>
+
+      <div id="mag_wire_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Magnetic field B (T)</label>
+            <input type="number" id="mag_B" class="phys-input" step="any" value="0.5">
+          </div>
+          <div>
+            <label>Current I (A)</label>
+            <input type="number" id="mag_I" class="phys-input" step="any" value="3">
+          </div>
+          <div>
+            <label>Length L (m)</label>
+            <input type="number" id="mag_L" class="phys-input" step="any" value="0.4">
+          </div>
+          <div>
+            <label>Angle θ (°)</label>
+            <input type="number" id="mag_theta" class="phys-input" step="any" value="90">
+          </div>
+        </div>
+      </div>
+
+      <div id="mag_charge_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Charge q (C)</label>
+            <input type="number" id="mag_q" class="phys-input" step="any" value="1.6e-19">
+          </div>
+          <div>
+            <label>Velocity v (m/s)</label>
+            <input type="number" id="mag_v" class="phys-input" step="any" value="2e6">
+          </div>
+          <div>
+            <label>Magnetic field B (T)</label>
+            <input type="number" id="mag_B2" class="phys-input" step="any" value="0.3">
+          </div>
+          <div>
+            <label>Angle θ (°)</label>
+            <input type="number" id="mag_theta2" class="phys-input" step="any" value="90">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physMagForce()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Magnetic Force</div>
+      <div id="mag_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="mag_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="mag_steps"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+/* ============================================================
+   SHARED HELPERS
+   ============================================================ */
+function physFmt(n) {
+  if (!isFinite(n)) return '—';
+  if (n === 0) return '0';
+  if (Number.isInteger(n)) return n.toString();
+  const abs = Math.abs(n);
+  if (abs < 0.001 || abs >= 100000) return parseFloat(n.toExponential(4)).toString();
+  return parseFloat(n.toFixed(6)).toString();
+}
+function physShowSteps(stepsId, cardId, steps) {
+  const el = document.getElementById(stepsId);
+  if (!el) return;
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="phys-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  const card = document.getElementById(cardId);
+  if (card) card.classList.remove('phys-hidden');
+}
+function physHideSteps(cardId) {
+  const card = document.getElementById(cardId);
+  if (card) card.classList.add('phys-hidden');
+}
+function physResult(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+function physConstNote(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+/* ============================================================
+   GRADE 10 / 11 TAB SWITCHING
+   ============================================================ */
+let physCurrentGrade = 10;
+let physCurrentTool10 = 'motion1d';
+let physCurrentTool11 = 'newton';
+
+function physSetGrade(g) {
+  physCurrentGrade = g;
+  document.getElementById('tabG10').classList.toggle('active', g === 10);
+  document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('physGrade10Tools').classList.toggle('phys-hidden', g !== 10);
+  document.getElementById('physGrade11Tools').classList.toggle('phys-hidden', g !== 11);
+  if (g === 10) {
+    document.querySelectorAll('#physGrade10Tools .phys-tool-pill').forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-g10-tool') === physCurrentTool10);
+    });
+    document.querySelectorAll('[id^="tool-"]').forEach(p => {
+      if (p.id === 'tool-' + physCurrentTool10) p.classList.remove('phys-hidden');
+      else p.classList.add('phys-hidden');
+    });
+  } else {
+    document.querySelectorAll('#physGrade11Tools .phys-tool-pill').forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-g11-tool') === physCurrentTool11);
+    });
+    document.querySelectorAll('[id^="tool-"]').forEach(p => {
+      if (p.id === 'tool-' + physCurrentTool11) p.classList.remove('phys-hidden');
+      else p.classList.add('phys-hidden');
+    });
+  }
+}
+
+function physSelectTool10(tool) {
+  physCurrentTool10 = tool;
+  document.querySelectorAll('#physGrade10Tools .phys-tool-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-g10-tool') === tool);
+  });
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
+    else if (p.getAttribute('data-grade') !== '11') p.classList.add('phys-hidden');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function physSelectTool11(tool) {
+  physCurrentTool11 = tool;
+  document.querySelectorAll('#physGrade11Tools .phys-tool-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-g11-tool') === tool);
+  });
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
+    else p.classList.add('phys-hidden');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================================
+   GRADE 10 TOOLS
+   ============================================================ */
+
+/* --- Motion 1D --- */
+function physClearMotion1D() {
+  ['m1_vi', 'm1_vf', 'm1_a', 'm1_t', 'm1_x'].forEach(id => document.getElementById(id).value = '');
+  physResult('m1_result', '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values above and click Solve.</div>');
+  physHideSteps('m1_steps_card');
+}
+
+function physMotion1D() {
+  const vi = document.getElementById('m1_vi').value === '' ? null : parseFloat(document.getElementById('m1_vi').value);
+  const vf = document.getElementById('m1_vf').value === '' ? null : parseFloat(document.getElementById('m1_vf').value);
+  const a = document.getElementById('m1_a').value === '' ? null : parseFloat(document.getElementById('m1_a').value);
+  const t = document.getElementById('m1_t').value === '' ? null : parseFloat(document.getElementById('m1_t').value);
+  const x = document.getElementById('m1_x').value === '' ? null : parseFloat(document.getElementById('m1_x').value);
+
+  const known = [vi, vf, a, t, x].filter(v => v !== null).length;
+  if (known < 3) {
+    physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Need at least 3 known values.</div>');
+    return;
+  }
+
+  const steps = [];
+  let answerHtml = '';
+  let answer = '';
+
+  // Determine what to solve
+  if (vf === null && vi !== null && a !== null && t !== null) {
+    answer = vi + a * t;
+    steps.push('Use: v_f = v_i + a·Δt');
+    steps.push('v_f = ' + physFmt(vi) + ' + (' + physFmt(a) + ')(' + physFmt(t) + ')');
+    steps.push('v_f = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v_f = ' + physFmt(answer) + ' m/s</div>';
+  } else if (vi === null && vf !== null && a !== null && t !== null) {
+    answer = vf - a * t;
+    steps.push('Rearrange v_f = v_i + a·Δt → v_i = v_f − a·Δt');
+    steps.push('v_i = ' + physFmt(vf) + ' − (' + physFmt(a) + ')(' + physFmt(t) + ')');
+    steps.push('v_i = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v_i = ' + physFmt(answer) + ' m/s</div>';
+  } else if (a === null && vf !== null && vi !== null && t !== null && t !== 0) {
+    answer = (vf - vi) / t;
+    steps.push('Rearrange v_f = v_i + a·Δt → a = (v_f − v_i) / Δt');
+    steps.push('a = (' + physFmt(vf) + ' − ' + physFmt(vi) + ') / ' + physFmt(t));
+    steps.push('a = ' + physFmt(answer) + ' m/s²');
+    answerHtml = '<div class="phys-answer">a = ' + physFmt(answer) + ' m/s²</div>';
+  } else if (t === null && vf !== null && vi !== null && a !== null && a !== 0) {
+    answer = (vf - vi) / a;
+    steps.push('Rearrange v_f = v_i + a·Δt → Δt = (v_f − v_i) / a');
+    steps.push('Δt = (' + physFmt(vf) + ' − ' + physFmt(vi) + ') / ' + physFmt(a));
+    steps.push('Δt = ' + physFmt(answer) + ' s');
+    answerHtml = '<div class="phys-answer">Δt = ' + physFmt(answer) + ' s</div>';
+  } else if (x === null && vi !== null && a !== null && t !== null) {
+    answer = vi * t + 0.5 * a * t * t;
+    steps.push('Use: Δx = v_i·Δt + ½a·Δt²');
+    steps.push('Δx = (' + physFmt(vi) + ')(' + physFmt(t) + ') + ½(' + physFmt(a) + ')(' + physFmt(t) + ')²');
+    steps.push('Δx = ' + physFmt(answer) + ' m');
+    answerHtml = '<div class="phys-answer">Δx = ' + physFmt(answer) + ' m</div>';
+  } else if (a === null && x !== null && vi !== null && t !== null && t !== 0) {
+    answer = 2 * (x - vi * t) / (t * t);
+    steps.push('Rearrange Δx = v_i·Δt + ½a·Δt² → a = 2(Δx − v_i·Δt) / Δt²');
+    steps.push('a = 2(' + physFmt(x) + ' − (' + physFmt(vi) + ')(' + physFmt(t) + ')) / (' + physFmt(t) + ')²');
+    steps.push('a = ' + physFmt(answer) + ' m/s²');
+    answerHtml = '<div class="phys-answer">a = ' + physFmt(answer) + ' m/s²</div>';
+  } else if (vi === null && x !== null && a !== null && t !== null && t !== 0) {
+    answer = (x - 0.5 * a * t * t) / t;
+    steps.push('Rearrange Δx = v_i·Δt + ½a·Δt² → v_i = (Δx − ½a·Δt²) / Δt');
+    steps.push('v_i = (' + physFmt(x) + ' − ½(' + physFmt(a) + ')(' + physFmt(t) + ')²) / ' + physFmt(t));
+    steps.push('v_i = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v_i = ' + physFmt(answer) + ' m/s</div>';
+  } else if (x === null && vf !== null && vi !== null && a !== null && a !== 0) {
+    answer = (vf * vf - vi * vi) / (2 * a);
+    steps.push('Use: v_f² = v_i² + 2a·Δx');
+    steps.push('Δx = (v_f² − v_i²) / (2a)');
+    steps.push('Δx = (' + physFmt(vf) + '² − ' + physFmt(vi) + '²) / (2·' + physFmt(a) + ')');
+    steps.push('Δx = ' + physFmt(answer) + ' m');
+    answerHtml = '<div class="phys-answer">Δx = ' + physFmt(answer) + ' m</div>';
+  } else if (a === null && vf !== null && vi !== null && x !== null && x !== 0) {
+    answer = (vf * vf - vi * vi) / (2 * x);
+    steps.push('Rearrange v_f² = v_i² + 2a·Δx → a = (v_f² − v_i²) / (2Δx)');
+    steps.push('a = (' + physFmt(vf) + '² − ' + physFmt(vi) + '²) / (2·' + physFmt(x) + ')');
+    steps.push('a = ' + physFmt(answer) + ' m/s²');
+    answerHtml = '<div class="phys-answer">a = ' + physFmt(answer) + ' m/s²</div>';
+  } else if (vf === null && vi !== null && a !== null && x !== null) {
+    const vfSq = vi * vi + 2 * a * x;
+    if (vfSq < 0) {
+      physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real solution (v_f² would be negative).</div>');
+      return;
+    }
+    answer = Math.sqrt(vfSq);
+    steps.push('Use: v_f² = v_i² + 2a·Δx');
+    steps.push('v_f² = (' + physFmt(vi) + ')² + 2(' + physFmt(a) + ')(' + physFmt(x) + ')');
+    steps.push('v_f² = ' + physFmt(vfSq));
+    steps.push('v_f = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v_f = ' + physFmt(answer) + ' m/s</div>';
+  } else if (vi === null && vf !== null && a !== null && x !== null) {
+    const viSq = vf * vf - 2 * a * x;
+    if (viSq < 0) {
+      physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real solution (v_i² would be negative).</div>');
+      return;
+    }
+    answer = Math.sqrt(viSq);
+    steps.push('Rearrange v_f² = v_i² + 2a·Δx → v_i = √(v_f² − 2a·Δx)');
+    steps.push('v_i² = (' + physFmt(vf) + ')² − 2(' + physFmt(a) + ')(' + physFmt(x) + ')');
+    steps.push('v_i = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v_i = ' + physFmt(answer) + ' m/s</div>';
+  } else {
+    physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">That combination is not directly solvable with the 3 kinematic equations. Check your inputs.</div>');
+    return;
+  }
+
+  steps.push('All quantities in SI units: m, s, m/s, m/s².');
+  physResult('m1_result', answerHtml);
+  physShowSteps('m1_steps', 'm1_steps_card', steps);
+}
+
+/* --- Motion Graphs --- */
+function physGraphs() {
+  const t1 = parseFloat(document.getElementById('g_t1').value);
+  const y1 = parseFloat(document.getElementById('g_y1').value);
+  const t2 = parseFloat(document.getElementById('g_t2').value);
+  const y2 = parseFloat(document.getElementById('g_y2').value);
+  const type = document.getElementById('g_type').value;
+
+  if ([t1, y1, t2, y2].some(v => isNaN(v))) {
+    physResult('g_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all four fields.</div>');
+    return;
+  }
+  if (t2 === t1) {
+    physResult('g_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">t₁ and t₂ cannot be equal.</div>');
+    return;
+  }
+
+  const gradient = (y2 - y1) / (t2 - t1);
+  const steps = [];
+  let answerHtml = '';
+
+  if (type === 'pt') {
+    steps.push('Position-time graph: gradient = velocity.');
+    steps.push('m = (y₂ − y₁) / (t₂ − t₁) = (' + physFmt(y2) + ' − ' + physFmt(y1) + ') / (' + physFmt(t2) + ' − ' + physFmt(t1) + ')');
+    steps.push('v = ' + physFmt(gradient) + ' m/s');
+    if (gradient === 0) steps.push('Horizontal line → object is at rest.');
+    else if (gradient > 0) steps.push('Positive gradient → object moves in the positive direction.');
+    else steps.push('Negative gradient → object moves in the negative direction.');
+    answerHtml = '<div class="phys-answer">v = ' + physFmt(gradient) + ' m/s</div>' +
+      '<div class="result-sub">Gradient of position-time = velocity</div>';
+  } else {
+    steps.push('Velocity-time graph: gradient = acceleration.');
+    steps.push('a = (v₂ − v₁) / (t₂ − t₁) = (' + physFmt(y2) + ' − ' + physFmt(y1) + ') / (' + physFmt(t2) + ' − ' + physFmt(t1) + ')');
+    steps.push('a = ' + physFmt(gradient) + ' m/s²');
+    const area = 0.5 * (y1 + y2) * (t2 - t1);
+    steps.push('Trapezium area under graph = displacement.');
+    steps.push('Δx = ½(v₁ + v₂)·Δt = ½(' + physFmt(y1) + ' + ' + physFmt(y2) + ')(' + physFmt(t2 - t1) + ') = ' + physFmt(area) + ' m');
+    answerHtml = '<div class="phys-answer">a = ' + physFmt(gradient) + ' m/s²</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">Δx = ' + physFmt(area) + ' m</div>' +
+      '<div class="result-sub">Gradient = acceleration · Area = displacement</div>';
+  }
+
+  physResult('g_result', answerHtml);
+  physShowSteps('g_steps', 'g_steps_card', steps);
+}
+
+/* --- Vectors --- */
+function physVectors() {
+  const v1m = parseFloat(document.getElementById('v1m').value) || 0;
+  const v1a = parseFloat(document.getElementById('v1a').value) || 0;
+  const v2m = parseFloat(document.getElementById('v2m').value) || 0;
+  const v2a = parseFloat(document.getElementById('v2a').value) || 0;
+  const v3m = parseFloat(document.getElementById('v3m').value) || 0;
+  const v3a = parseFloat(document.getElementById('v3a').value) || 0;
+  const v4m = parseFloat(document.getElementById('v4m').value) || 0;
+  const v4a = parseFloat(document.getElementById('v4a').value) || 0;
+
+  const vectors = [
+    { m: v1m, a: v1a },
+    { m: v2m, a: v2a },
+    { m: v3m, a: v3a },
+    { m: v4m, a: v4a }
+  ];
+
+  let rx = 0, ry = 0;
+  const steps = [];
+
+  vectors.forEach((v, i) => {
+    if (v.m === 0) return;
+    const rad = v.a * Math.PI / 180;
+    const cx = v.m * Math.cos(rad);
+    const cy = v.m * Math.sin(rad);
+    rx += cx;
+    ry += cy;
+    steps.push('V' + (i + 1) + ': ' + physFmt(v.m) + ' at ' + physFmt(v.a) + '° → x = ' + physFmt(cx) + ', y = ' + physFmt(cy));
+  });
+
+  const mag = Math.sqrt(rx * rx + ry * ry);
+  let dir = Math.atan2(ry, rx) * 180 / Math.PI;
+  if (dir < 0) dir += 360;
+
+  steps.push('R_x = Σx = ' + physFmt(rx));
+  steps.push('R_y = Σy = ' + physFmt(ry));
+  steps.push('|R| = √(R_x² + R_y²) = √(' + physFmt(rx) + '² + ' + physFmt(ry) + '²) = ' + physFmt(mag));
+  steps.push('θ = tan⁻¹(R_y / R_x) = ' + physFmt(dir) + '° (from positive x-axis)');
+
+  let compass = '';
+  if (dir < 22.5 || dir >= 337.5) compass = 'East';
+  else if (dir < 67.5) compass = 'North-East';
+  else if (dir < 112.5) compass = 'North';
+  else if (dir < 157.5) compass = 'North-West';
+  else if (dir < 202.5) compass = 'West';
+  else if (dir < 247.5) compass = 'South-West';
+  else if (dir < 292.5) compass = 'South';
+  else compass = 'South-East';
+
+  const html =
+    '<div class="phys-answer">|R| = ' + physFmt(mag) + '</div>' +
+    '<div class="result-sub">Direction: ' + physFmt(dir) + '° (' + compass + ')</div>' +
+    '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">R_x</span><span class="result-cell-value">' + physFmt(rx) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">R_y</span><span class="result-cell-value">' + physFmt(ry) + '</span></div>' +
+    '</div>';
+
+  physResult('v_result', html);
+  physShowSteps('v_steps', 'v_steps_card', steps);
+}
+
+/* --- Waves --- */
+function physWaves() {
+  let v = document.getElementById('w_v').value === '' ? null : parseFloat(document.getElementById('w_v').value);
+  let f = document.getElementById('w_f').value === '' ? null : parseFloat(document.getElementById('w_f').value);
+  let l = document.getElementById('w_l').value === '' ? null : parseFloat(document.getElementById('w_l').value);
+  let T = document.getElementById('w_t').value === '' ? null : parseFloat(document.getElementById('w_t').value);
+
+  const steps = [];
+  let answerHtml = '';
+
+  // Derive missing pieces
+  if (T !== null && f === null) { f = 1 / T; steps.push('f = 1/T = 1/' + physFmt(T) + ' = ' + physFmt(f) + ' Hz'); }
+  if (f !== null && T === null) { T = 1 / f; }
+
+  if (v === null && f !== null && l !== null) {
+    v = f * l;
+    steps.push('v = f·λ = (' + physFmt(f) + ')(' + physFmt(l) + ') = ' + physFmt(v) + ' m/s');
+    answerHtml = '<div class="phys-answer">v = ' + physFmt(v) + ' m/s</div>';
+  } else if (f === null && v !== null && l !== null && l !== 0) {
+    f = v / l;
+    steps.push('f = v/λ = ' + physFmt(v) + ' / ' + physFmt(l) + ' = ' + physFmt(f) + ' Hz');
+    T = 1 / f;
+    steps.push('T = 1/f = ' + physFmt(T) + ' s');
+    answerHtml = '<div class="phys-answer">f = ' + physFmt(f) + ' Hz</div><div class="phys-answer multi" style="color:var(--text);">T = ' + physFmt(T) + ' s</div>';
+  } else if (l === null && v !== null && f !== null && f !== 0) {
+    l = v / f;
+    steps.push('λ = v/f = ' + physFmt(v) + ' / ' + physFmt(f) + ' = ' + physFmt(l) + ' m');
+    answerHtml = '<div class="phys-answer">λ = ' + physFmt(l) + ' m</div>';
+  } else {
+    physResult('w_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Need two of v, f, λ (or T) filled in.</div>');
+    return;
+  }
+
+  physResult('w_result', answerHtml);
+  physShowSteps('w_steps', 'w_steps_card', steps);
+}
+
+/* --- EM Radiation --- */
+function physEMRModeChange() {
+  const mode = document.getElementById('emr_mode').value;
+  const label = document.getElementById('emr_input_label');
+  const input = document.getElementById('emr_value');
+  if (mode === 'freq') { label.textContent = 'Frequency f (Hz)'; input.value = '5e14'; }
+  else if (mode === 'wave') { label.textContent = 'Wavelength λ (m)'; input.value = '6e-7'; }
+  else { label.textContent = 'Photon energy E (J)'; input.value = '3.3e-19'; }
+}
+
+function physEMR() {
+  const h = 6.63e-34;
+  const c = 3.00e8;
+  const mode = document.getElementById('emr_mode').value;
+  const val = parseFloat(document.getElementById('emr_value').value);
+
+  if (isNaN(val) || val <= 0) {
+    physResult('emr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a positive value.</div>');
+    return;
+  }
+
+  let f, lambda, E;
+  const steps = [];
+
+  if (mode === 'freq') {
+    f = val;
+    lambda = c / f;
+    E = h * f;
+    steps.push('Given f = ' + physFmt(f) + ' Hz');
+    steps.push('λ = c/f = (3,00 × 10⁸) / (' + physFmt(f) + ') = ' + physFmt(lambda) + ' m');
+    steps.push('E = h·f = (6,63 × 10⁻³⁴)(' + physFmt(f) + ') = ' + physFmt(E) + ' J');
+  } else if (mode === 'wave') {
+    lambda = val;
+    f = c / lambda;
+    E = h * f;
+    steps.push('Given λ = ' + physFmt(lambda) + ' m');
+    steps.push('f = c/λ = (3,00 × 10⁸) / (' + physFmt(lambda) + ') = ' + physFmt(f) + ' Hz');
+    steps.push('E = h·f = (6,63 × 10⁻³⁴)(' + physFmt(f) + ') = ' + physFmt(E) + ' J');
+  } else {
+    E = val;
+    f = E / h;
+    lambda = c / f;
+    steps.push('Given E = ' + physFmt(E) + ' J');
+    steps.push('f = E/h = (' + physFmt(E) + ') / (6,63 × 10⁻³⁴) = ' + physFmt(f) + ' Hz');
+    steps.push('λ = c/f = (3,00 × 10⁸) / (' + physFmt(f) + ') = ' + physFmt(lambda) + ' m');
+  }
+
+  let region = 'Unknown region';
+  if (lambda >= 1e-1) region = 'Radio waves';
+  else if (lambda >= 1e-3) region = 'Microwaves';
+  else if (lambda >= 7e-7) region = 'Infrared';
+  else if (lambda >= 4e-7) region = 'Visible light';
+  else if (lambda >= 1e-8) region = 'Ultraviolet';
+  else if (lambda >= 1e-11) region = 'X-rays';
+  else region = 'Gamma rays';
+
+  const eV = E / 1.6e-19;
+  steps.push('Energy in eV = ' + physFmt(E) + ' / 1,6 × 10⁻¹⁹ = ' + physFmt(eV) + ' eV');
+  steps.push('Spectrum region: ' + region);
+
+  const html =
+    '<div class="phys-answer">E = ' + physFmt(E) + ' J</div>' +
+    '<div class="phys-answer multi" style="color:var(--text);">f = ' + physFmt(f) + ' Hz</div>' +
+    '<div class="phys-answer multi" style="color:var(--text);">λ = ' + physFmt(lambda) + ' m</div>' +
+    '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Energy (eV)</span><span class="result-cell-value">' + physFmt(eV) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Region</span><span class="result-cell-value">' + region + '</span></div>' +
+    '</div>';
+
+  physResult('emr_result', html);
+  physShowSteps('emr_steps', 'emr_steps_card', steps);
+}
+
+/* --- Mechanical Energy --- */
+function physEnergy() {
+  const m = parseFloat(document.getElementById('e_m').value);
+  const h = parseFloat(document.getElementById('e_h').value);
+  const v = parseFloat(document.getElementById('e_v').value);
+  const g = parseFloat(document.getElementById('e_g').value);
+
+  if ([m, h, v, g].some(x => isNaN(x))) {
+    physResult('e_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all four fields.</div>');
+    return;
+  }
+
+  const Ep = m * g * h;
+  const Ek = 0.5 * m * v * v;
+  const Em = Ep + Ek;
+
+  const steps = [];
+  steps.push('E_p = m·g·h = (' + physFmt(m) + ')(' + physFmt(g) + ')(' + physFmt(h) + ') = ' + physFmt(Ep) + ' J');
+  steps.push('E_k = ½·m·v² = ½(' + physFmt(m) + ')(' + physFmt(v) + ')² = ' + physFmt(Ek) + ' J');
+  steps.push('E_m = E_p + E_k = ' + physFmt(Ep) + ' + ' + physFmt(Ek) + ' = ' + physFmt(Em) + ' J');
+  steps.push('If the object falls freely with no friction, E_m is conserved: (E_p + E_k) top = (E_p + E_k) bottom.');
+
+  const html =
+    '<div class="phys-answer">E_m = ' + physFmt(Em) + ' J</div>' +
+    '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">E_p (J)</span><span class="result-cell-value">' + physFmt(Ep) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">E_k (J)</span><span class="result-cell-value">' + physFmt(Ek) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">E_m (J)</span><span class="result-cell-value">' + physFmt(Em) + '</span></div>' +
+    '</div>';
+
+  physResult('e_result', html);
+  physShowSteps('e_steps', 'e_steps_card', steps);
+}
+
+/* --- Charge --- */
+function physChargeModeChange() {
+  const mode = document.getElementById('q_mode').value;
+  document.getElementById('q_quantise_inputs').classList.toggle('phys-hidden', mode !== 'quantise');
+  document.getElementById('q_spheres_inputs').classList.toggle('phys-hidden', mode !== 'spheres');
+}
+
+function physCharge() {
+  const mode = document.getElementById('q_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'quantise') {
+    const n = parseFloat(document.getElementById('q_n').value);
+    if (isNaN(n)) {
+      physResult('q_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a number of electrons.</div>');
+      return;
+    }
+    const qe = 1.6e-19;
+    const Q = n * qe;
+    steps.push('Q = n · q_e');
+    steps.push('Q = (' + physFmt(n) + ')(' + physFmt(qe) + ')');
+    steps.push('Q = ' + physFmt(Q) + ' C');
+    answerHtml = '<div class="phys-answer">Q = ' + physFmt(Q) + ' C</div>';
+  } else {
+    const q1 = parseFloat(document.getElementById('q_q1').value);
+    const q2 = parseFloat(document.getElementById('q_q2').value);
+    if ([q1, q2].some(x => isNaN(x))) {
+      physResult('q_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both charge fields.</div>');
+      return;
+    }
+    const qNew = (q1 + q2) / 2;
+    steps.push('Q_new = (Q₁ + Q₂) / 2');
+    steps.push('Q_new = (' + physFmt(q1) + ' + ' + physFmt(q2) + ') / 2');
+    steps.push('Q_new = ' + physFmt(qNew) + ' C');
+    steps.push('Each sphere ends with ' + physFmt(qNew) + ' C after contact and separation.');
+    answerHtml = '<div class="phys-answer">Q_new = ' + physFmt(qNew) + ' C</div>';
+  }
+
+  physResult('q_result', answerHtml);
+  physShowSteps('q_steps', 'q_steps_card', steps);
+}
+
+/* ============================================================
+   GRADE 11 TOOLS
+   ============================================================ */
+
+/* --- Newton's Laws --- */
+function physNewton() {
+  let F = document.getElementById('n_f').value === '' ? null : parseFloat(document.getElementById('n_f').value);
+  let m = document.getElementById('n_m').value === '' ? null : parseFloat(document.getElementById('n_m').value);
+  let a = document.getElementById('n_a').value === '' ? null : parseFloat(document.getElementById('n_a').value);
+  const mu = document.getElementById('n_mu').value === '' ? null : parseFloat(document.getElementById('n_mu').value);
+  const m2 = document.getElementById('n_m2').value === '' ? null : parseFloat(document.getElementById('n_m2').value);
+  const g = parseFloat(document.getElementById('n_g').value) || 9.8;
+
+  const steps = [];
+  let answerHtml = '';
+
+  // Main Newton II calculation
+  if (F === null && m !== null && a !== null) {
+    F = m * a;
+    steps.push('F_net = m·a');
+    steps.push('F_net = (' + physFmt(m) + ')(' + physFmt(a) + ')');
+    steps.push('F_net = ' + physFmt(F) + ' N');
+    answerHtml = '<div class="phys-answer">F_net = ' + physFmt(F) + ' N</div>';
+  } else if (m === null && F !== null && a !== null && a !== 0) {
+    m = F / a;
+    steps.push('Rearrange F_net = m·a → m = F_net / a');
+    steps.push('m = ' + physFmt(F) + ' / ' + physFmt(a) + ' = ' + physFmt(m) + ' kg');
+    answerHtml = '<div class="phys-answer">m = ' + physFmt(m) + ' kg</div>';
+  } else if (a === null && F !== null && m !== null && m !== 0) {
+    a = F / m;
+    steps.push('Rearrange F_net = m·a → a = F_net / m');
+    steps.push('a = ' + physFmt(F) + ' / ' + physFmt(m) + ' = ' + physFmt(a) + ' m/s²');
+    answerHtml = '<div class="phys-answer">a = ' + physFmt(a) + ' m/s²</div>';
+  } else if (F !== null && m !== null && a !== null) {
+    steps.push('F_net = m·a = (' + physFmt(m) + ')(' + physFmt(a) + ') = ' + physFmt(m * a) + ' N');
+    answerHtml = '<div class="phys-answer">F_net = ' + physFmt(m * a) + ' N (check)</div>';
+  } else {
+    answerHtml = '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Provide two of F_net, m, a.</div>';
+  }
+
+  // Friction add-on
+  if (mu !== null && m2 !== null) {
+    const N = m2 * g;
+    const f = mu * N;
+    steps.push('N = m·g = (' + physFmt(m2) + ')(' + physFmt(g) + ') = ' + physFmt(N) + ' N');
+    steps.push('f = μ·N = (' + physFmt(mu) + ')(' + physFmt(N) + ') = ' + physFmt(f) + ' N');
+    answerHtml += '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Normal N</span><span class="result-cell-value">' + physFmt(N) + ' N</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Friction f</span><span class="result-cell-value">' + physFmt(f) + ' N</span></div>' +
+    '</div>';
+  }
+
+  physResult('n_result', answerHtml);
+  if (steps.length > 0) physShowSteps('n_steps', 'n_steps_card', steps);
+}
+
+/* --- Work-Energy --- */
+function physWorkModeChange() {
+  const mode = document.getElementById('we_mode').value;
+  document.getElementById('we_work_inputs').classList.toggle('phys-hidden', mode !== 'work');
+  document.getElementById('we_theorem_inputs').classList.toggle('phys-hidden', mode !== 'theorem');
+}
+
+function physWorkEnergy() {
+  const mode = document.getElementById('we_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'work') {
+    const F = parseFloat(document.getElementById('we_f').value);
+    const x = parseFloat(document.getElementById('we_x').value);
+    const theta = parseFloat(document.getElementById('we_theta').value);
+    if ([F, x, theta].some(v => isNaN(v))) {
+      physResult('we_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all three fields.</div>');
+      return;
+    }
+    const rad = theta * Math.PI / 180;
+    const W = F * x * Math.cos(rad);
+    steps.push('W = F·Δx·cosθ');
+    steps.push('W = (' + physFmt(F) + ')(' + physFmt(x) + ')·cos(' + physFmt(theta) + '°)');
+    steps.push('W = ' + physFmt(W) + ' J');
+    answerHtml = '<div class="phys-answer">W = ' + physFmt(W) + ' J</div>';
+  } else {
+    const m = parseFloat(document.getElementById('we_m').value);
+    const vi = parseFloat(document.getElementById('we_vi').value);
+    const vf = parseFloat(document.getElementById('we_vf').value);
+    if ([m, vi, vf].some(v => isNaN(v))) {
+      physResult('we_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all three fields.</div>');
+      return;
+    }
+    const Eki = 0.5 * m * vi * vi;
+    const Ekf = 0.5 * m * vf * vf;
+    const W = Ekf - Eki;
+    steps.push('E_k,i = ½mv_i² = ½(' + physFmt(m) + ')(' + physFmt(vi) + ')² = ' + physFmt(Eki) + ' J');
+    steps.push('E_k,f = ½mv_f² = ½(' + physFmt(m) + ')(' + physFmt(vf) + ')² = ' + physFmt(Ekf) + ' J');
+    steps.push('W_net = ΔE_k = E_k,f − E_k,i = ' + physFmt(Ekf) + ' − ' + physFmt(Eki) + ' = ' + physFmt(W) + ' J');
+    answerHtml = '<div class="phys-answer">W_net = ' + physFmt(W) + ' J</div>' +
+      '<div class="phys-result-grid">' +
+        '<div class="result-cell"><span class="result-cell-label">E_k,i</span><span class="result-cell-value">' + physFmt(Eki) + ' J</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">E_k,f</span><span class="result-cell-value">' + physFmt(Ekf) + ' J</span></div>' +
+      '</div>';
+  }
+
+  physResult('we_result', answerHtml);
+  physShowSteps('we_steps', 'we_steps_card', steps);
+}
+
+/* --- Power --- */
+function physPower() {
+  let P = document.getElementById('p_p').value === '' ? null : parseFloat(document.getElementById('p_p').value);
+  let W = document.getElementById('p_w').value === '' ? null : parseFloat(document.getElementById('p_w').value);
+  let t = document.getElementById('p_t').value === '' ? null : parseFloat(document.getElementById('p_t').value);
+
+  const steps = [];
+  let answerHtml = '';
+
+  if (P === null && W !== null && t !== null && t !== 0) {
+    P = W / t;
+    steps.push('P = W / Δt = ' + physFmt(W) + ' / ' + physFmt(t) + ' = ' + physFmt(P) + ' W');
+    answerHtml = '<div class="phys-answer">P = ' + physFmt(P) + ' W</div>';
+  } else if (W === null && P !== null && t !== null) {
+    W = P * t;
+    steps.push('W = P·Δt = (' + physFmt(P) + ')(' + physFmt(t) + ') = ' + physFmt(W) + ' J');
+    answerHtml = '<div class="phys-answer">W = ' + physFmt(W) + ' J</div>';
+  } else if (t === null && P !== null && W !== null && P !== 0) {
+    t = W / P;
+    steps.push('Δt = W / P = ' + physFmt(W) + ' / ' + physFmt(P) + ' = ' + physFmt(t) + ' s');
+    answerHtml = '<div class="phys-answer">Δt = ' + physFmt(t) + ' s</div>';
+  } else {
+    physResult('p_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Provide two of P, W, Δt.</div>');
+    return;
+  }
+
+  physResult('p_result', answerHtml);
+  physShowSteps('p_steps', 'p_steps_card', steps);
+}
+
+/* --- Coulomb --- */
+function physCoulomb() {
+  const k = 9.0e9;
+  const q1 = parseFloat(document.getElementById('c_q1').value);
+  const q2 = parseFloat(document.getElementById('c_q2').value);
+  const r = parseFloat(document.getElementById('c_r').value);
+
+  if ([q1, q2, r].some(v => isNaN(v)) || r === 0) {
+    physResult('c_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields. r cannot be zero.</div>');
+    return;
+  }
+
+  const F = k * Math.abs(q1 * q2) / (r * r);
+  const attractive = (q1 * q2) < 0;
+
+  const steps = [];
+  steps.push('F = k·|Q₁·Q₂| / r²');
+  steps.push('F = (9,0 × 10⁹)(' + physFmt(Math.abs(q1)) + ')(' + physFmt(Math.abs(q2)) + ') / (' + physFmt(r) + ')²');
+  steps.push('F = ' + physFmt(F) + ' N');
+  steps.push('Charges have ' + (attractive ? 'opposite' : 'like') + ' signs → force is ' + (attractive ? 'attractive' : 'repulsive') + '.');
+
+  const html =
+    '<div class="phys-answer">F = ' + physFmt(F) + ' N</div>' +
+    '<div class="result-sub">' + (attractive ? 'Attractive (opposite charges)' : 'Repulsive (like charges)') + '</div>';
+
+  physResult('c_result', html);
+  physShowSteps('c_steps', 'c_steps_card', steps);
+}
+
+/* --- Electric Field --- */
+function physEFieldModeChange() {
+  const mode = document.getElementById('ef_mode').value;
+  document.getElementById('ef_force_inputs').classList.toggle('phys-hidden', mode !== 'force');
+  document.getElementById('ef_point_inputs').classList.toggle('phys-hidden', mode !== 'point');
+}
+
+function physEField() {
+  const k = 9.0e9;
+  const mode = document.getElementById('ef_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'force') {
+    const F = parseFloat(document.getElementById('ef_f').value);
+    const q = parseFloat(document.getElementById('ef_q').value);
+    if ([F, q].some(v => isNaN(v)) || q === 0) {
+      physResult('ef_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields. q cannot be zero.</div>');
+      return;
+    }
+    const E = F / q;
+    steps.push('E = F / q = ' + physFmt(F) + ' / ' + physFmt(q) + ' = ' + physFmt(E) + ' N/C');
+    answerHtml = '<div class="phys-answer">E = ' + physFmt(E) + ' N/C</div>';
+  } else {
+    const Q = parseFloat(document.getElementById('ef_Q').value);
+    const r = parseFloat(document.getElementById('ef_r').value);
+    if ([Q, r].some(v => isNaN(v)) || r === 0) {
+      physResult('ef_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields. r cannot be zero.</div>');
+      return;
+    }
+    const E = k * Math.abs(Q) / (r * r);
+    steps.push('E = k·|Q| / r²');
+    steps.push('E = (9,0 × 10⁹)(' + physFmt(Math.abs(Q)) + ') / (' + physFmt(r) + ')²');
+    steps.push('E = ' + physFmt(E) + ' N/C');
+    answerHtml = '<div class="phys-answer">E = ' + physFmt(E) + ' N/C</div>';
+  }
+
+  physResult('ef_result', answerHtml);
+  physShowSteps('ef_steps', 'ef_steps_card', steps);
+}
+
+/* --- Internal Resistance --- */
+function physEMF() {
+  let e = document.getElementById('emf_e').value === '' ? null : parseFloat(document.getElementById('emf_e').value);
+  let i = document.getElementById('emf_i').value === '' ? null : parseFloat(document.getElementById('emf_i').value);
+  let R = document.getElementById('emf_R').value === '' ? null : parseFloat(document.getElementById('emf_R').value);
+  let r = document.getElementById('emf_r').value === '' ? null : parseFloat(document.getElementById('emf_r').value);
+
+  const steps = [];
+  let answerHtml = '';
+
+  if (e === null && i !== null && R !== null && r !== null) {
+    e = i * (R + r);
+    steps.push('ε = I(R + r) = (' + physFmt(i) + ')((' + physFmt(R) + ') + (' + physFmt(r) + '))');
+    steps.push('ε = ' + physFmt(e) + ' V');
+    answerHtml = '<div class="phys-answer">ε = ' + physFmt(e) + ' V</div>';
+  } else if (i === null && e !== null && R !== null && r !== null && (R + r) !== 0) {
+    i = e / (R + r);
+    steps.push('I = ε / (R + r) = ' + physFmt(e) + ' / ((' + physFmt(R) + ') + (' + physFmt(r) + ')) = ' + physFmt(i) + ' A');
+    answerHtml = '<div class="phys-answer">I = ' + physFmt(i) + ' A</div>';
+  } else if (R === null && e !== null && i !== null && r !== null && i !== 0) {
+    R = e / i - r;
+    steps.push('Rearrange ε = I(R + r) → R = ε/I − r');
+    steps.push('R = ' + physFmt(e) + '/' + physFmt(i) + ' − ' + physFmt(r) + ' = ' + physFmt(R) + ' Ω');
+    answerHtml = '<div class="phys-answer">R = ' + physFmt(R) + ' Ω</div>';
+  } else if (r === null && e !== null && i !== null && R !== null && i !== 0) {
+    r = e / i - R;
+    steps.push('Rearrange ε = I(R + r) → r = ε/I − R');
+    steps.push('r = ' + physFmt(e) + '/' + physFmt(i) + ' − ' + physFmt(R) + ' = ' + physFmt(r) + ' Ω');
+    answerHtml = '<div class="phys-answer">r = ' + physFmt(r) + ' Ω</div>';
+  } else {
+    physResult('emf_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one unknown blank. Fill the other three.</div>');
+    return;
+  }
+
+  // Add terminal voltage if we have enough
+  if (i !== null && R !== null) {
+    const V = i * R;
+    steps.push('V_terminal = I·R = (' + physFmt(i) + ')(' + physFmt(R) + ') = ' + physFmt(V) + ' V');
+    answerHtml += '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">V_terminal</span><span class="result-cell-value">' + physFmt(V) + ' V</span></div>' +
+    '</div>';
+  }
+
+  physResult('emf_result', answerHtml);
+  physShowSteps('emf_steps', 'emf_steps_card', steps);
+}
+
+/* --- Snell's Law --- */
+function physSnell() {
+  const n1 = parseFloat(document.getElementById('s_n1').value);
+  const t1 = document.getElementById('s_t1').value === '' ? null : parseFloat(document.getElementById('s_t1').value);
+  const n2 = parseFloat(document.getElementById('s_n2').value);
+  const t2 = document.getElementById('s_t2').value === '' ? null : parseFloat(document.getElementById('s_t2').value);
+
+  if ([n1, n2].some(v => isNaN(v))) {
+    physResult('s_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill in both refractive indices.</div>');
+    return;
+  }
+
+  const steps = [];
+  let answerHtml = '';
+
+  if (t2 === null && t1 !== null) {
+    const rad1 = t1 * Math.PI / 180;
+    const sinT2 = (n1 * Math.sin(rad1)) / n2;
+    if (sinT2 > 1) {
+      const critical = Math.asin(n2 / n1) * 180 / Math.PI;
+      physResult('s_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Total internal reflection: no refracted ray. Critical angle ≈ ' + physFmt(critical) + '°.</div>');
+      return;
+    }
+    const t2New = Math.asin(sinT2) * 180 / Math.PI;
+    steps.push('n₁·sinθ₁ = n₂·sinθ₂');
+    steps.push('sinθ₂ = (n₁·sinθ₁) / n₂ = (' + physFmt(n1) + '·sin(' + physFmt(t1) + '°)) / ' + physFmt(n2));
+    steps.push('sinθ₂ = ' + physFmt(sinT2));
+    steps.push('θ₂ = ' + physFmt(t2New) + '°');
+    answerHtml = '<div class="phys-answer">θ₂ = ' + physFmt(t2New) + '°</div>';
+  } else if (t1 === null && t2 !== null) {
+    const rad2 = t2 * Math.PI / 180;
+    const sinT1 = (n2 * Math.sin(rad2)) / n1;
+    if (sinT1 > 1) {
+      physResult('s_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real angle of incidence gives this refraction.</div>');
+      return;
+    }
+    const t1New = Math.asin(sinT1) * 180 / Math.PI;
+    steps.push('sinθ₁ = (n₂·sinθ₂) / n₁ = (' + physFmt(n2) + '·sin(' + physFmt(t2) + '°)) / ' + physFmt(n1));
+    steps.push('θ₁ = ' + physFmt(t1New) + '°');
+    answerHtml = '<div class="phys-answer">θ₁ = ' + physFmt(t1New) + '°</div>';
+  } else {
+    physResult('s_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one angle blank.</div>');
+    return;
+  }
+
+  // Critical angle if n1 > n2
+  if (n1 > n2) {
+    const crit = Math.asin(n2 / n1) * 180 / Math.PI;
+    steps.push('Since n₁ > n₂, total internal reflection is possible. Critical angle: θ_c = sin⁻¹(n₂/n₁) = ' + physFmt(crit) + '°');
+    answerHtml += '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Critical angle</span><span class="result-cell-value">' + physFmt(crit) + '°</span></div>' +
+    '</div>';
+  }
+
+  physResult('s_result', answerHtml);
+  physShowSteps('s_steps', 's_steps_card', steps);
+}
+
+/* --- Lens Formula --- */
+function physLens() {
+  const f = parseFloat(document.getElementById('l_f').value);
+  const u = parseFloat(document.getElementById('l_u').value);
+  let v = document.getElementById('l_v').value === '' ? null : parseFloat(document.getElementById('l_v').value);
+
+  if (isNaN(f) || isNaN(u)) {
+    physResult('l_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill in f and u.</div>');
+    return;
+  }
+
+  const steps = [];
+  let answerHtml = '';
+
+  if (v === null) {
+    // 1/f = 1/v + 1/u → 1/v = 1/f − 1/u
+    const inv = 1 / f - 1 / u;
+    if (inv === 0) {
+      physResult('l_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No image formed (v → ∞).</div>');
+      return;
+    }
+    v = 1 / inv;
+    steps.push('1/f = 1/v + 1/u → 1/v = 1/f − 1/u');
+    steps.push('1/v = 1/' + physFmt(f) + ' − 1/' + physFmt(u));
+    steps.push('1/v = ' + physFmt(inv));
+    steps.push('v = ' + physFmt(v) + ' m');
+  } else {
+    steps.push('Given f, u, v: verify 1/f ≈ 1/v + 1/u');
+    steps.push('1/f = ' + physFmt(1 / f));
+    steps.push('1/v + 1/u = ' + physFmt(1 / v + 1 / u));
+  }
+
+  const m = -v / u;
+  steps.push('Magnification m = −v/u = −(' + physFmt(v) + ')/(' + physFmt(u) + ') = ' + physFmt(m));
+
+  let nature = '';
+  if (v > 0) nature = 'Real, inverted image';
+  else nature = 'Virtual, upright image';
+  if (Math.abs(m) > 1) nature += ', magnified';
+  else if (Math.abs(m) < 1) nature += ', diminished';
+  else nature += ', same size';
+
+  answerHtml =
+    '<div class="phys-answer">v = ' + physFmt(v) + ' m</div>' +
+    '<div class="phys-answer multi" style="color:var(--text);">m = ' + physFmt(m) + '</div>' +
+    '<div class="result-sub">' + nature + '</div>';
+
+  physResult('l_result', answerHtml);
+  physShowSteps('l_steps', 'l_steps_card', steps);
+}
+
+/* --- Magnetic Force --- */
+function physMagModeChange() {
+  const mode = document.getElementById('mag_mode').value;
+  document.getElementById('mag_wire_inputs').classList.toggle('phys-hidden', mode !== 'wire');
+  document.getElementById('mag_charge_inputs').classList.toggle('phys-hidden', mode !== 'charge');
+}
+
+function physMagForce() {
+  const mode = document.getElementById('mag_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'wire') {
+    const B = parseFloat(document.getElementById('mag_B').value);
+    const I = parseFloat(document.getElementById('mag_I').value);
+    const L = parseFloat(document.getElementById('mag_L').value);
+    const theta = parseFloat(document.getElementById('mag_theta').value);
+    if ([B, I, L, theta].some(v => isNaN(v))) {
+      physResult('mag_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+      return;
+    }
+    const rad = theta * Math.PI / 180;
+    const F = B * I * L * Math.sin(rad);
+    steps.push('F = B·I·L·sinθ');
+    steps.push('F = (' + physFmt(B) + ')(' + physFmt(I) + ')(' + physFmt(L) + ')·sin(' + physFmt(theta) + '°)');
+    steps.push('F = ' + physFmt(F) + ' N');
+    answerHtml = '<div class="phys-answer">F = ' + physFmt(F) + ' N</div>';
+  } else {
+    const q = parseFloat(document.getElementById('mag_q').value);
+    const v = parseFloat(document.getElementById('mag_v').value);
+    const B = parseFloat(document.getElementById('mag_B2').value);
+    const theta = parseFloat(document.getElementById('mag_theta2').value);
+    if ([q, v, B, theta].some(x => isNaN(x))) {
+      physResult('mag_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+      return;
+    }
+    const rad = theta * Math.PI / 180;
+    const F = Math.abs(q) * v * B * Math.sin(rad);
+    steps.push('F = q·v·B·sinθ');
+    steps.push('F = (' + physFmt(Math.abs(q)) + ')(' + physFmt(v) + ')(' + physFmt(B) + ')·sin(' + physFmt(theta) + '°)');
+    steps.push('F = ' + physFmt(F) + ' N');
+    answerHtml = '<div class="phys-answer">F = ' + physFmt(F) + ' N</div>';
+  }
+
+  physResult('mag_result', answerHtml);
+  physShowSteps('mag_steps', 'mag_steps_card', steps);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+  physSetGrade(10);
+});
+
+// Add data-grade attributes so the tool selector hides the right panels
+document.addEventListener('DOMContentLoaded', function () {
+  const g10Ids = ['tool-motion1d','tool-graphs','tool-vectors','tool-waves','tool-emr','tool-energy','tool-charge'];
+  g10Ids.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('data-grade', '10'); });
+  const g11Ids = ['tool-newton','tool-workenergy','tool-power','tool-coulomb','tool-efield','tool-emf','tool-snell','tool-lens','tool-magnetic'];
+  g11Ids.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('data-grade', '11'); });
+});
+</script>
+</body>
+</html>
