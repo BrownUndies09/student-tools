@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Physics Tools - Grade 10 & 11 NSC Calculator</title>
-<meta name="description" content="Free NSC Physics calculators for Grade 10 and 11. Motion, vectors, waves, EM radiation, energy, Newton's Laws, Coulomb's Law, optics, and more.">
+<title>Physics Tools - Grade 10, 11 & 12 NSC Calculator</title>
+<meta name="description" content="Free NSC Physics calculators for Grade 10, 11 and 12. Motion, vectors, waves, EM radiation, energy, Newton's Laws, Coulomb's Law, optics, momentum, projectiles, gravitation, Doppler, photoelectric effect, and electrodynamics.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -159,13 +159,14 @@
   <header class="tool-header">
     <a href="index.html" class="back-link">← All tools</a>
     <h1>Physics Tools</h1>
-    <p>NSC Grade 10 &amp; 11 Physics calculators with step-by-step working.</p>
+    <p>NSC Grade 10, 11 &amp; 12 Physics calculators with step-by-step working.</p>
   </header>
 
   <div class="card">
     <div class="tabs" style="margin-bottom:16px;">
       <button class="tab active" id="tabG10" onclick="physSetGrade(10)">Grade 10</button>
       <button class="tab" id="tabG11" onclick="physSetGrade(11)">Grade 11</button>
+      <button class="tab" id="tabG12" onclick="physSetGrade(12)">Grade 12</button>
     </div>
 
     <div id="physGrade10Tools">
@@ -191,6 +192,19 @@
         <button class="phys-tool-pill" data-g11-tool="snell" onclick="physSelectTool11('snell')">Snell's Law</button>
         <button class="phys-tool-pill" data-g11-tool="lens" onclick="physSelectTool11('lens')">Lens Formula</button>
         <button class="phys-tool-pill" data-g11-tool="magnetic" onclick="physSelectTool11('magnetic')">Magnetic Force</button>
+      </div>
+    </div>
+
+    <div id="physGrade12Tools" class="phys-hidden">
+      <div class="phys-tool-select">
+        <button class="phys-tool-pill active" data-g12-tool="momentum" onclick="physSelectTool12('momentum')">Momentum &amp; Impulse</button>
+        <button class="phys-tool-pill" data-g12-tool="projectile" onclick="physSelectTool12('projectile')">Projectile Motion</button>
+        <button class="phys-tool-pill" data-g12-tool="gravitation" onclick="physSelectTool12('gravitation')">Universal Gravitation</button>
+        <button class="phys-tool-pill" data-g12-tool="circular" onclick="physSelectTool12('circular')">Circular Motion</button>
+        <button class="phys-tool-pill" data-g12-tool="doppler" onclick="physSelectTool12('doppler')">Doppler Effect</button>
+        <button class="phys-tool-pill" data-g12-tool="photoelectric" onclick="physSelectTool12('photoelectric')">Photoelectric Effect</button>
+        <button class="phys-tool-pill" data-g12-tool="faraday" onclick="physSelectTool12('faraday')">Faraday &amp; Lenz</button>
+        <button class="phys-tool-pill" data-g12-tool="transformer" onclick="physSelectTool12('transformer')">Transformers</button>
       </div>
     </div>
   </div>
@@ -1030,6 +1044,470 @@
     </div>
   </div>
 
+  <!-- ============ GRADE 12 TOOLS ============ -->
+
+  <!-- Momentum & Impulse -->
+  <div id="tool-momentum" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Momentum and impulse:</strong>
+        <span class="phys-formula">p = mv</span>
+        <span class="phys-formula">Δp = m·v_f − m·v_i</span>
+        <span class="phys-formula">F_net·Δt = Δp</span><br>
+        <strong>Conservation of momentum (isolated system):</strong>
+        <span class="phys-formula">Σp_before = Σp_after</span>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="mom_mode" class="phys-input" onchange="physMomModeChange()">
+          <option value="basic">Momentum / impulse</option>
+          <option value="collision">Two-object collision</option>
+        </select>
+      </div>
+
+      <div id="mom_basic_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Mass m (kg)</label>
+            <input type="number" id="mom_m" class="phys-input" step="any" value="2">
+          </div>
+          <div>
+            <label>Initial velocity v_i (m/s)</label>
+            <input type="number" id="mom_vi" class="phys-input" step="any" value="5">
+          </div>
+          <div>
+            <label>Final velocity v_f (m/s)</label>
+            <input type="number" id="mom_vf" class="phys-input" step="any" value="-3">
+          </div>
+          <div>
+            <label>Contact time Δt (s) — optional</label>
+            <input type="number" id="mom_dt" class="phys-input" step="any" value="0.2">
+          </div>
+        </div>
+      </div>
+
+      <div id="mom_collision_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Mass m₁ (kg)</label>
+            <input type="number" id="col_m1" class="phys-input" step="any" value="2">
+          </div>
+          <div>
+            <label>Initial velocity u₁ (m/s)</label>
+            <input type="number" id="col_u1" class="phys-input" step="any" value="4">
+          </div>
+          <div>
+            <label>Mass m₂ (kg)</label>
+            <input type="number" id="col_m2" class="phys-input" step="any" value="3">
+          </div>
+          <div>
+            <label>Initial velocity u₂ (m/s)</label>
+            <input type="number" id="col_u2" class="phys-input" step="any" value="-2">
+          </div>
+          <div>
+            <label>Final velocity v₁ (m/s) — leave blank if unknown</label>
+            <input type="number" id="col_v1" class="phys-input" step="any" placeholder="leave blank">
+          </div>
+          <div>
+            <label>Final velocity v₂ (m/s) — leave blank if unknown</label>
+            <input type="number" id="col_v2" class="phys-input" step="any" value="-0.4">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physMomentum()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="mom_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="mom_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="mom_steps"></div>
+    </div>
+  </div>
+
+  <!-- Projectile Motion -->
+  <div id="tool-projectile" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Vertical projectile motion:</strong>
+        <span class="phys-formula">v_f = v_i + aΔt</span>
+        <span class="phys-formula">Δy = v_iΔt + ½aΔt²</span>
+        <span class="phys-formula">v_f² = v_i² + 2aΔy</span><br>
+        a = g = −9,8 m/s² (up positive, down negative). At max height, v = 0.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="proj_mode" class="phys-input" onchange="physProjModeChange()">
+          <option value="up">Launched upward from ground</option>
+          <option value="down">Dropped / thrown down from height</option>
+          <option value="cliff">Projected horizontally off a cliff</option>
+        </select>
+      </div>
+
+      <div id="proj_up_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Initial velocity v_i (m/s, upward)</label>
+            <input type="number" id="proj_vi" class="phys-input" step="any" value="20">
+          </div>
+          <div>
+            <label>g (m/s²)</label>
+            <input type="number" id="proj_g" class="phys-input" step="any" value="9.8">
+          </div>
+        </div>
+      </div>
+
+      <div id="proj_down_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Height h (m)</label>
+            <input type="number" id="proj_h" class="phys-input" step="any" value="45">
+          </div>
+          <div>
+            <label>Initial downward velocity v_i (m/s)</label>
+            <input type="number" id="proj_vi2" class="phys-input" step="any" value="0">
+          </div>
+          <div>
+            <label>g (m/s²)</label>
+            <input type="number" id="proj_g2" class="phys-input" step="any" value="9.8">
+          </div>
+        </div>
+      </div>
+
+      <div id="proj_cliff_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Horizontal velocity v_x (m/s)</label>
+            <input type="number" id="proj_vx" class="phys-input" step="any" value="15">
+          </div>
+          <div>
+            <label>Cliff height h (m)</label>
+            <input type="number" id="proj_ch" class="phys-input" step="any" value="80">
+          </div>
+          <div>
+            <label>g (m/s²)</label>
+            <input type="number" id="proj_g3" class="phys-input" step="any" value="9.8">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physProjectile()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="proj_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="proj_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="proj_steps"></div>
+    </div>
+  </div>
+
+  <!-- Universal Gravitation -->
+  <div id="tool-gravitation" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Newton's Law of Universal Gravitation:</strong>
+        <span class="phys-formula">F = G·m₁·m₂ / r²</span>
+        <span class="phys-formula">g = G·M / r²</span><br>
+        G = 6,67 × 10⁻¹¹ N·m²·kg⁻². r is the distance between centres.
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Mode</label>
+        <select id="grav_mode" class="phys-input" onchange="physGravModeChange()">
+          <option value="force">Gravitational force between two masses</option>
+          <option value="g">Gravitational acceleration at distance r</option>
+        </select>
+      </div>
+
+      <div id="grav_force_inputs">
+        <div class="phys-input-grid">
+          <div>
+            <label>Mass m₁ (kg)</label>
+            <input type="number" id="gr_m1" class="phys-input" step="any" value="5.97e24">
+          </div>
+          <div>
+            <label>Mass m₂ (kg)</label>
+            <input type="number" id="gr_m2" class="phys-input" step="any" value="7.35e22">
+          </div>
+          <div>
+            <label>Distance r (m)</label>
+            <input type="number" id="gr_r" class="phys-input" step="any" value="3.84e8">
+          </div>
+        </div>
+      </div>
+
+      <div id="grav_g_inputs" class="phys-hidden">
+        <div class="phys-input-grid">
+          <div>
+            <label>Planet mass M (kg)</label>
+            <input type="number" id="gr_M" class="phys-input" step="any" value="5.97e24">
+          </div>
+          <div>
+            <label>Distance from centre r (m)</label>
+            <input type="number" id="gr_r2" class="phys-input" step="any" value="6.38e6">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physGravitation()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="gr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="gr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="gr_steps"></div>
+    </div>
+  </div>
+
+  <!-- Circular Motion -->
+  <div id="tool-circular" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Circular motion:</strong>
+        <span class="phys-formula">v = 2πr / T</span>
+        <span class="phys-formula">a_c = v² / r</span>
+        <span class="phys-formula">F_c = m·v² / r</span><br>
+        T = period (time for one revolution). v is the tangential speed.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Radius r (m)</label>
+          <input type="number" id="ci_r" class="phys-input" step="any" value="2">
+        </div>
+        <div>
+          <label>Period T (s)</label>
+          <input type="number" id="ci_T" class="phys-input" step="any" value="4">
+        </div>
+        <div>
+          <label>Mass m (kg)</label>
+          <input type="number" id="ci_m" class="phys-input" step="any" value="0.5">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physCircular()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="ci_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="ci_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ci_steps"></div>
+    </div>
+  </div>
+
+  <!-- Doppler Effect -->
+  <div id="tool-doppler" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Doppler Effect:</strong>
+        <span class="phys-formula">f_L = (v ± v_L) / (v ± v_s) · f_s</span><br>
+        v = speed of sound (≈ 340 m/s in air). Sign rules:<br>
+        • v_L is + if listener moves toward source, − if away.<br>
+        • v_s is − if source moves toward listener, + if away.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Source frequency f_s (Hz)</label>
+          <input type="number" id="d_fs" class="phys-input" step="any" value="500">
+        </div>
+        <div>
+          <label>Speed of sound v (m/s)</label>
+          <input type="number" id="d_v" class="phys-input" step="any" value="340">
+        </div>
+        <div>
+          <label>Listener speed v_L (m/s, 0 if still)</label>
+          <input type="number" id="d_vl" class="phys-input" step="any" value="0">
+        </div>
+        <div>
+          <label>Source speed v_s (m/s, 0 if still)</label>
+          <input type="number" id="d_vs" class="phys-input" step="any" value="30">
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>Motion</label>
+        <select id="d_dir" class="phys-input">
+          <option value="toward">Source moving TOWARD still listener</option>
+          <option value="away">Source moving AWAY from still listener</option>
+          <option value="listener_toward">Listener moving TOWARD still source</option>
+          <option value="listener_away">Listener moving AWAY from still source</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physDoppler()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Observed Frequency</div>
+      <div id="d_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="d_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="d_steps"></div>
+    </div>
+  </div>
+
+  <!-- Photoelectric Effect -->
+  <div id="tool-photoelectric" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Photoelectric effect:</strong>
+        <span class="phys-formula">E = hf = W₀ + E_k(max)</span>
+        <span class="phys-formula">W₀ = h·f₀</span>
+        <span class="phys-formula">E_k(max) = hf − W₀</span><br>
+        h = 6,63 × 10⁻³⁴ J·s. W₀ = work function. f₀ = threshold frequency.<br>
+        Leave the unknown blank. Fill the other two.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Photon frequency f (Hz)</label>
+          <input type="number" id="pe_f" class="phys-input" step="any" value="8e14">
+        </div>
+        <div>
+          <label>Work function W₀ (J)</label>
+          <input type="number" id="pe_W" class="phys-input" step="any" value="3.5e-19">
+        </div>
+        <div>
+          <label>Max kinetic energy E_k (J) — leave blank to solve</label>
+          <input type="number" id="pe_Ek" class="phys-input" step="any" placeholder="leave blank">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physPhoto()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="pe_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="pe_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pe_steps"></div>
+    </div>
+  </div>
+
+  <!-- Faraday & Lenz -->
+  <div id="tool-faraday" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Faraday's Law:</strong>
+        <span class="phys-formula">ε = −N · ΔΦ / Δt</span>
+        <span class="phys-formula">Φ = B·A·cosθ</span><br>
+        <strong>Lenz's Law:</strong> the induced current opposes the change in magnetic flux.<br>
+        N = number of turns. Φ = magnetic flux (Wb). A = area (m²).
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Number of turns N</label>
+          <input type="number" id="fa_N" class="phys-input" step="any" value="100">
+        </div>
+        <div>
+          <label>Change in flux ΔΦ (Wb)</label>
+          <input type="number" id="fa_dphi" class="phys-input" step="any" value="0.02">
+        </div>
+        <div>
+          <label>Time interval Δt (s)</label>
+          <input type="number" id="fa_dt" class="phys-input" step="any" value="0.1">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physFaraday()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Induced Emf</div>
+      <div id="fa_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="fa_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="fa_steps"></div>
+    </div>
+  </div>
+
+  <!-- Transformer -->
+  <div id="tool-transformer" class="phys-tool-panel phys-hidden">
+    <div class="card">
+      <div class="phys-formula-note">
+        <strong>Transformer equations (ideal):</strong>
+        <span class="phys-formula">V_s / V_p = N_s / N_p</span>
+        <span class="phys-formula">I_p / I_s = N_s / N_p</span>
+        <span class="phys-formula">P_p = P_s</span><br>
+        Step-up: N_s > N_p → voltage increases. Step-down: N_s < N_p → voltage decreases.
+      </div>
+
+      <div class="phys-input-grid">
+        <div>
+          <label>Primary voltage V_p (V)</label>
+          <input type="number" id="tr_Vp" class="phys-input" step="any" value="240">
+        </div>
+        <div>
+          <label>Primary turns N_p</label>
+          <input type="number" id="tr_Np" class="phys-input" step="any" value="1000">
+        </div>
+        <div>
+          <label>Secondary turns N_s</label>
+          <input type="number" id="tr_Ns" class="phys-input" step="any" value="100">
+        </div>
+        <div>
+          <label>Secondary voltage V_s (V) — leave blank to solve</label>
+          <input type="number" id="tr_Vs" class="phys-input" step="any" placeholder="leave blank">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="physTransformer()">Calculate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="tr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+
+    <div class="card phys-hidden" id="tr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="tr_steps"></div>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="footer-note">
       StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
@@ -1069,41 +1547,33 @@ function physResult(id, html) {
   const el = document.getElementById(id);
   if (el) el.innerHTML = html;
 }
-function physConstNote(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = text;
-}
 
 /* ============================================================
-   GRADE 10 / 11 TAB SWITCHING
+   GRADE TABS
    ============================================================ */
 let physCurrentGrade = 10;
 let physCurrentTool10 = 'motion1d';
 let physCurrentTool11 = 'newton';
+let physCurrentTool12 = 'momentum';
 
 function physSetGrade(g) {
   physCurrentGrade = g;
   document.getElementById('tabG10').classList.toggle('active', g === 10);
   document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('tabG12').classList.toggle('active', g === 12);
   document.getElementById('physGrade10Tools').classList.toggle('phys-hidden', g !== 10);
   document.getElementById('physGrade11Tools').classList.toggle('phys-hidden', g !== 11);
-  if (g === 10) {
-    document.querySelectorAll('#physGrade10Tools .phys-tool-pill').forEach(p => {
-      p.classList.toggle('active', p.getAttribute('data-g10-tool') === physCurrentTool10);
-    });
-    document.querySelectorAll('[id^="tool-"]').forEach(p => {
-      if (p.id === 'tool-' + physCurrentTool10) p.classList.remove('phys-hidden');
-      else p.classList.add('phys-hidden');
-    });
-  } else {
-    document.querySelectorAll('#physGrade11Tools .phys-tool-pill').forEach(p => {
-      p.classList.toggle('active', p.getAttribute('data-g11-tool') === physCurrentTool11);
-    });
-    document.querySelectorAll('[id^="tool-"]').forEach(p => {
-      if (p.id === 'tool-' + physCurrentTool11) p.classList.remove('phys-hidden');
-      else p.classList.add('phys-hidden');
-    });
-  }
+  document.getElementById('physGrade12Tools').classList.toggle('phys-hidden', g !== 12);
+
+  let currentTool;
+  if (g === 10) currentTool = physCurrentTool10;
+  else if (g === 11) currentTool = physCurrentTool11;
+  else currentTool = physCurrentTool12;
+
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + currentTool) p.classList.remove('phys-hidden');
+    else p.classList.add('phys-hidden');
+  });
 }
 
 function physSelectTool10(tool) {
@@ -1113,7 +1583,7 @@ function physSelectTool10(tool) {
   });
   document.querySelectorAll('[id^="tool-"]').forEach(p => {
     if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
-    else if (p.getAttribute('data-grade') !== '11') p.classList.add('phys-hidden');
+    else p.classList.add('phys-hidden');
   });
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1130,11 +1600,22 @@ function physSelectTool11(tool) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function physSelectTool12(tool) {
+  physCurrentTool12 = tool;
+  document.querySelectorAll('#physGrade12Tools .phys-tool-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-g12-tool') === tool);
+  });
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
+    else p.classList.add('phys-hidden');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 /* ============================================================
    GRADE 10 TOOLS
    ============================================================ */
 
-/* --- Motion 1D --- */
 function physClearMotion1D() {
   ['m1_vi', 'm1_vf', 'm1_a', 'm1_t', 'm1_x'].forEach(id => document.getElementById(id).value = '');
   physResult('m1_result', '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values above and click Solve.</div>');
@@ -1158,7 +1639,6 @@ function physMotion1D() {
   let answerHtml = '';
   let answer = '';
 
-  // Determine what to solve
   if (vf === null && vi !== null && a !== null && t !== null) {
     answer = vi + a * t;
     steps.push('Use: v_f = v_i + a·Δt');
@@ -1247,7 +1727,6 @@ function physMotion1D() {
   physShowSteps('m1_steps', 'm1_steps_card', steps);
 }
 
-/* --- Motion Graphs --- */
 function physGraphs() {
   const t1 = parseFloat(document.getElementById('g_t1').value);
   const y1 = parseFloat(document.getElementById('g_y1').value);
@@ -1293,7 +1772,6 @@ function physGraphs() {
   physShowSteps('g_steps', 'g_steps_card', steps);
 }
 
-/* --- Vectors --- */
 function physVectors() {
   const v1m = parseFloat(document.getElementById('v1m').value) || 0;
   const v1a = parseFloat(document.getElementById('v1a').value) || 0;
@@ -1355,7 +1833,6 @@ function physVectors() {
   physShowSteps('v_steps', 'v_steps_card', steps);
 }
 
-/* --- Waves --- */
 function physWaves() {
   let v = document.getElementById('w_v').value === '' ? null : parseFloat(document.getElementById('w_v').value);
   let f = document.getElementById('w_f').value === '' ? null : parseFloat(document.getElementById('w_f').value);
@@ -1365,7 +1842,6 @@ function physWaves() {
   const steps = [];
   let answerHtml = '';
 
-  // Derive missing pieces
   if (T !== null && f === null) { f = 1 / T; steps.push('f = 1/T = 1/' + physFmt(T) + ' = ' + physFmt(f) + ' Hz'); }
   if (f !== null && T === null) { T = 1 / f; }
 
@@ -1392,7 +1868,6 @@ function physWaves() {
   physShowSteps('w_steps', 'w_steps_card', steps);
 }
 
-/* --- EM Radiation --- */
 function physEMRModeChange() {
   const mode = document.getElementById('emr_mode').value;
   const label = document.getElementById('emr_input_label');
@@ -1465,7 +1940,6 @@ function physEMR() {
   physShowSteps('emr_steps', 'emr_steps_card', steps);
 }
 
-/* --- Mechanical Energy --- */
 function physEnergy() {
   const m = parseFloat(document.getElementById('e_m').value);
   const h = parseFloat(document.getElementById('e_h').value);
@@ -1499,7 +1973,6 @@ function physEnergy() {
   physShowSteps('e_steps', 'e_steps_card', steps);
 }
 
-/* --- Charge --- */
 function physChargeModeChange() {
   const mode = document.getElementById('q_mode').value;
   document.getElementById('q_quantise_inputs').classList.toggle('phys-hidden', mode !== 'quantise');
@@ -1546,7 +2019,6 @@ function physCharge() {
    GRADE 11 TOOLS
    ============================================================ */
 
-/* --- Newton's Laws --- */
 function physNewton() {
   let F = document.getElementById('n_f').value === '' ? null : parseFloat(document.getElementById('n_f').value);
   let m = document.getElementById('n_m').value === '' ? null : parseFloat(document.getElementById('n_m').value);
@@ -1558,7 +2030,6 @@ function physNewton() {
   const steps = [];
   let answerHtml = '';
 
-  // Main Newton II calculation
   if (F === null && m !== null && a !== null) {
     F = m * a;
     steps.push('F_net = m·a');
@@ -1582,7 +2053,6 @@ function physNewton() {
     answerHtml = '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Provide two of F_net, m, a.</div>';
   }
 
-  // Friction add-on
   if (mu !== null && m2 !== null) {
     const N = m2 * g;
     const f = mu * N;
@@ -1598,7 +2068,6 @@ function physNewton() {
   if (steps.length > 0) physShowSteps('n_steps', 'n_steps_card', steps);
 }
 
-/* --- Work-Energy --- */
 function physWorkModeChange() {
   const mode = document.getElementById('we_mode').value;
   document.getElementById('we_work_inputs').classList.toggle('phys-hidden', mode !== 'work');
@@ -1649,7 +2118,6 @@ function physWorkEnergy() {
   physShowSteps('we_steps', 'we_steps_card', steps);
 }
 
-/* --- Power --- */
 function physPower() {
   let P = document.getElementById('p_p').value === '' ? null : parseFloat(document.getElementById('p_p').value);
   let W = document.getElementById('p_w').value === '' ? null : parseFloat(document.getElementById('p_w').value);
@@ -1679,7 +2147,6 @@ function physPower() {
   physShowSteps('p_steps', 'p_steps_card', steps);
 }
 
-/* --- Coulomb --- */
 function physCoulomb() {
   const k = 9.0e9;
   const q1 = parseFloat(document.getElementById('c_q1').value);
@@ -1708,7 +2175,6 @@ function physCoulomb() {
   physShowSteps('c_steps', 'c_steps_card', steps);
 }
 
-/* --- Electric Field --- */
 function physEFieldModeChange() {
   const mode = document.getElementById('ef_mode').value;
   document.getElementById('ef_force_inputs').classList.toggle('phys-hidden', mode !== 'force');
@@ -1749,7 +2215,6 @@ function physEField() {
   physShowSteps('ef_steps', 'ef_steps_card', steps);
 }
 
-/* --- Internal Resistance --- */
 function physEMF() {
   let e = document.getElementById('emf_e').value === '' ? null : parseFloat(document.getElementById('emf_e').value);
   let i = document.getElementById('emf_i').value === '' ? null : parseFloat(document.getElementById('emf_i').value);
@@ -1783,7 +2248,6 @@ function physEMF() {
     return;
   }
 
-  // Add terminal voltage if we have enough
   if (i !== null && R !== null) {
     const V = i * R;
     steps.push('V_terminal = I·R = (' + physFmt(i) + ')(' + physFmt(R) + ') = ' + physFmt(V) + ' V');
@@ -1796,7 +2260,6 @@ function physEMF() {
   physShowSteps('emf_steps', 'emf_steps_card', steps);
 }
 
-/* --- Snell's Law --- */
 function physSnell() {
   const n1 = parseFloat(document.getElementById('s_n1').value);
   const t1 = document.getElementById('s_t1').value === '' ? null : parseFloat(document.getElementById('s_t1').value);
@@ -1841,7 +2304,6 @@ function physSnell() {
     return;
   }
 
-  // Critical angle if n1 > n2
   if (n1 > n2) {
     const crit = Math.asin(n2 / n1) * 180 / Math.PI;
     steps.push('Since n₁ > n₂, total internal reflection is possible. Critical angle: θ_c = sin⁻¹(n₂/n₁) = ' + physFmt(crit) + '°');
@@ -1854,7 +2316,6 @@ function physSnell() {
   physShowSteps('s_steps', 's_steps_card', steps);
 }
 
-/* --- Lens Formula --- */
 function physLens() {
   const f = parseFloat(document.getElementById('l_f').value);
   const u = parseFloat(document.getElementById('l_u').value);
@@ -1869,7 +2330,6 @@ function physLens() {
   let answerHtml = '';
 
   if (v === null) {
-    // 1/f = 1/v + 1/u → 1/v = 1/f − 1/u
     const inv = 1 / f - 1 / u;
     if (inv === 0) {
       physResult('l_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No image formed (v → ∞).</div>');
@@ -1905,7 +2365,6 @@ function physLens() {
   physShowSteps('l_steps', 'l_steps_card', steps);
 }
 
-/* --- Magnetic Force --- */
 function physMagModeChange() {
   const mode = document.getElementById('mag_mode').value;
   document.getElementById('mag_wire_inputs').classList.toggle('phys-hidden', mode !== 'wire');
@@ -1954,18 +2413,425 @@ function physMagForce() {
 }
 
 /* ============================================================
+   GRADE 12 TOOLS
+   ============================================================ */
+
+function physMomModeChange() {
+  const mode = document.getElementById('mom_mode').value;
+  document.getElementById('mom_basic_inputs').classList.toggle('phys-hidden', mode !== 'basic');
+  document.getElementById('mom_collision_inputs').classList.toggle('phys-hidden', mode !== 'collision');
+}
+
+function physMomentum() {
+  const mode = document.getElementById('mom_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'basic') {
+    const m = parseFloat(document.getElementById('mom_m').value);
+    const vi = parseFloat(document.getElementById('mom_vi').value);
+    const vf = parseFloat(document.getElementById('mom_vf').value);
+    const dt = document.getElementById('mom_dt').value === '' ? null : parseFloat(document.getElementById('mom_dt').value);
+
+    if ([m, vi, vf].some(x => isNaN(x))) {
+      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill in m, v_i, v_f.</div>');
+      return;
+    }
+
+    const pi = m * vi;
+    const pf = m * vf;
+    const dp = pf - pi;
+
+    steps.push('p_i = m·v_i = (' + physFmt(m) + ')(' + physFmt(vi) + ') = ' + physFmt(pi) + ' kg·m/s');
+    steps.push('p_f = m·v_f = (' + physFmt(m) + ')(' + physFmt(vf) + ') = ' + physFmt(pf) + ' kg·m/s');
+    steps.push('Δp = p_f − p_i = ' + physFmt(pf) + ' − ' + physFmt(pi) + ' = ' + physFmt(dp) + ' kg·m/s');
+
+    answerHtml = '<div class="phys-answer">Δp = ' + physFmt(dp) + ' kg·m/s</div>';
+
+    if (dt !== null && dt !== 0) {
+      const F = dp / dt;
+      steps.push('F_net = Δp / Δt = ' + physFmt(dp) + ' / ' + physFmt(dt) + ' = ' + physFmt(F) + ' N');
+      answerHtml += '<div class="phys-answer multi" style="color:var(--text);">F_net = ' + physFmt(F) + ' N</div>';
+    }
+
+    answerHtml += '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">p_i</span><span class="result-cell-value">' + physFmt(pi) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">p_f</span><span class="result-cell-value">' + physFmt(pf) + '</span></div>' +
+    '</div>';
+  } else {
+    const m1 = parseFloat(document.getElementById('col_m1').value);
+    const u1 = parseFloat(document.getElementById('col_u1').value);
+    const m2 = parseFloat(document.getElementById('col_m2').value);
+    const u2 = parseFloat(document.getElementById('col_u2').value);
+    let v1 = document.getElementById('col_v1').value === '' ? null : parseFloat(document.getElementById('col_v1').value);
+    let v2 = document.getElementById('col_v2').value === '' ? null : parseFloat(document.getElementById('col_v2').value);
+
+    if ([m1, u1, m2, u2].some(x => isNaN(x))) {
+      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill m₁, u₁, m₂, u₂.</div>');
+      return;
+    }
+
+    const pBefore = m1 * u1 + m2 * u2;
+    steps.push('p_before = m₁u₁ + m₂u₂ = (' + physFmt(m1) + ')(' + physFmt(u1) + ') + (' + physFmt(m2) + ')(' + physFmt(u2) + ') = ' + physFmt(pBefore) + ' kg·m/s');
+
+    if (v1 === null && v2 !== null) {
+      v1 = (pBefore - m2 * v2) / m1;
+      steps.push('Conservation: p_after = p_before → m₁v₁ + m₂v₂ = p_before');
+      steps.push('v₁ = (p_before − m₂v₂) / m₁ = (' + physFmt(pBefore) + ' − (' + physFmt(m2) + ')(' + physFmt(v2) + ')) / ' + physFmt(m1));
+      steps.push('v₁ = ' + physFmt(v1) + ' m/s');
+      answerHtml = '<div class="phys-answer">v₁ = ' + physFmt(v1) + ' m/s</div>';
+    } else if (v2 === null && v1 !== null) {
+      v2 = (pBefore - m1 * v1) / m2;
+      steps.push('Conservation: m₁v₁ + m₂v₂ = p_before');
+      steps.push('v₂ = (p_before − m₁v₁) / m₂ = (' + physFmt(pBefore) + ' − (' + physFmt(m1) + ')(' + physFmt(v1) + ')) / ' + physFmt(m2));
+      steps.push('v₂ = ' + physFmt(v2) + ' m/s');
+      answerHtml = '<div class="phys-answer">v₂ = ' + physFmt(v2) + ' m/s</div>';
+    } else if (v1 !== null && v2 !== null) {
+      const pAfter = m1 * v1 + m2 * v2;
+      steps.push('p_after = m₁v₁ + m₂v₂ = (' + physFmt(m1) + ')(' + physFmt(v1) + ') + (' + physFmt(m2) + ')(' + physFmt(v2) + ') = ' + physFmt(pAfter) + ' kg·m/s');
+      if (Math.abs(pBefore - pAfter) < 1e-6) {
+        steps.push('p_before = p_after ✓ Momentum is conserved.');
+      } else {
+        steps.push('p_before ≠ p_after. Momentum is NOT conserved with these values.');
+      }
+      answerHtml = '<div class="phys-answer">p_after = ' + physFmt(pAfter) + ' kg·m/s</div>';
+    } else {
+      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one of v₁ or v₂ blank.</div>');
+      return;
+    }
+
+    answerHtml += '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">p_before</span><span class="result-cell-value">' + physFmt(pBefore) + '</span></div>' +
+    '</div>';
+  }
+
+  physResult('mom_result', answerHtml);
+  physShowSteps('mom_steps', 'mom_steps_card', steps);
+}
+
+function physProjModeChange() {
+  const mode = document.getElementById('proj_mode').value;
+  document.getElementById('proj_up_inputs').classList.toggle('phys-hidden', mode !== 'up');
+  document.getElementById('proj_down_inputs').classList.toggle('phys-hidden', mode !== 'down');
+  document.getElementById('proj_cliff_inputs').classList.toggle('phys-hidden', mode !== 'cliff');
+}
+
+function physProjectile() {
+  const mode = document.getElementById('proj_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'up') {
+    const vi = parseFloat(document.getElementById('proj_vi').value);
+    const g = parseFloat(document.getElementById('proj_g').value);
+    if ([vi, g].some(x => isNaN(x))) {
+      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill v_i and g.</div>');
+      return;
+    }
+    const tUp = vi / g;
+    const hMax = vi * vi / (2 * g);
+    const tTotal = 2 * tUp;
+    steps.push('Take up as positive. a = −g = −' + physFmt(g) + ' m/s².');
+    steps.push('At maximum height v = 0. Use v_f = v_i + a·Δt:');
+    steps.push('0 = ' + physFmt(vi) + ' − ' + physFmt(g) + '·t_up → t_up = ' + physFmt(tUp) + ' s');
+    steps.push('Max height: Δy = v_i·t_up − ½g·t_up² = ' + physFmt(hMax) + ' m');
+    steps.push('Total flight time (returns to start): 2·t_up = ' + physFmt(tTotal) + ' s');
+    steps.push('Return velocity: v = −v_i = −' + physFmt(vi) + ' m/s (same magnitude, opposite direction).');
+
+    answerHtml =
+      '<div class="phys-answer">h_max = ' + physFmt(hMax) + ' m</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">t_up = ' + physFmt(tUp) + ' s</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">t_total = ' + physFmt(tTotal) + ' s</div>';
+  } else if (mode === 'down') {
+    const h = parseFloat(document.getElementById('proj_h').value);
+    const vi = parseFloat(document.getElementById('proj_vi2').value);
+    const g = parseFloat(document.getElementById('proj_g2').value);
+    if ([h, vi, g].some(x => isNaN(x))) {
+      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill h, v_i, g.</div>');
+      return;
+    }
+    // Take down as positive
+    const vf = Math.sqrt(vi * vi + 2 * g * h);
+    const t = (vf - vi) / g;
+    steps.push('Take down as positive. Δy = ' + physFmt(h) + ' m, a = +g = ' + physFmt(g) + ' m/s².');
+    steps.push('Use v_f² = v_i² + 2a·Δy: v_f² = (' + physFmt(vi) + ')² + 2(' + physFmt(g) + ')(' + physFmt(h) + ')');
+    steps.push('v_f = ' + physFmt(vf) + ' m/s (downward)');
+    steps.push('Use v_f = v_i + a·Δt: Δt = (v_f − v_i) / g = ' + physFmt(t) + ' s');
+
+    answerHtml =
+      '<div class="phys-answer">v_f = ' + physFmt(vf) + ' m/s</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">Δt = ' + physFmt(t) + ' s</div>';
+  } else {
+    const vx = parseFloat(document.getElementById('proj_vx').value);
+    const h = parseFloat(document.getElementById('proj_ch').value);
+    const g = parseFloat(document.getElementById('proj_g3').value);
+    if ([vx, h, g].some(x => isNaN(x))) {
+      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill v_x, h, g.</div>');
+      return;
+    }
+    const tFall = Math.sqrt(2 * h / g);
+    const xRange = vx * tFall;
+    const vyImpact = g * tFall;
+    const vImpact = Math.sqrt(vx * vx + vyImpact * vyImpact);
+    const angleImpact = Math.atan2(vyImpact, vx) * 180 / Math.PI;
+
+    steps.push('Horizontal: constant v_x = ' + physFmt(vx) + ' m/s. Vertical: free fall from h = ' + physFmt(h) + ' m.');
+    steps.push('Time to fall: h = ½g·t² → t = √(2h/g) = ' + physFmt(tFall) + ' s');
+    steps.push('Horizontal range: x = v_x · t = ' + physFmt(xRange) + ' m');
+    steps.push('Vertical impact velocity: v_y = g·t = ' + physFmt(vyImpact) + ' m/s');
+    steps.push('Resultant impact velocity: v = √(v_x² + v_y²) = ' + physFmt(vImpact) + ' m/s');
+    steps.push('Impact angle below horizontal: θ = tan⁻¹(v_y/v_x) = ' + physFmt(angleImpact) + '°');
+
+    answerHtml =
+      '<div class="phys-answer">x_range = ' + physFmt(xRange) + ' m</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">t_fall = ' + physFmt(tFall) + ' s</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">v_impact = ' + physFmt(vImpact) + ' m/s @ ' + physFmt(angleImpact) + '° below horizontal</div>';
+  }
+
+  physResult('proj_result', answerHtml);
+  physShowSteps('proj_steps', 'proj_steps_card', steps);
+}
+
+function physGravModeChange() {
+  const mode = document.getElementById('grav_mode').value;
+  document.getElementById('grav_force_inputs').classList.toggle('phys-hidden', mode !== 'force');
+  document.getElementById('grav_g_inputs').classList.toggle('phys-hidden', mode !== 'g');
+}
+
+function physGravitation() {
+  const G = 6.67e-11;
+  const mode = document.getElementById('grav_mode').value;
+  const steps = [];
+  let answerHtml = '';
+
+  if (mode === 'force') {
+    const m1 = parseFloat(document.getElementById('gr_m1').value);
+    const m2 = parseFloat(document.getElementById('gr_m2').value);
+    const r = parseFloat(document.getElementById('gr_r').value);
+    if ([m1, m2, r].some(x => isNaN(x)) || r === 0) {
+      physResult('gr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill m₁, m₂, r (r ≠ 0).</div>');
+      return;
+    }
+    const F = G * m1 * m2 / (r * r);
+    steps.push('F = G·m₁·m₂ / r²');
+    steps.push('F = (6,67 × 10⁻¹¹)(' + physFmt(m1) + ')(' + physFmt(m2) + ') / (' + physFmt(r) + ')²');
+    steps.push('F = ' + physFmt(F) + ' N');
+    answerHtml = '<div class="phys-answer">F = ' + physFmt(F) + ' N</div>';
+  } else {
+    const M = parseFloat(document.getElementById('gr_M').value);
+    const r = parseFloat(document.getElementById('gr_r2').value);
+    if ([M, r].some(x => isNaN(x)) || r === 0) {
+      physResult('gr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill M and r (r ≠ 0).</div>');
+      return;
+    }
+    const g = G * M / (r * r);
+    steps.push('g = G·M / r²');
+    steps.push('g = (6,67 × 10⁻¹¹)(' + physFmt(M) + ') / (' + physFmt(r) + ')²');
+    steps.push('g = ' + physFmt(g) + ' m/s²');
+    answerHtml = '<div class="phys-answer">g = ' + physFmt(g) + ' m/s²</div>';
+  }
+
+  physResult('gr_result', answerHtml);
+  physShowSteps('gr_steps', 'gr_steps_card', steps);
+}
+
+function physCircular() {
+  const r = parseFloat(document.getElementById('ci_r').value);
+  const T = parseFloat(document.getElementById('ci_T').value);
+  const m = parseFloat(document.getElementById('ci_m').value);
+
+  if ([r, T, m].some(x => isNaN(x)) || r === 0 || T === 0) {
+    physResult('ci_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill r, T, m (r ≠ 0, T ≠ 0).</div>');
+    return;
+  }
+
+  const v = 2 * Math.PI * r / T;
+  const ac = v * v / r;
+  const Fc = m * ac;
+
+  const steps = [];
+  steps.push('v = 2πr / T = 2π(' + physFmt(r) + ') / ' + physFmt(T) + ' = ' + physFmt(v) + ' m/s');
+  steps.push('a_c = v² / r = (' + physFmt(v) + ')² / ' + physFmt(r) + ' = ' + physFmt(ac) + ' m/s²');
+  steps.push('F_c = m·v² / r = (' + physFmt(m) + ')(' + physFmt(v) + ')² / ' + physFmt(r) + ' = ' + physFmt(Fc) + ' N');
+
+  const html =
+    '<div class="phys-answer">F_c = ' + physFmt(Fc) + ' N</div>' +
+    '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">v (m/s)</span><span class="result-cell-value">' + physFmt(v) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">a_c (m/s²)</span><span class="result-cell-value">' + physFmt(ac) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">F_c (N)</span><span class="result-cell-value">' + physFmt(Fc) + '</span></div>' +
+    '</div>';
+
+  physResult('ci_result', html);
+  physShowSteps('ci_steps', 'ci_steps_card', steps);
+}
+
+function physDoppler() {
+  const fs = parseFloat(document.getElementById('d_fs').value);
+  const v = parseFloat(document.getElementById('d_v').value);
+  const vl = parseFloat(document.getElementById('d_vl').value);
+  const vs = parseFloat(document.getElementById('d_vs').value);
+  const dir = document.getElementById('d_dir').value;
+
+  if ([fs, v, vl, vs].some(x => isNaN(x))) {
+    physResult('d_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+    return;
+  }
+
+  const steps = [];
+  let fL = 0;
+  let note = '';
+
+  if (dir === 'toward') {
+    fL = (v / (v - vs)) * fs;
+    steps.push('Source moves toward still listener. Use denominator (v − v_s).');
+    steps.push('f_L = v / (v − v_s) · f_s = ' + physFmt(v) + ' / (' + physFmt(v) + ' − ' + physFmt(vs) + ') · ' + physFmt(fs));
+    note = 'Observed frequency is HIGHER (higher pitch).';
+  } else if (dir === 'away') {
+    fL = (v / (v + vs)) * fs;
+    steps.push('Source moves away from still listener. Use denominator (v + v_s).');
+    steps.push('f_L = v / (v + v_s) · f_s = ' + physFmt(v) + ' / (' + physFmt(v) + ' + ' + physFmt(vs) + ') · ' + physFmt(fs));
+    note = 'Observed frequency is LOWER (lower pitch).';
+  } else if (dir === 'listener_toward') {
+    fL = ((v + vl) / v) * fs;
+    steps.push('Listener moves toward still source. Use numerator (v + v_L).');
+    steps.push('f_L = (v + v_L) / v · f_s = (' + physFmt(v) + ' + ' + physFmt(vl) + ') / ' + physFmt(v) + ' · ' + physFmt(fs));
+    note = 'Observed frequency is HIGHER.';
+  } else {
+    fL = ((v - vl) / v) * fs;
+    steps.push('Listener moves away from still source. Use numerator (v − v_L).');
+    steps.push('f_L = (v − v_L) / v · f_s = (' + physFmt(v) + ' − ' + physFmt(vl) + ') / ' + physFmt(v) + ' · ' + physFmt(fs));
+    note = 'Observed frequency is LOWER.';
+  }
+
+  steps.push('f_L = ' + physFmt(fL) + ' Hz');
+  steps.push(note);
+
+  const html =
+    '<div class="phys-answer">f_L = ' + physFmt(fL) + ' Hz</div>' +
+    '<div class="result-sub">' + note + '</div>';
+
+  physResult('d_result', html);
+  physShowSteps('d_steps', 'd_steps_card', steps);
+}
+
+function physPhoto() {
+  const h = 6.63e-34;
+  const f = parseFloat(document.getElementById('pe_f').value);
+  const W = parseFloat(document.getElementById('pe_W').value);
+  let Ek = document.getElementById('pe_Ek').value === '' ? null : parseFloat(document.getElementById('pe_Ek').value);
+
+  if (isNaN(f) || isNaN(W)) {
+    physResult('pe_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill in frequency and work function.</div>');
+    return;
+  }
+
+  const steps = [];
+  const f0 = W / h;
+  steps.push('Threshold frequency: f₀ = W₀/h = ' + physFmt(W) + ' / (6,63 × 10⁻³⁴) = ' + physFmt(f0) + ' Hz');
+
+  let answerHtml = '';
+
+  if (f < f0) {
+    steps.push('f < f₀, so no photoelectrons are emitted.');
+    answerHtml = '<div class="phys-answer" style="color:var(--warning);">No emission</div>' +
+      '<div class="result-sub">Incident frequency is below the threshold frequency</div>' +
+      '<div class="phys-result-grid">' +
+        '<div class="result-cell"><span class="result-cell-label">f₀ (Hz)</span><span class="result-cell-value">' + physFmt(f0) + '</span></div>' +
+      '</div>';
+  } else {
+    if (Ek === null) {
+      Ek = h * f - W;
+      steps.push('E_k(max) = h·f − W₀');
+      steps.push('E_k(max) = (6,63 × 10⁻³⁴)(' + physFmt(f) + ') − ' + physFmt(W));
+      steps.push('E_k(max) = ' + physFmt(Ek) + ' J');
+    } else {
+      steps.push('Given E_k(max) = ' + physFmt(Ek) + ' J. Check: h·f − W₀ = ' + physFmt(h * f - W) + ' J');
+    }
+    const eV = Ek / 1.6e-19;
+    steps.push('E_k(max) in eV = ' + physFmt(eV) + ' eV');
+    answerHtml =
+      '<div class="phys-answer">E_k(max) = ' + physFmt(Ek) + ' J</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">= ' + physFmt(eV) + ' eV</div>' +
+      '<div class="phys-result-grid">' +
+        '<div class="result-cell"><span class="result-cell-label">f₀ (Hz)</span><span class="result-cell-value">' + physFmt(f0) + '</span></div>' +
+      '</div>';
+  }
+
+  physResult('pe_result', answerHtml);
+  physShowSteps('pe_steps', 'pe_steps_card', steps);
+}
+
+function physFaraday() {
+  const N = parseFloat(document.getElementById('fa_N').value);
+  const dphi = parseFloat(document.getElementById('fa_dphi').value);
+  const dt = parseFloat(document.getElementById('fa_dt').value);
+
+  if ([N, dphi, dt].some(x => isNaN(x)) || dt === 0) {
+    physResult('fa_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill N, ΔΦ, Δt (Δt ≠ 0).</div>');
+    return;
+  }
+
+  const emf = -N * dphi / dt;
+
+  const steps = [];
+  steps.push('ε = −N · ΔΦ / Δt');
+  steps.push('ε = −(' + physFmt(N) + ')(' + physFmt(dphi) + ') / ' + physFmt(dt));
+  steps.push('ε = ' + physFmt(emf) + ' V');
+  steps.push('The negative sign is Lenz\'s Law: the induced current opposes the change in flux.');
+
+  const html =
+    '<div class="phys-answer">|ε| = ' + physFmt(Math.abs(emf)) + ' V</div>' +
+    '<div class="result-sub">Direction opposes the change in flux (Lenz\'s Law)</div>';
+
+  physResult('fa_result', html);
+  physShowSteps('fa_steps', 'fa_steps_card', steps);
+}
+
+function physTransformer() {
+  const Vp = parseFloat(document.getElementById('tr_Vp').value);
+  const Np = parseFloat(document.getElementById('tr_Np').value);
+  const Ns = parseFloat(document.getElementById('tr_Ns').value);
+  let Vs = document.getElementById('tr_Vs').value === '' ? null : parseFloat(document.getElementById('tr_Vs').value);
+
+  if ([Vp, Np, Ns].some(x => isNaN(x)) || Np === 0) {
+    physResult('tr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill V_p, N_p, N_s (N_p ≠ 0).</div>');
+    return;
+  }
+
+  const steps = [];
+
+  if (Vs === null) {
+    Vs = Vp * Ns / Np;
+    steps.push('V_s / V_p = N_s / N_p');
+    steps.push('V_s = V_p · N_s / N_p = (' + physFmt(Vp) + ')(' + physFmt(Ns) + ') / ' + physFmt(Np));
+    steps.push('V_s = ' + physFmt(Vs) + ' V');
+  } else {
+    steps.push('Check: V_s / V_p = ' + physFmt(Vs / Vp) + ', N_s / N_p = ' + physFmt(Ns / Np));
+  }
+
+  const type = Ns > Np ? 'Step-up transformer (voltage increases)' :
+              Ns < Np ? 'Step-down transformer (voltage decreases)' :
+              'Isolation transformer (1:1 ratio)';
+  steps.push(type);
+
+  const html =
+    '<div class="phys-answer">V_s = ' + physFmt(Vs) + ' V</div>' +
+    '<div class="result-sub">' + type + '</div>' +
+    '<div class="phys-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Turns ratio N_s/N_p</span><span class="result-cell-value">' + physFmt(Ns / Np) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Voltage ratio V_s/V_p</span><span class="result-cell-value">' + physFmt(Vs / Vp) + '</span></div>' +
+    '</div>';
+
+  physResult('tr_result', html);
+  physShowSteps('tr_steps', 'tr_steps_card', steps);
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 document.addEventListener('DOMContentLoaded', function () {
   physSetGrade(10);
-});
-
-// Add data-grade attributes so the tool selector hides the right panels
-document.addEventListener('DOMContentLoaded', function () {
-  const g10Ids = ['tool-motion1d','tool-graphs','tool-vectors','tool-waves','tool-emr','tool-energy','tool-charge'];
-  g10Ids.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('data-grade', '10'); });
-  const g11Ids = ['tool-newton','tool-workenergy','tool-power','tool-coulomb','tool-efield','tool-emf','tool-snell','tool-lens','tool-magnetic'];
-  g11Ids.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('data-grade', '11'); });
 });
 </script>
 </body>
