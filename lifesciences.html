@@ -54,17 +54,6 @@
     gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
   }
   .ls-hidden { display: none !important; }
-  .ls-subpills {
-    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; padding: 8px;
-    background: var(--glass-strong); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
-  }
-  .ls-subpill {
-    padding: 5px 11px; background: transparent; border: none; border-radius: 100px;
-    font-family: var(--font-sans); font-size: 11px; font-weight: 500;
-    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
-  }
-  .ls-subpill:hover { color: var(--text); }
-  .ls-subpill.active { background: var(--accent); color: var(--accent-text); font-weight: 600; }
   .ls-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
   .ls-table th, .ls-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
   .ls-table th { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); }
@@ -112,52 +101,51 @@
 
     <div id="lsGrade10Tools">
       <div class="ls-tool-select">
-        <button class="ls-tool-pill active" data-g10="biomolecule" onclick="lsSelect10('biomolecule')">Biomolecules</button>
-        <button class="ls-tool-pill" data-g10="foodtest" onclick="lsSelect10('foodtest')">Food Tests</button>
-        <button class="ls-tool-pill" data-g10="enzyme" onclick="lsSelect10('enzyme')">Enzymes</button>
-        <button class="ls-tool-pill" data-g10="organelle" onclick="lsSelect10('organelle')">Cell Organelles</button>
-        <button class="ls-tool-pill" data-g10="microscope" onclick="lsSelect10('microscope')">Microscope Magnification</button>
-        <button class="ls-tool-pill" data-g10="osmosis" onclick="lsSelect10('osmosis')">Osmosis &amp; Diffusion</button>
-        <button class="ls-tool-pill" data-g10="mitosis" onclick="lsSelect10('mitosis')">Mitosis</button>
-        <button class="ls-tool-pill" data-g10="planttissue" onclick="lsSelect10('planttissue')">Plant Tissues</button>
-        <button class="ls-tool-pill" data-g10="transpiration" onclick="lsSelect10('transpiration')">Transpiration</button>
-        <button class="ls-tool-pill" data-g10="foodweb" onclick="lsSelect10('foodweb')">Food Web</button>
+        <button class="ls-tool-pill active" data-grade="10" data-tool="biomolecule" onclick="lsSelect(10, 'biomolecule')">Biomolecules</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="foodtest" onclick="lsSelect(10, 'foodtest')">Food Tests</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="enzyme" onclick="lsSelect(10, 'enzyme')">Enzymes</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="organelle" onclick="lsSelect(10, 'organelle')">Cell Organelles</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="microscope" onclick="lsSelect(10, 'microscope')">Microscope Magnification</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="osmosis" onclick="lsSelect(10, 'osmosis')">Osmosis &amp; Diffusion</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="mitosis" onclick="lsSelect(10, 'mitosis')">Mitosis</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="planttissue" onclick="lsSelect(10, 'planttissue')">Plant Tissues</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="transpiration" onclick="lsSelect(10, 'transpiration')">Transpiration</button>
+        <button class="ls-tool-pill" data-grade="10" data-tool="foodweb" onclick="lsSelect(10, 'foodweb')">Food Web</button>
       </div>
     </div>
 
     <div id="lsGrade11Tools" class="ls-hidden">
       <div class="ls-tool-select">
-        <button class="ls-tool-pill active" data-g11="microorg" onclick="lsSelect11('microorg')">Microorganisms</button>
-        <button class="ls-tool-pill" data-g11="plantgroup" onclick="lsSelect11('plantgroup')">Plant Groups</button>
-        <button class="ls-tool-pill" data-g11="animphyla" onclick="lsSelect11('animphyla')">Animal Phyla</button>
-        <button class="ls-tool-pill" data-g11="photosynth" onclick="lsSelect11('photosynth')">Photosynthesis</button>
-        <button class="ls-tool-pill" data-g11="respiration" onclick="lsSelect11('respiration')">Cellular Respiration</button>
-        <button class="ls-tool-pill" data-g11="nutrition" onclick="lsSelect11('nutrition')">Animal Nutrition</button>
-        <button class="ls-tool-pill" data-g11="gasexchange" onclick="lsSelect11('gasexchange')">Gas Exchange</button>
-        <button class="ls-tool-pill" data-g11="excretion" onclick="lsSelect11('excretion')">Excretion</button>
-        <button class="ls-tool-pill" data-g11="popphase" onclick="lsSelect11('popphase')">Population Ecology</button>
-        <button class="ls-tool-pill" data-g11="markrecap" onclick="lsSelect11('markrecap')">Mark-Recapture</button>
+        <button class="ls-tool-pill active" data-grade="11" data-tool="microorg" onclick="lsSelect(11, 'microorg')">Microorganisms</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="plantgroup" onclick="lsSelect(11, 'plantgroup')">Plant Groups</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="animphyla" onclick="lsSelect(11, 'animphyla')">Animal Phyla</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="photosynth" onclick="lsSelect(11, 'photosynth')">Photosynthesis</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="respiration" onclick="lsSelect(11, 'respiration')">Cellular Respiration</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="nutrition" onclick="lsSelect(11, 'nutrition')">Animal Nutrition</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="gasexchange" onclick="lsSelect(11, 'gasexchange')">Gas Exchange</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="excretion" onclick="lsSelect(11, 'excretion')">Excretion</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="popphase" onclick="lsSelect(11, 'popphase')">Population Ecology</button>
+        <button class="ls-tool-pill" data-grade="11" data-tool="markrecap" onclick="lsSelect(11, 'markrecap')">Mark-Recapture</button>
       </div>
     </div>
 
     <div id="lsGrade12Tools" class="ls-hidden">
       <div class="ls-tool-select">
-        <button class="ls-tool-pill active" data-g12="dnarna" onclick="lsSelect12('dnarna')">DNA &amp; RNA</button>
-        <button class="ls-tool-pill" data-g12="punnett" onclick="lsSelect12('punnett')">Punnett Square</button>
-        <button class="ls-tool-pill" data-g12="bloodtype" onclick="lsSelect12('bloodtype')">Blood Types</button>
-        <button class="ls-tool-pill" data-g12="pedigree" onclick="lsSelect12('pedigree')">Pedigree Analyser</button>
-        <button class="ls-tool-pill" data-g12="meiosis" onclick="lsSelect12('meiosis')">Meiosis</button>
-        <button class="ls-tool-pill" data-g12="karyotype" onclick="lsSelect12('karyotype')">Karyotype Analyser</button>
-        <button class="ls-tool-pill" data-g12="evolution" onclick="lsSelect12('evolution')">Evolution</button>
-        <button class="ls-tool-pill" data-g12="population" onclick="lsSelect12('population')">Population Ecology</button>
-        <button class="ls-tool-pill" data-g12="dna-profile" onclick="lsSelect12('dna-profile')">DNA Profiling</button>
+        <button class="ls-tool-pill active" data-grade="12" data-tool="dnarna" onclick="lsSelect(12, 'dnarna')">DNA &amp; RNA</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="punnett" onclick="lsSelect(12, 'punnett')">Punnett Square</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="bloodtype" onclick="lsSelect(12, 'bloodtype')">Blood Types</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="pedigree" onclick="lsSelect(12, 'pedigree')">Pedigree Analyser</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="meiosis" onclick="lsSelect(12, 'meiosis')">Meiosis</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="karyotype" onclick="lsSelect(12, 'karyotype')">Karyotype Analyser</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="evolution" onclick="lsSelect(12, 'evolution')">Evolution</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="population" onclick="lsSelect(12, 'population')">Population Ecology</button>
+        <button class="ls-tool-pill" data-grade="12" data-tool="dna-profile" onclick="lsSelect(12, 'dna-profile')">DNA Profiling</button>
       </div>
     </div>
   </div>
 
   <!-- ==================== GRADE 10 ==================== -->
 
-  <!-- Biomolecules -->
   <div id="tool-biomolecule" class="ls-tool-panel">
     <div class="card">
       <div class="ls-formula-note">
@@ -179,7 +167,6 @@
     </div>
   </div>
 
-  <!-- Food Tests -->
   <div id="tool-foodtest" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -210,7 +197,6 @@
     </div>
   </div>
 
-  <!-- Enzymes -->
   <div id="tool-enzyme" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -238,7 +224,6 @@
     </div>
   </div>
 
-  <!-- Cell Organelles -->
   <div id="tool-organelle" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">Look up an organelle's function and whether it's in plant cells, animal cells, or both.</div>
@@ -254,7 +239,6 @@
     </div>
   </div>
 
-  <!-- Microscope Magnification -->
   <div id="tool-microscope" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -277,7 +261,6 @@
     </div>
   </div>
 
-  <!-- Osmosis & Diffusion -->
   <div id="tool-osmosis" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -306,7 +289,6 @@
     </div>
   </div>
 
-  <!-- Mitosis -->
   <div id="tool-mitosis" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">Identify the phase of mitosis based on observable features, or calculate chromosome numbers.</div>
@@ -340,7 +322,6 @@
     </div>
   </div>
 
-  <!-- Plant Tissues -->
   <div id="tool-planttissue" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">Identify plant tissue from a description or match function to tissue.</div>
@@ -356,7 +337,6 @@
     </div>
   </div>
 
-  <!-- Transpiration -->
   <div id="tool-transpiration" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -382,7 +362,6 @@
     </div>
   </div>
 
-  <!-- Food Web -->
   <div id="tool-foodweb" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -403,7 +382,6 @@
 
   <!-- ==================== GRADE 11 ==================== -->
 
-  <!-- Microorganisms -->
   <div id="tool-microorg" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">Identify the kingdom or type of microorganism from a description.</div>
@@ -419,7 +397,6 @@
     </div>
   </div>
 
-  <!-- Plant Groups -->
   <div id="tool-plantgroup" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">Identify the plant group from a description.</div>
@@ -435,7 +412,6 @@
     </div>
   </div>
 
-  <!-- Animal Phyla -->
   <div id="tool-animphyla" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -480,7 +456,6 @@
     </div>
   </div>
 
-  <!-- Photosynthesis -->
   <div id="tool-photosynth" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -512,7 +487,6 @@
     </div>
   </div>
 
-  <!-- Cellular Respiration -->
   <div id="tool-respiration" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -522,7 +496,7 @@
       </div>
       <div style="margin-bottom:10px;">
         <label>Type of respiration</label>
-        <select id="rs_type" class="ls-input" onchange="lsRespirationChange()">
+        <select id="rs_type" class="ls-input">
           <option value="aerobic">Aerobic</option>
           <option value="anaerobic_muscle">Anaerobic (muscle)</option>
           <option value="anaerobic_yeast">Anaerobic (yeast)</option>
@@ -544,7 +518,6 @@
     </div>
   </div>
 
-  <!-- Animal Nutrition -->
   <div id="tool-nutrition" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -570,7 +543,6 @@
     </div>
   </div>
 
-  <!-- Gas Exchange -->
   <div id="tool-gasexchange" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -595,7 +567,6 @@
     </div>
   </div>
 
-  <!-- Excretion -->
   <div id="tool-excretion" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -623,7 +594,6 @@
     </div>
   </div>
 
-  <!-- Population Ecology -->
   <div id="tool-popphase" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -646,7 +616,6 @@
     </div>
   </div>
 
-  <!-- Mark-Recapture -->
   <div id="tool-markrecap" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -674,7 +643,6 @@
 
   <!-- ==================== GRADE 12 ==================== -->
 
-  <!-- DNA & RNA -->
   <div id="tool-dnarna" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -698,7 +666,6 @@
     </div>
   </div>
 
-  <!-- Punnett Square -->
   <div id="tool-punnett" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -728,7 +695,6 @@
     </div>
   </div>
 
-  <!-- Blood Types -->
   <div id="tool-bloodtype" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -764,7 +730,6 @@
     </div>
   </div>
 
-  <!-- Pedigree Analyser -->
   <div id="tool-pedigree" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -788,13 +753,8 @@
       <div class="result-label">Inheritance Mode</div>
       <div id="pd_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick pattern and click Identify.</div></div>
     </div>
-    <div class="card ls-hidden" id="pd_steps_card">
-      <div class="result-label">Reasoning</div>
-      <div id="pd_steps"></div>
-    </div>
   </div>
 
-  <!-- Meiosis -->
   <div id="tool-meiosis" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -817,7 +777,6 @@
     </div>
   </div>
 
-  <!-- Karyotype Analyser -->
   <div id="tool-karyotype" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -853,7 +812,6 @@
     </div>
   </div>
 
-  <!-- Evolution -->
   <div id="tool-evolution" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">Identify type of evidence for evolution or mode of speciation.</div>
@@ -876,7 +834,6 @@
     </div>
   </div>
 
-  <!-- Population Ecology -->
   <div id="tool-population" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -904,7 +861,6 @@
     </div>
   </div>
 
-  <!-- DNA Profiling -->
   <div id="tool-dna-profile" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
@@ -958,7 +914,7 @@ function lsShowSteps(stepsId, cardId, steps) {
 }
 function lsResult(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
-/* Grade switching */
+/* Grade state */
 let lsGrade = 10;
 let lsTool10 = 'biomolecule';
 let lsTool11 = 'microorg';
@@ -972,14 +928,35 @@ function lsSetGrade(g) {
   document.getElementById('lsGrade10Tools').classList.toggle('ls-hidden', g !== 10);
   document.getElementById('lsGrade11Tools').classList.toggle('ls-hidden', g !== 11);
   document.getElementById('lsGrade12Tools').classList.toggle('ls-hidden', g !== 12);
-  let current = g === 10 ? lsTool10 : g === 11 ? lsTool11 : lsTool12;
-  document.querySelectorAll('[id^="tool-"]').forEach(p => {
-    p.classList.toggle('ls-hidden', p.id !== 'tool-' + current);
+
+  const tool = g === 10 ? lsTool10 : g === 11 ? lsTool11 : lsTool12;
+  lsApplyPillHighlight(g, tool);
+  lsShowPanel(tool);
+}
+
+/* New unified selector — fixes the pill bug */
+function lsSelect(grade, tool) {
+  if (grade === 10) lsTool10 = tool;
+  else if (grade === 11) lsTool11 = tool;
+  else lsTool12 = tool;
+  lsApplyPillHighlight(grade, tool);
+  lsShowPanel(tool);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function lsApplyPillHighlight(grade, tool) {
+  document.querySelectorAll('.ls-tool-pill').forEach(p => {
+    const pGrade = parseInt(p.getAttribute('data-grade'));
+    const pTool = p.getAttribute('data-tool');
+    p.classList.toggle('active', pGrade === grade && pTool === tool);
   });
 }
-function lsSelect10(t) { lsTool10 = t; lsSetGrade(10); window.scrollTo({top:0,behavior:'smooth'}); }
-function lsSelect11(t) { lsTool11 = t; lsSetGrade(11); window.scrollTo({top:0,behavior:'smooth'}); }
-function lsSelect12(t) { lsTool12 = t; lsSetGrade(12); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function lsShowPanel(tool) {
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    p.classList.toggle('ls-hidden', p.id !== 'tool-' + tool);
+  });
+}
 
 /* ============== GRADE 10 ============== */
 
@@ -1307,9 +1284,6 @@ function lsPhotosynthesis() {
   lsShowSteps('ps_steps', 'ps_steps_card', steps);
 }
 
-function lsRespirationChange() {
-  // no-op — placeholder for future
-}
 function lsRespiration() {
   const type = document.getElementById('rs_type').value;
   const n = parseFloat(document.getElementById('rs_glucose').value) || 1;
@@ -1426,7 +1400,6 @@ function lsMarkRecap() {
 function lsDnaRna() {
   const dna = document.getElementById('dr_dna').value.toUpperCase().replace(/[^ATGC]/g, '');
   if (dna.length < 3) { lsResult('dr_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid DNA sequence (A, T, G, C).</div>'); return; }
-  const complement = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
   const transcription = { 'A': 'U', 'T': 'A', 'G': 'C', 'C': 'G' };
   let mrna = '';
   for (const base of dna) mrna += transcription[base];
@@ -1464,19 +1437,13 @@ function lsPunnett() {
   const p2 = document.getElementById('pu_p2').value.trim();
   if (!p1 || !p2) { lsResult('pu_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter both parents.</div>'); return; }
   function gametes(geno) {
-    // Supports single-gene (2 letters) or dihybrid (4 letters)
-    if (geno.length === 2) {
-      return [geno[0], geno[1]];
-    } else if (geno.length === 4) {
-      return [geno[0]+geno[2], geno[0]+geno[3], geno[1]+geno[2], geno[1]+geno[3]];
-    } else if (geno.length === 1) {
-      return [geno[0]];
-    }
+    if (geno.length === 2) return [geno[0], geno[1]];
+    if (geno.length === 4) return [geno[0]+geno[2], geno[0]+geno[3], geno[1]+geno[2], geno[1]+geno[3]];
+    if (geno.length === 1) return [geno[0]];
     return [geno];
   }
   const g1 = gametes(p1);
   const g2 = gametes(p2);
-  const offspring = [];
   const counts = {};
   const gridHtml = [];
   gridHtml.push('<table class="ls-table"><thead><tr><th>×</th>');
@@ -1485,15 +1452,12 @@ function lsPunnett() {
   g1.forEach(a => {
     gridHtml.push('<tr><th>' + a + '</th>');
     g2.forEach(b => {
-      // Combine alleles with same-letter grouping (Aa not aA)
       let combined;
       if (a.length <= 2 && b.length <= 2) {
-        // Sort each allele pair so dominant comes first within each gene
         const sortPair = (x, y) => {
           const upper1 = x.toUpperCase();
           const upper2 = y.toUpperCase();
           if (upper1 === upper2) {
-            // Same letter — dominant first
             if (x === x.toUpperCase()) return x + y;
             return y + x;
           }
@@ -1506,7 +1470,6 @@ function lsPunnett() {
       } else {
         combined = a + b;
       }
-      offspring.push(combined);
       counts[combined] = (counts[combined] || 0) + 1;
       gridHtml.push('<td>' + combined + '</td>');
     });
@@ -1514,8 +1477,7 @@ function lsPunnett() {
   });
   gridHtml.push('</tbody></table>');
 
-  // Build summary
-  const total = offspring.length;
+  const total = g1.length * g2.length;
   const summary = Object.keys(counts).sort().map(g => {
     const pct = ((counts[g] / total) * 100).toFixed(1);
     return g + ': ' + counts[g] + '/' + total + ' (' + pct + '%)';
@@ -1538,20 +1500,15 @@ function lsBloodType() {
   const offspringTypes = new Set();
   genotypes[m].forEach(mg => {
     genotypes[f].forEach(fg => {
-      // Produce 4 gamete combinations
-      const combos = [];
       mg.forEach(a => fg.forEach(b => {
         const pair = [a, b].sort().join('');
-        combos.push(pair);
-      }));
-      combos.forEach(c => {
         let pheno;
-        if (c.includes('IA') && c.includes('IB')) pheno = 'AB';
-        else if (c.includes('IA')) pheno = 'A';
-        else if (c.includes('IB')) pheno = 'B';
+        if (pair.includes('IA') && pair.includes('IB')) pheno = 'AB';
+        else if (pair.includes('IA')) pheno = 'A';
+        else if (pair.includes('IB')) pheno = 'B';
         else pheno = 'O';
         offspringTypes.add(pheno);
-      });
+      }));
     });
   });
   const list = Array.from(offspringTypes).sort().join(', ');
