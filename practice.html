@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Mode - Free Mastery-Based Study Tool</title>
+<meta name="description" content="Practice any NSC concept until mastered. Three modes: Practice, Test, and Endless. Free, no sign-up required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="practice-styles.css">
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Practice Mode</h1>
+    <p>Pick a concept. Practice until mastered. Prove it in the test.</p>
+  </header>
+
+  <!-- ==================== DASHBOARD VIEW ==================== -->
+  <div id="view-dashboard">
+    <div class="card">
+      <div class="result-label">Filter</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+        <div>
+          <label style="font-size:10px;">Grade</label>
+          <select id="dashGrade" class="geo-input" onchange="updateDashSubjects()">
+            <option value="all">All grades</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;">Subject</label>
+          <select id="dashSubject" class="geo-input" onchange="renderDashboard()">
+            <option value="all">All subjects</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="result-label" style="margin:0;">Your Concepts</div>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" onclick="exportProgress()">Export Progress</button>
+      </div>
+      <div id="dashGrid" class="prac-concept-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="result-label">Recent Sessions</div>
+      <div id="dashSessions"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SETUP VIEW ==================== -->
+  <div id="view-setup" class="prac-hidden" style="display:none;">
+    <div class="card">
+      <button class="back-link" onclick="showView('dashboard')">← Back to concepts</button>
+      <h2 id="setupTitle" style="font-size:24px; font-weight:600; letter-spacing:-0.5px; margin:12px 0 4px;">Concept</h2>
+      <div class="result-sub" id="setupSubject" style="margin-bottom:20px;">Subject</div>
+
+      <div class="result-label" style="margin-bottom:10px;">Choose your mode</div>
+      <div class="prac-mode-grid">
+        <div class="prac-mode-card" data-mode="practice" onclick="selectMode('practice')">
+          <span class="prac-mode-icon">📚</span>
+          <h3>Practice</h3>
+          <p>No timer. Step-by-step help. Climb from 0% to 100% mastery.</p>
+        </div>
+        <div class="prac-mode-card" data-mode="test" onclick="selectMode('test')">
+          <span class="prac-mode-icon">✅</span>
+          <h3>Test</h3>
+          <p>No help. No steps. Scored out of 100%. Unlocks at 100% mastery.</p>
+        </div>
+        <div class="prac-mode-card" data-mode="endless" onclick="selectMode('endless')">
+          <span class="prac-mode-icon">⏱️</span>
+          <h3>Endless</h3>
+          <p>Beat the clock. Correct answers add time. Difficulty escalates on streaks.</p>
+        </div>
+      </div>
+
+      <!-- Practice / Test: problem count -->
+      <div id="setupCountWrap" style="margin-top:20px; display:none;">
+        <div class="result-label" style="margin-bottom:10px;">How many problems?</div>
+        <div class="acc-tool-select" style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button class="prac-count-pill" data-count="5"  onclick="selectCount(5)">5</button>
+          <button class="prac-count-pill active" data-count="10" onclick="selectCount(10)">10</button>
+          <button class="prac-count-pill" data-count="15" onclick="selectCount(15)">15</button>
+          <button class="prac-count-pill" data-count="20" onclick="selectCount(20)">20</button>
+        </div>
+        <div style="margin-top:10px;">
+          <label style="font-size:10px;">Custom (min 5)</label>
+          <input type="number" id="setupCount" class="geo-input" min="5" max="100" value="10" style="max-width:140px;">
+        </div>
+      </div>
+
+      <!-- Endless: start time -->
+      <div id="setupTimeWrap" style="margin-top:20px; display:none;">
+        <div class="result-label" style="margin-bottom:10px;">Starting clock</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button class="prac-time-pill" data-time="1"  onclick="selectTime(1)">1 min</button>
+          <button class="prac-time-pill active" data-time="3" onclick="selectTime(3)">3 min</button>
+          <button class="prac-time-pill" data-time="5"  onclick="selectTime(5)">5 min</button>
+          <button class="prac-time-pill" data-time="10" onclick="selectTime(10)">10 min</button>
+        </div>
+        <div style="margin-top:10px;">
+          <label style="font-size:10px;">Custom (1–30 min)</label>
+          <input type="number" id="setupTime" class="geo-input" min="1" max="30" value="3" style="max-width:140px;">
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary btn-block" onclick="startSession()">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SESSION VIEW ==================== -->
+  <div id="view-session" style="display:none;">
+    <div class="card">
+      <div class="prac-session-top">
+        <div>
+          <div class="result-label" id="sessTitle" style="margin:0;">Concept</div>
+          <div class="prac-progress-text" id="sessProgress" style="margin-top:4px;">Problem 1 of 10</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="prac-endless-clock safe" id="sessTimer">00:00</div>
+          <div class="prac-streak" id="sessStreak" style="margin-top:4px;">Streak: <strong>0</strong></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="prac-problem" id="sessProblem">
+        <span class="prac-problem-label">Problem</span>
+        <div id="sessProblemText">Loading...</div>
+      </div>
+
+      <div id="sessAnswerArea"></div>
+
+      <div id="sessFeedback"></div>
+
+      <div class="btn-row" id="sessActions" style="margin-top:20px;">
+        <button class="btn btn-primary btn-block" id="sessSubmitBtn" onclick="submitCurrent()">Submit</button>
+        <button class="btn btn-secondary" onclick="endCurrentSession()">End Session</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== RESULTS VIEW ==================== -->
+  <div id="view-results" style="display:none;">
+    <div class="card">
+      <div class="result-label">Session Complete</div>
+      <h2 id="resTitle" style="font-size:24px; font-weight:600; letter-spacing:-0.5px; margin:8px 0 4px;">Concept</h2>
+      <div class="result-sub" id="resSub" style="margin-bottom:20px;">Mode</div>
+
+      <div class="prac-summary-grid" id="resStats"></div>
+
+      <div class="result-label" style="margin-top:20px;">All answers</div>
+      <div style="max-height:400px; overflow-y:auto;">
+        <table class="prac-results" id="resTable"></table>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary btn-block" id="resRetryBtn" onclick="retrySession()">Try Again</button>
+        <button class="btn btn-secondary" onclick="showView('dashboard')">Back to Concepts</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<!-- ==================== DEEP REVIEW MODAL ==================== -->
+<div class="prac-modal-overlay" id="reviewModal" onclick="if (event.target === this) closeReview()">
+  <div class="prac-modal">
+    <button class="prac-modal-close" onclick="closeReview()">×</button>
+    <div id="reviewContent"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script src="practice-concepts.js"></script>
+<script src="practice-engine.js"></script>
+<script>
+/* ============================================================
+   VIEW MANAGEMENT
+   ============================================================ */
+function showView(name) {
+  document.getElementById('view-dashboard').style.display = name === 'dashboard' ? 'block' : 'none';
+  document.getElementById('view-setup').style.display     = name === 'setup'     ? 'block' : 'none';
+  document.getElementById('view-session').style.display   = name === 'session'   ? 'block' : 'none';
+  document.getElementById('view-results').style.display   = name === 'results'   ? 'block' : 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+let selectedGrade = 'all';
+let selectedSubject = 'all';
+
+function initDashboard() {
+  const gradeSelect = document.getElementById('dashGrade');
+  const subjects = document.getElementById('dashSubject');
+
+  if (!window.Practice) return;
+  const grades = window.Practice.getGradeList();
+  grades.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = 'Grade ' + g;
+    gradeSelect.appendChild(opt);
+  });
+
+  updateDashSubjects();
+  renderDashboard();
+  renderRecentSessions();
+}
+
+function updateDashSubjects() {
+  selectedGrade = document.getElementById('dashGrade').value;
+  const subjectSelect = document.getElementById('dashSubject');
+  subjectSelect.innerHTML = '<option value="all">All subjects</option>';
+
+  if (!window.Practice) return;
+  const all = window.Practice.listConcepts();
+  const subjects = new Set();
+  all.forEach(c => {
+    if (selectedGrade === 'all' || c.grade === parseInt(selectedGrade)) {
+      subjects.add(c.subject);
+    }
+  });
+  Array.from(subjects).sort().forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    subjectSelect.appendChild(opt);
+  });
+  renderDashboard();
+}
+
+function renderDashboard() {
+  selectedSubject = document.getElementById('dashSubject').value;
+  const grid = document.getElementById('dashGrid');
+  if (!window.Practice) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">Engine not loaded.</div>';
+    return;
+  }
+
+  const mastery = window.Practice.getAllMastery();
+  let concepts = window.Practice.listConcepts();
+
+  if (selectedGrade !== 'all') concepts = concepts.filter(c => c.grade === parseInt(selectedGrade));
+  if (selectedSubject !== 'all') concepts = concepts.filter(c => c.subject === selectedSubject);
+
+  if (concepts.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">No concepts match this filter.</div>';
+    return;
+  }
+
+  grid.innerHTML = concepts.map(c => {
+    const m = mastery[c.id] || { mastery: 0, bestEndless: 0, bestTier: 1 };
+    const masteryNum = Math.round(m.mastery);
+    let status, statusClass;
+    if (masteryNum >= 100) { status = 'Mastered'; statusClass = 'mastered'; }
+    else if (masteryNum > 0) { status = masteryNum + '%'; statusClass = 'progress'; }
+    else { status = 'Not started'; statusClass = 'notstarted'; }
+
+    return `
+      <button class="prac-concept-card" onclick="openConcept('${c.id}')">
+        <h3>${escapeHtml(c.title)}</h3>
+        <div class="prac-concept-subject">${escapeHtml(c.subject)} · Gr ${c.grade}</div>
+        <div style="font-size:12px; color:var(--text-muted); line-height:1.5; margin-bottom:8px;">${escapeHtml(c.description || '')}</div>
+        <div class="prac-concept-meta">
+          <span class="prac-mastery-pill ${statusClass}">${status}</span>
+          <span>Endless: <strong>${m.bestEndless ? window.Practice.fmtScore(m.bestEndless) : '—'}</strong></span>
+        </div>
+      </button>
+    `;
+  }).join('');
+}
+
+function renderRecentSessions() {
+  const el = document.getElementById('dashSessions');
+  if (!window.Practice) { el.innerHTML = ''; return; }
+  const sessions = window.Practice.getRecentSessions(10);
+  if (sessions.length === 0) {
+    el.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">No sessions yet. Pick a concept above to begin.</div>';
+    return;
+  }
+  const rows = sessions.map(s => {
+    const concept = window.Practice.getConcept(s.conceptId);
+    const title = concept ? concept.title : s.conceptId;
+    const date = new Date(s.startedAt).toLocaleDateString();
+    const acc = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+    const modeIcon = s.mode === 'practice' ? '📚' : s.mode === 'test' ? '✅' : '⏱️';
+    const scoreText = s.mode === 'endless'
+      ? window.Practice.fmtScore(s.score) + ' pts'
+      : s.correct + '/' + s.total + ' (' + acc + '%)';
+    return `
+      <div class="weak-card-item" style="margin-bottom:6px;">
+        <span class="wc-front">${modeIcon} ${escapeHtml(title)}</span>
+        <span class="wc-metric">${escapeHtml(date)} · ${escapeHtml(scoreText)}</span>
+      </div>
+    `;
+  }).join('');
+  el.innerHTML = rows;
+}
+
+/* ============================================================
+   SETUP
+   ============================================================ */
+let setupConceptId = null;
+let setupMode = null;
+let setupCount = 10;
+let setupTime = 3;
+
+function openConcept(id) {
+  if (!window.Practice) return;
+  const c = window.Practice.getConcept(id);
+  if (!c) return;
+  setupConceptId = id;
+  setupMode = null;
+  document.getElementById('setupTitle').textContent = c.title;
+  document.getElementById('setupSubject').textContent = c.subject + ' · Grade ' + c.grade;
+  document.querySelectorAll('.prac-mode-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('setupCountWrap').style.display = 'none';
+  document.getElementById('setupTimeWrap').style.display = 'none';
+  showView('setup');
+}
+
+function selectMode(mode) {
+  setupMode = mode;
+  document.querySelectorAll('.prac-mode-card').forEach(el => {
+    el.classList.toggle('selected', el.getAttribute('data-mode') === mode);
+  });
+
+  const countWrap = document.getElementById('setupCountWrap');
+  const timeWrap = document.getElementById('setupTimeWrap');
+
+  if (mode === 'endless') {
+    countWrap.style.display = 'none';
+    timeWrap.style.display = 'block';
+  } else {
+    countWrap.style.display = 'block';
+    timeWrap.style.display = 'none';
+  }
+}
+
+function selectCount(n) {
+  setupCount = n;
+  document.getElementById('setupCount').value = n;
+  document.querySelectorAll('.prac-count-pill').forEach(el => {
+    el.classList.toggle('active', parseInt(el.getAttribute('data-count')) === n);
+  });
+}
+
+function selectTime(n) {
+  setupTime = n;
+  document.getElementById('setupTime').value = n;
+  document.querySelectorAll('.prac-time-pill').forEach(el => {
+    el.classList.toggle('active', parseInt(el.getAttribute('data-time')) === n);
+  });
+}
+
+function startSession() {
+  if (!setupConceptId) return;
+  if (!setupMode) {
+    alert('Please choose a mode first.');
+    return;
+  }
+
+  const options = { conceptId: setupConceptId, mode: setupMode };
+
+  if (setupMode === 'endless') {
+    const custom = parseInt(document.getElementById('setupTime').value);
+    options.startTime = (custom >= 1 && custom <= 30) ? custom : setupTime;
+  } else {
+    const custom = parseInt(document.getElementById('setupCount').value);
+    if (custom >= 5 && custom <= 100) options.problemCount = custom;
+    else options.problemCount = setupCount;
+  }
+
+  const ok = window.Practice.start(options);
+  if (!ok) { alert('Could not start session.'); return; }
+
+  showView('session');
+  renderSession();
+}
+
+/* ============================================================
+   SESSION RENDERING
+   ============================================================ */
+let currentAnswer = null;
+
+function renderSession() {
+  if (!window.Practice) return;
+  const st = window.Practice.getState();
+  const concept = window.Practice.getConcept(st.conceptId);
+  if (!concept) return;
+
+  document.getElementById('sessTitle').textContent = concept.title;
+
+  // Progress text
+  if (st.mode === 'endless') {
+    document.getElementById('sessProgress').textContent = 'Problem ' + (st.currentIndex + 1) + ' · Tier ' + st.tier;
+  } else {
+    document.getElementById('sessProgress').textContent = 'Problem ' + (st.currentIndex + 1) + ' of ' + st.problemCount;
+  }
+
+  // Timer
+  const timerEl = document.getElementById('sessTimer');
+  if (st.mode === 'endless') {
+    timerEl.textContent = window.Practice.fmtTime(st.timeRemaining);
+    timerEl.className = 'prac-endless-clock ' + (st.timeRemaining <= 10 ? 'danger' : st.timeRemaining <= 30 ? 'warning' : 'safe');
+  } else {
+    timerEl.textContent = window.Practice.fmtTime(st.elapsed);
+    timerEl.className = 'prac-endless-clock safe';
+  }
+
+  // Streak
+  const streakEl = document.getElementById('sessStreak');
+  streakEl.innerHTML = 'Streak: <strong>' + st.streak + '</strong>';
+  streakEl.classList.toggle('broken', st.streak === 0 && st.wrong > 0);
+
+  // Problem
+  renderProblem(concept, st.problem);
+
+  // Reset answer area
+  currentAnswer = null;
+  document.getElementById('sessFeedback').innerHTML = '';
+  document.getElementById('sessSubmitBtn').disabled = false;
+  document.getElementById('sessSubmitBtn').textContent = 'Submit';
+}
+
+function renderProblem(concept, problem) {
+  const problemText = document.getElementById('sessProblemText');
+  const answerArea = document.getElementById('sessAnswerArea');
+
+  if (concept.type === 'numeric') {
+    // Build problem statement from inputs
+    problemText.innerHTML = buildNumericStatement(concept.id, problem);
+    answerArea.innerHTML = `
+      <label>Your answer (${concept.id === 'coulomb' ? 'N' : ''})</label>
+      <input type="text" id="answerInput" class="geo-input" placeholder="Type your answer" autocomplete="off" onkeydown="if (event.key === 'Enter') submitCurrent()">
+    `;
+    setTimeout(() => document.getElementById('answerInput').focus(), 100);
+  } else if (concept.type === 'conceptual') {
+    problemText.textContent = problem.question;
+    answerArea.innerHTML = '<div class="prac-mc-options" id="mcOptions"></div>';
+    const optWrap = document.getElementById('mcOptions');
+    optWrap.innerHTML = problem.options.map((opt, i) =>
+      '<button class="prac-mc-option" data-opt="' + escapeHtml(opt).replace(/"/g, '&quot;') + '" onclick="selectMCOption(this)">' + escapeHtml(opt) + '</button>'
+    ).join('');
+  }
+}
+
+function buildNumericStatement(conceptId, problem) {
+  if (conceptId === 'coulomb') {
+    const fmt = window.Practice.getConcept('coulomb').fmt;
+    return `Two point charges of <strong>${fmt(problem.q1)} C</strong> and <strong>${fmt(problem.q2)} C</strong> are placed <strong>${fmt(problem.r)} m</strong> apart.<br><br>Calculate the magnitude of the electrostatic force between them. (k = 9×10⁹ N·m²/C²)`;
+  }
+  return JSON.stringify(problem);
+}
+
+function selectMCOption(btn) {
+  if (btn.classList.contains('disabled')) return;
+  document.querySelectorAll('.prac-mc-option').forEach(el => el.classList.remove('selected'));
+  btn.classList.add('selected');
+  currentAnswer = btn.getAttribute('data-opt');
+}
+
+/* ============================================================
+   SUBMIT
+   ============================================================ */
+function submitCurrent() {
+  if (!window.Practice) return;
+  const st = window.Practice.getState();
+  const concept = window.Practice.getConcept(st.conceptId);
+  if (!concept) return;
+
+  let answer;
+  if (concept.type === 'numeric') {
+    const input = document.getElementById('answerInput');
+    if (!input || input.value.trim() === '') return;
+    answer = input.value.trim();
+    document.getElementById('sessSubmitBtn').disabled = true;
+  } else {
+    if (!currentAnswer) return;
+    answer = currentAnswer;
+  }
+
+  const result = window.Practice.submitAnswer(answer);
+  if (!result) return;
+
+  // Disable all answer input
+  if (concept.type === 'numeric') {
+    const input = document.getElementById('answerInput');
+    if (input) input.disabled = true;
+  } else {
+    document.querySelectorAll('.prac-mc-option').forEach(el => {
+      el.classList.add('disabled');
+      if (el.getAttribute('data-opt') === result.correctAnswer) el.classList.add('correct');
+      else if (el.classList.contains('selected')) el.classList.add('wrong');
+    });
+  }
+
+  // Show feedback
+  const fb = document.getElementById('sessFeedback');
+  if (result.correct) {
+    fb.innerHTML = '<div class="prac-feedback correct"><strong>✓ Correct</strong>' + escapeHtml(result.correctAnswer) + '</div>';
+  } else {
+    fb.innerHTML = '<div class="prac-feedback wrong"><strong>✗ Not quite</strong>Correct answer: ' + escapeHtml(result.correctAnswer) + '</div>';
+  }
+
+  // Change submit button to "Next"
+  const btn = document.getElementById('sessSubmitBtn');
+  btn.disabled = false;
+  btn.textContent = 'Next →';
+  btn.onclick = nextOrEnd;
+}
+
+function nextOrEnd() {
+  if (!window.Practice) return;
+  const st = window.Practice.getState();
+
+  // Endless ends when time runs out
+  if (st.mode === 'endless' && st.timeRemaining <= 0) {
+    showResults();
+    return;
+  }
+
+  if (st.mode === 'practice' || st.mode === 'test') {
+    if (st.currentIndex >= st.problemCount) {
+      showResults();
+      return;
+    }
+  }
+
+  const p = window.Practice.advance();
+  if (!p) {
+    showResults();
+    return;
+  }
+
+  const btn = document.getElementById('sessSubmitBtn');
+  btn.onclick = submitCurrent;
+  renderSession();
+}
+
+function endCurrentSession() {
+  if (!confirm('End this session? Your progress will be saved.')) return;
+  window.Practice.endSession('manual');
+  showResults();
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+let lastSession = null;
+
+function showResults() {
+  const sessions = window.Practice.getRecentSessions(1);
+  if (sessions.length === 0) { showView('dashboard'); return; }
+  lastSession = sessions[0];
+
+  const concept = window.Practice.getConcept(lastSession.conceptId);
+  document.getElementById('resTitle').textContent = concept ? concept.title : lastSession.conceptId;
+  const modeLabels = { practice: 'Practice', test: 'Test', endless: 'Endless' };
+  document.getElementById('resSub').textContent = modeLabels[lastSession.mode] + ' session complete';
+
+  const accuracy = lastSession.total > 0 ? Math.round((lastSession.correct / lastSession.total) * 100) : 0;
+
+  let statsHtml = '';
+  statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Correct</span><span class="prac-summary-value success">' + lastSession.correct + '</span></div>';
+  statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Wrong</span><span class="prac-summary-value danger">' + lastSession.wrong + '</span></div>';
+  statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Accuracy</span><span class="prac-summary-value">' + accuracy + '%</span></div>';
+  statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Time</span><span class="prac-summary-value">' + window.Practice.fmtTime(lastSession.duration) + '</span></div>';
+  if (lastSession.mode === 'endless') {
+    statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Score</span><span class="prac-summary-value">' + window.Practice.fmtScore(lastSession.score) + '</span></div>';
+    statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Peak Tier</span><span class="prac-summary-value">' + lastSession.tier + '</span></div>';
+  } else {
+    statsHtml += '<div class="prac-summary-cell"><span class="prac-summary-label">Longest Streak</span><span class="prac-summary-value">' + lastSession.longestStreak + '</span></div>';
+  }
+  document.getElementById('resStats').innerHTML = statsHtml;
+
+  // Results table
+  const table = document.getElementById('resTable');
+  let rows = '<thead><tr><th>#</th><th>Your Answer</th><th>Status</th><th class="num">Time</th></tr></thead><tbody>';
+  lastSession.answered.forEach((a, i) => {
+    const r = a.result;
+    const status = r.correct
+      ? '<td class="status-correct">✓ Correct</td>'
+      : '<td class="status-wrong">✗ Wrong</td>';
+    const answer = r.correct ? r.correctAnswer : r.studentAnswer + ' → ' + r.correctAnswer;
+    rows += '<tr class="clickable" onclick="openReview(' + i + ')">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td>' + escapeHtml(String(answer)) + '</td>' +
+      status +
+      '<td class="num">' + a.timeTaken + 's</td>' +
+    '</tr>';
+  });
+  rows += '</tbody>';
+  table.innerHTML = rows;
+
+  showView('results');
+}
+
+/* ============================================================
+   DEEP REVIEW MODAL
+   ============================================================ */
+function openReview(index) {
+  if (!lastSession) return;
+  const a = lastSession.answered[index];
+  if (!a) return;
+
+  const r = a.result;
+  const concept = window.Practice.getConcept(lastSession.conceptId);
+  const modal = document.getElementById('reviewContent');
+
+  let html = '';
+
+  if (r.correct) {
+    html += '<h2>' + escapeHtml(concept.title) + '</h2>';
+    html += '<div class="prac-modal-sub">Question ' + (index + 1) + ' · Correct</div>';
+    html += '<div class="prac-feedback correct"><strong>✓ You got this right</strong>Answer: ' + escapeHtml(r.correctAnswer) + '</div>';
+    html += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary btn-block" onclick="closeReview()">Close</button></div>';
+  } else {
+    html += '<h2>' + escapeHtml(concept.title) + '</h2>';
+    html += '<div class="prac-modal-sub">Question ' + (index + 1) + ' · Review</div>';
+
+    html += '<div class="prac-problem" style="margin-bottom:16px;">';
+    html += '<span class="prac-problem-label">Problem</span>';
+    if (concept.type === 'numeric') {
+      html += buildNumericStatement(concept.id, a.problem);
+    } else {
+      html += escapeHtml(a.problem.question);
+    }
+    html += '</div>';
+
+    html += '<div class="result-label">Your answer</div>';
+    html += '<div style="padding:10px 14px; background:var(--danger-bg); border:1px solid var(--danger); border-radius:8px; font-family:var(--font-mono); font-size:14px; margin-bottom:16px;">' + escapeHtml(String(r.studentAnswer)) + '</div>';
+
+    // Error pattern explanation (if available)
+    if (r.errorPattern) {
+      html += '<div class="prac-feedback wrong" style="margin-bottom:16px;">';
+      html += '<strong>' + escapeHtml(r.errorPattern.title) + '</strong>';
+      html += escapeHtml(r.errorPattern.explain);
+      html += '</div>';
+
+      html += '<div class="result-label">Walk-through</div>';
+      html += '<div class="prac-walk-step"><span class="prac-walk-label">What happened</span>' + escapeHtml(r.errorPattern.walkthrough) + '</div>';
+      html += '<div class="prac-walk-step"><span class="prac-walk-label">How to fix it</span>' + escapeHtml(r.errorPattern.fix) + '</div>';
+    }
+
+    // Full step-by-step
+    if (r.steps) {
+      html += '<div class="result-label" style="margin-top:16px;">Full working</div>';
+      r.steps.forEach((s, si) => {
+        html += '<div class="prac-walk-step"><span class="prac-walk-label">' + escapeHtml(s.label) + '</span>' + escapeHtml(s.value) + (s.unit ? ' <span style="color:var(--text-dim);">' + escapeHtml(s.unit) + '</span>' : '') + '</div>';
+      });
+    }
+
+    html += '<div class="result-label" style="margin-top:16px;">Do you understand now?</div>';
+    html += '<div class="prac-flag-row">';
+    html += '<button class="prac-flag-btn yes" onclick="markUnderstood(' + index + ')">✓ Yes, I\'ve got it</button>';
+    html += '<button class="prac-flag-btn no" onclick="startFocusedPractice(' + index + ')">Not quite yet</button>';
+    html += '</div>';
+  }
+
+  modal.innerHTML = html;
+  document.getElementById('reviewModal').classList.add('show');
+}
+
+function closeReview() {
+  document.getElementById('reviewModal').classList.remove('show');
+}
+
+function markUnderstood(index) {
+  // Record understanding flag
+  try {
+    const store = JSON.parse(localStorage.getItem('studytools_practice_understood') || '{}');
+    const key = lastSession.conceptId + ':' + index;
+    store[key] = { understood: true, when: Date.now() };
+    localStorage.setItem('studytools_practice_understood', JSON.stringify(store));
+  } catch (e) {}
+  closeReview();
+}
+
+function startFocusedPractice(index) {
+  const a = lastSession.answered[index];
+  if (!a || !a.result.errorPattern) {
+    closeReview();
+    return;
+  }
+  const patternId = a.result.errorPattern.id;
+  const concept = window.Practice.getConcept(lastSession.conceptId);
+
+  // Build focused practice problem
+  if (!concept.drill) {
+    alert('Focused practice not available for this concept yet.');
+    closeReview();
+    return;
+  }
+
+  const drill = concept.drill(patternId);
+  closeReview();
+
+  // Show focused practice inside modal for simplicity
+  const modal = document.getElementById('reviewContent');
+  let html = '';
+  html += '<h2>Focused Practice</h2>';
+  html += '<div class="prac-modal-sub">' + escapeHtml(concept.title) + ' · Drilling: ' + escapeHtml(a.result.errorPattern.title) + '</div>';
+  html += '<div class="prac-feedback wrong" style="margin-bottom:16px;"><strong>Focus</strong>' + escapeHtml(a.result.errorPattern.fix) + '</div>';
+
+  if (drill.focusPrompt) {
+    html += '<div class="prac-walk-step"><span class="prac-walk-label">Hint</span>' + escapeHtml(drill.focusPrompt) + '</div>';
+  }
+
+  if (drill.type === 'coulomb') {
+    html += '<div class="prac-problem" style="margin-top:16px;">';
+    html += '<span class="prac-problem-label">Problem</span>';
+    html += buildNumericStatement('coulomb', drill.inputs);
+    html += '</div>';
+    html += '<label>Your answer (N)</label>';
+    html += '<input type="text" id="drillAnswer" class="geo-input" placeholder="Type your answer" autocomplete="off">';
+    html += '<div class="btn-row" style="margin-top:16px;">';
+    html += '<button class="btn btn-primary btn-block" onclick="checkDrill()">Check</button>';
+    html += '<button class="btn btn-secondary" onclick="closeReview()">Close</button>';
+    html += '</div>';
+    html += '<div id="drillFeedback"></div>';
+    window._drillInputs = drill.inputs;
+    window._drillType = 'coulomb';
+  } else if (drill.type === 'volcano_type') {
+    html += '<div class="prac-problem" style="margin-top:16px;">';
+    html += '<span class="prac-problem-label">Problem</span>';
+    html += escapeHtml(drill.problem.question);
+    html += '</div>';
+    html += '<div class="prac-mc-options">';
+    drill.problem.options.forEach(opt => {
+      html += '<button class="prac-mc-option" data-opt="' + escapeHtml(opt).replace(/"/g, '&quot;') + '" onclick="checkVolcanoDrill(this)">' + escapeHtml(opt) + '</button>';
+    });
+    html += '</div>';
+    html += '<div id="drillFeedback"></div>';
+    window._drillProblem = drill.problem;
+    window._drillType = 'volcano_type';
+  }
+
+  modal.innerHTML = html;
+  document.getElementById('reviewModal').classList.add('show');
+}
+
+function checkDrill() {
+  const input = document.getElementById('drillAnswer');
+  if (!input) return;
+  const val = input.value.trim();
+  if (val === '') return;
+
+  const concept = window.Practice.getConcept('coulomb');
+  const solved = concept.solve(window._drillInputs);
+  const studentNum = parseFloat(val.replace(/[^0-9.\-eE]/g, ''));
+  const correctNum = solved.answer;
+  const diff = Math.abs(studentNum - correctNum);
+  const relDiff = correctNum !== 0 ? diff / Math.abs(correctNum) : diff;
+  const ok = !isNaN(studentNum) && relDiff < 0.01;
+
+  const fb = document.getElementById('drillFeedback');
+  if (ok) {
+    fb.innerHTML = '<div class="prac-feedback correct" style="margin-top:16px;"><strong>✓ Correct</strong>' + escapeHtml(solved.answerFormatted) + '</div>';
+    input.disabled = true;
+  } else {
+    fb.innerHTML = '<div class="prac-feedback wrong" style="margin-top:16px;"><strong>✗ Try again</strong>Expected: ' + escapeHtml(solved.answerFormatted) + '</div>';
+  }
+}
+
+function checkVolcanoDrill(btn) {
+  const p = window._drillProblem;
+  document.querySelectorAll('.prac-mc-option').forEach(el => el.classList.add('disabled'));
+  if (btn.getAttribute('data-opt') === p.answer) {
+    btn.classList.add('correct');
+    document.getElementById('drillFeedback').innerHTML = '<div class="prac-feedback correct" style="margin-top:16px;"><strong>✓ Correct</strong></div>';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.prac-mc-option').forEach(el => {
+      if (el.getAttribute('data-opt') === p.answer) el.classList.add('correct');
+    });
+    document.getElementById('drillFeedback').innerHTML = '<div class="prac-feedback wrong" style="margin-top:16px;"><strong>✗ Not quite</strong>Correct: ' + escapeHtml(p.answer) + '</div>';
+  }
+}
+
+function retrySession() {
+  if (!lastSession) { showView('dashboard'); return; }
+  openConcept(lastSession.conceptId);
+}
+
+/* ============================================================
+   EXPORT
+   ============================================================ */
+function exportProgress() {
+  if (!window.Practice) return;
+  window.Practice.exportProgress();
+}
+
+/* ============================================================
+   LIVE TICK HANDLER (updates timer in session)
+   ============================================================ */
+window.addEventListener('practice:tick', function (e) {
+  if (document.getElementById('view-session').style.display === 'none') return;
+  const d = e.detail;
+  const timerEl = document.getElementById('sessTimer');
+  if (!timerEl) return;
+  if (d.mode === 'endless') {
+    timerEl.textContent = window.Practice.fmtTime(d.timeRemaining);
+    timerEl.className = 'prac-endless-clock ' + (d.timeRemaining <= 10 ? 'danger' : d.timeRemaining <= 30 ? 'warning' : 'safe');
+    if (d.timeRemaining <= 0) {
+      // Session ended automatically
+      setTimeout(showResults, 500);
+    }
+  } else {
+    timerEl.textContent = window.Practice.fmtTime(d.elapsed);
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+  initDashboard();
+  showView('dashboard');
+});
+</script>
+</body>
+</html>
