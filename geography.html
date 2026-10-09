@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geography Tools - Grade 10, 11 & 12 NSC Calculator</title>
+<meta name="description" content="Free NSC Geography tools for Grade 10, 11 and 12. Climatology, geomorphology, settlement, economic geography, and mapwork calculations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .geo-tool-select { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .geo-tool-pill {
+    padding: 7px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: 100px; font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .geo-tool-pill:hover { border-color: var(--accent); color: var(--text); }
+  .geo-tool-pill.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  .geo-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .geo-input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 500px) { .geo-input-grid, .geo-input-grid-3 { grid-template-columns: 1fr; } }
+  .geo-answer {
+    font-size: 24px; font-weight: 700; letter-spacing: -1px; color: var(--success);
+    font-family: var(--font-mono); margin: 8px 0; word-break: break-word; line-height: 1.2;
+  }
+  .geo-answer.multi { font-size: 16px; }
+  .geo-input { font-family: var(--font-mono); font-size: 15px; padding: 12px 14px; }
+  .geo-step {
+    padding: 12px 16px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm); margin-bottom: 8px; font-family: var(--font-mono);
+    font-size: 13px; color: var(--text); line-height: 1.65;
+  }
+  .geo-step .step-num {
+    display: inline-block; width: 22px; height: 22px; background: var(--accent);
+    color: var(--accent-text); border-radius: 50%; font-size: 11px; text-align: center;
+    line-height: 22px; font-weight: 600; margin-right: 10px; flex-shrink: 0;
+  }
+  .geo-step .step-row { display: flex; align-items: flex-start; }
+  .geo-formula {
+    display: inline-block; padding: 2px 8px; background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--text); margin: 0 2px;
+  }
+  .geo-formula-note {
+    padding: 10px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent); border-radius: 10px; font-size: 12px;
+    color: var(--text-muted); line-height: 1.7; margin-bottom: 12px;
+  }
+  .geo-formula-note strong { color: var(--text); }
+  .geo-result-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .geo-hidden { display: none !important; }
+  .geo-subpills {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; padding: 8px;
+    background: var(--glass-strong); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  }
+  .geo-subpill {
+    padding: 5px 11px; background: transparent; border: none; border-radius: 100px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .geo-subpill:hover { color: var(--text); }
+  .geo-subpill.active { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+
+  /* Pop-up toast for mapwork tip */
+  .geo-toast {
+    position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(-120%);
+    z-index: 80; padding: 12px 20px;
+    background: var(--accent); color: var(--accent-text);
+    border-radius: 100px; font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    display: flex; align-items: center; gap: 10px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+    opacity: 0; pointer-events: none;
+    cursor: pointer; max-width: 90vw;
+  }
+  .geo-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1; pointer-events: auto;
+  }
+  .geo-toast-close {
+    background: rgba(255,255,255,0.2);
+    border: none; color: inherit; width: 22px; height: 22px; border-radius: 50%;
+    cursor: pointer; font-size: 14px; line-height: 1; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="geo-toast" id="geoToast" onclick="geoJumpTo12()">
+  <span>📐 Mapwork calculations live in the Grade 12 tab</span>
+  <button class="geo-toast-close" onclick="event.stopPropagation(); geoDismissToast()" aria-label="Close">×</button>
+</div>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Geography Tools</h1>
+    <p>NSC Grade 10, 11 &amp; 12 Geography tools with step-by-step working.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab active" id="tabG10" onclick="geoSetGrade(10)">Grade 10</button>
+      <button class="tab" id="tabG11" onclick="geoSetGrade(11)">Grade 11</button>
+      <button class="tab" id="tabG12" onclick="geoSetGrade(12)">Grade 12</button>
+    </div>
+
+    <div id="geoGrade10Tools">
+      <div class="geo-tool-select">
+        <button class="geo-tool-pill active" data-grade="10" data-tool="atmoslayer" onclick="geoSelect(10, 'atmoslayer')">Atmosphere Layers</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="heattransfer" onclick="geoSelect(10, 'heattransfer')">Heat Transfer</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="cloudtype" onclick="geoSelect(10, 'cloudtype')">Cloud Types</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="rainfall" onclick="geoSelect(10, 'rainfall')">Rainfall Types</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="station" onclick="geoSelect(10, 'station')">Station Model</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="platebound" onclick="geoSelect(10, 'platebound')">Plate Boundaries</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="foldfault" onclick="geoSelect(10, 'foldfault')">Folds &amp; Faults</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="earthquake" onclick="geoSelect(10, 'earthquake')">Earthquakes</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="volcano" onclick="geoSelect(10, 'volcano')">Volcano Types</button>
+        <button class="geo-tool-pill" data-grade="10" data-tool="popdensity" onclick="geoSelect(10, 'popdensity')">Population Density</button>
+      </div>
+    </div>
+
+    <div id="geoGrade11Tools" class="geo-hidden">
+      <div class="geo-tool-select">
+        <button class="geo-tool-pill active" data-grade="11" data-tool="pressurebelt" onclick="geoSelect(11, 'pressurebelt')">Pressure Belts</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="tricell" onclick="geoSelect(11, 'tricell')">Tri-Cellular Cells</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="oceancurrent" onclick="geoSelect(11, 'oceancurrent')">Ocean Currents</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="drought" onclick="geoSelect(11, 'drought')">Drought &amp; Desertification</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="inclined" onclick="geoSelect(11, 'inclined')">Inclined Strata</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="massmovement" onclick="geoSelect(11, 'massmovement')">Mass Movement</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="slopeelements" onclick="geoSelect(11, 'slopeelements')">Slope Elements</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="devindicators" onclick="geoSelect(11, 'devindicators')">Development Indicators</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="tradebalance" onclick="geoSelect(11, 'tradebalance')">Trade Balance</button>
+        <button class="geo-tool-pill" data-grade="11" data-tool="energysource" onclick="geoSelect(11, 'energysource')">Energy Sources</button>
+      </div>
+    </div>
+
+    <div id="geoGrade12Tools" class="geo-hidden">
+      <div class="geo-tool-select">
+        <button class="geo-tool-pill active" data-grade="12" data-tool="mapwork" onclick="geoSelect(12, 'mapwork')">Mapwork Toolkit</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="midlat" onclick="geoSelect(12, 'midlat')">Mid-Latitude Cyclones</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="tropical" onclick="geoSelect(12, 'tropical')">Tropical Cyclones</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="drainage" onclick="geoSelect(12, 'drainage')">Drainage Patterns</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="meander" onclick="geoSelect(12, 'meander')">Meanders &amp; Oxbows</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="rivergrading" onclick="geoSelect(12, 'rivergrading')">River Grading</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="urbanzone" onclick="geoSelect(12, 'urbanzone')">Urban Land Use</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="centralplace" onclick="geoSelect(12, 'centralplace')">Central Place</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="econsector" onclick="geoSelect(12, 'econsector')">Economic Sectors</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="fluvial" onclick="geoSelect(12, 'fluvial')">Fluvial Landforms</button>
+        <button class="geo-tool-pill" data-grade="12" data-tool="hierarchy" onclick="geoSelect(12, 'hierarchy')">Settlement Hierarchy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 10 ============ -->
+
+  <div id="tool-atmoslayer" class="geo-tool-panel">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Layers of the atmosphere</strong> (from surface up): Troposphere → Stratosphere → Mesosphere → Thermosphere.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Description or layer name</label>
+        <input type="text" id="al_query" class="geo-input" placeholder="e.g. ozone layer, weather, meteors burn up" value="ozone">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoAtmosLayer()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="al_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a description and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-heattransfer" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Heat transfer processes</strong> — Conduction, Convection, Radiation, Terrestrial radiation, Scattering, Reflection, Absorption.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Describe the process</label>
+        <input type="text" id="ht_query" class="geo-input" placeholder="e.g. heat through direct contact, energy sent back to space" value="direct contact">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoHeatTransfer()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Process</div>
+      <div id="ht_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a description and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-cloudtype" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Cloud types:</strong> Cumulonimbus (thunderstorms), Nimbostratus (steady rain), Stratus (low layer), Cumulus (fair weather), Cirrus (high wispy).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Cloud name or description</label>
+        <input type="text" id="ct_query" class="geo-input" placeholder="e.g. cumulonimbus, tall dark storm cloud" value="cumulonimbus">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoCloudType()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="ct_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter cloud name and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-rainfall" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Three types of rainfall:</strong> Relief (mountains), Convectional (hot afternoons), Frontal (warm/cold front meet).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Type</label>
+        <select id="rf_type" class="geo-input">
+          <option value="relief">Relief rainfall</option>
+          <option value="convectional">Convectional rainfall</option>
+          <option value="frontal">Frontal rainfall</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoRainfall()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Explanation</div>
+      <div id="rf_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a type and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-station" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Station model interpreter</strong> — enter the values shown on a weather station symbol.
+      </div>
+      <div class="geo-input-grid">
+        <div><label>Air temperature (°C)</label><input type="number" id="st_temp" class="geo-input" step="any" value="18"></div>
+        <div><label>Dew point temperature (°C)</label><input type="number" id="st_dew" class="geo-input" step="any" value="14"></div>
+        <div><label>Cloud cover (oktas 0–8)</label><input type="number" id="st_cloud" class="geo-input" step="any" value="6"></div>
+        <div><label>Wind speed (knots)</label><input type="number" id="st_wind" class="geo-input" step="any" value="15"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoStation()">Interpret</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Interpretation</div>
+      <div id="st_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Interpret.</div></div>
+    </div>
+    <div class="card geo-hidden" id="st_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="st_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-platebound" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Three plate boundaries:</strong> Convergent (destructive), Divergent (constructive), Transform (conservative).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Boundary type</label>
+        <select id="pb_type" class="geo-input">
+          <option value="convergent">Convergent</option>
+          <option value="divergent">Divergent</option>
+          <option value="transform">Transform</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoPlateBound()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="pb_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a boundary and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-foldfault" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Folds:</strong> symmetrical, asymmetrical, overfold, overthrust, nappe. <strong>Faults:</strong> normal, reverse, transform, horst, graben.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Feature</label>
+        <input type="text" id="ff_query" class="geo-input" placeholder="e.g. anticline, syncline, horst, graben, overfold" value="anticline">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoFoldFault()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="ff_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter feature and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-earthquake" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Earthquake concepts:</strong> focus, epicentre, P-waves, S-waves, L-waves, seismograph, Richter scale.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Concept</label>
+        <input type="text" id="eq_query" class="geo-input" placeholder="e.g. focus, epicentre, P wave, Richter" value="focus">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoEarthquake()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="eq_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a concept and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-volcano" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Volcano types:</strong> Shield (broad, runny lava), Composite (steep, layered), Cinder cone (small, explosive).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Volcano type</label>
+        <select id="vc_type" class="geo-input">
+          <option value="shield">Shield volcano</option>
+          <option value="composite">Composite volcano</option>
+          <option value="cinder">Cinder cone</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoVolcano()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="vc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a type and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-popdensity" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <span class="geo-formula">Population density = Total population ÷ Area (km²)</span>
+      </div>
+      <div class="geo-input-grid">
+        <div><label>Total population</label><input type="number" id="pd_pop" class="geo-input" step="any" value="595061"></div>
+        <div><label>Area (km²)</label><input type="number" id="pd_area" class="geo-input" step="any" value="225.91"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoPopDensity()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Density</div>
+      <div id="pd_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card geo-hidden" id="pd_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pd_steps"></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 11 ============ -->
+
+  <div id="tool-pressurebelt" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Pressure belts by latitude:</strong> 0° Equatorial low · 30° N/S Subtropical high · 60° N/S Subpolar low · 90° N/S Polar high.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Latitude</label>
+        <select id="prb_lat" class="geo-input">
+          <option value="0">0° (Equator)</option>
+          <option value="30">30° N/S</option>
+          <option value="60">60° N/S</option>
+          <option value="90">90° N/S</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoPressureBelt()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="prb_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a latitude and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-tricell" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Three cells per hemisphere:</strong> Hadley (0–30°), Ferrel (30–60°), Polar (60–90°).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Description or cell name</label>
+        <input type="text" id="tc_query" class="geo-input" placeholder="e.g. trade winds, westerlies, polar easterlies" value="westerlies">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoTriCell()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="tc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter description and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-oceancurrent" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Ocean currents</strong> warm or cool the air above them, affecting coastal climate.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Coast or current</label>
+        <select id="oc_coast" class="geo-input">
+          <option value="east">East coast (warm current — e.g. Agulhas)</option>
+          <option value="west">West coast (cold current — e.g. Benguela)</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoOceanCurrent()">Explain Effect</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Effect</div>
+      <div id="oc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick a coast and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-drought" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Drought &amp; desertification</strong> — sort causes into human vs physical.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Cause</label>
+        <input type="text" id="dr_query" class="geo-input" placeholder="e.g. overgrazing, climate change, deforestation" value="overgrazing">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoDrought()">Classify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Classification</div>
+      <div id="dr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter a cause and click Classify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-inclined" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Inclined strata landforms:</strong> Cuesta (10–25°), Homoclinal (25–45°), Hogsback (&gt;45°).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Dip angle (°)</label>
+        <input type="number" id="in_angle" class="geo-input" step="any" value="20">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoInclined()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="in_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter angle and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-massmovement" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Types:</strong> Soil creep (slowest, 1 cm/yr), Solifluction (5 cm–1 m/yr), Mudflow (fast, &gt;40° slopes), Landslide (rapid mass), Rockfall (free fall).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Description</label>
+        <input type="text" id="mm_query" class="geo-input" placeholder="e.g. slow 1cm per year, fast wet soil, entire mass" value="slow 1cm">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMassMovement()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="mm_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter description and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-slopeelements" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Four slope elements</strong> (top to bottom): Crest, Cliff, Talus, Pediment.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Description</label>
+        <input type="text" id="se_query" class="geo-input" placeholder="e.g. convex top, steep vertical, debris at base" value="convex">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoSlopeElements()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="se_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter description and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-devindicators" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Compare two countries</strong> across development indicators. Enter the values to see the difference and which is more developed.
+      </div>
+      <div class="geo-input-grid">
+        <div><label>Country A — HDI (0–1)</label><input type="number" id="dv_hdi_a" class="geo-input" step="any" value="0.95"></div>
+        <div><label>Country B — HDI (0–1)</label><input type="number" id="dv_hdi_b" class="geo-input" step="any" value="0.55"></div>
+        <div><label>Country A — Life expectancy (yrs)</label><input type="number" id="dv_le_a" class="geo-input" step="any" value="82"></div>
+        <div><label>Country B — Life expectancy (yrs)</label><input type="number" id="dv_le_b" class="geo-input" step="any" value="58"></div>
+        <div><label>Country A — Literacy (%)</label><input type="number" id="dv_lit_a" class="geo-input" step="any" value="99"></div>
+        <div><label>Country B — Literacy (%)</label><input type="number" id="dv_lit_b" class="geo-input" step="any" value="62"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoDevIndicators()">Compare</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Comparison</div>
+      <div id="dv_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Compare.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-tradebalance" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <span class="geo-formula">Trade balance = Value of exports − Value of imports</span><br>
+        Positive = trade surplus · Negative = trade deficit.
+      </div>
+      <div class="geo-input-grid">
+        <div><label>Exports (R billion)</label><input type="number" id="tb_exp" class="geo-input" step="any" value="1850"></div>
+        <div><label>Imports (R billion)</label><input type="number" id="tb_imp" class="geo-input" step="any" value="2000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoTradeBalance()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Balance</div>
+      <div id="tb_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card geo-hidden" id="tb_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="tb_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-energysource" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Conventional:</strong> coal, oil, natural gas, nuclear. <strong>Non-conventional (renewable):</strong> solar, wind, hydro, tidal, geothermal, biomass.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Energy source</label>
+        <input type="text" id="es_query" class="geo-input" placeholder="e.g. solar, coal, nuclear, wind" value="solar">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoEnergySource()">Classify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="es_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter source and click Classify.</div></div>
+    </div>
+  </div>
+
+  <!-- ============ GRADE 12 ============ -->
+
+  <div id="tool-mapwork" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-subpills">
+        <button class="geo-subpill active" data-map="distance" onclick="geoMapSub('distance')">Distance</button>
+        <button class="geo-subpill" data-map="gradient" onclick="geoMapSub('gradient')">Gradient</button>
+        <button class="geo-subpill" data-map="ve" onclick="geoMapSub('ve')">Vertical Exaggeration</button>
+        <button class="geo-subpill" data-map="magdec" onclick="geoMapSub('magdec')">Magnetic Declination</button>
+        <button class="geo-subpill" data-map="area" onclick="geoMapSub('area')">Area</button>
+        <button class="geo-subpill" data-map="bearing" onclick="geoMapSub('bearing')">Bearing &amp; Direction</button>
+        <button class="geo-subpill" data-map="coords" onclick="geoMapSub('coords')">Coordinates</button>
+      </div>
+    </div>
+
+    <div id="map-distance" class="map-subpanel">
+      <div class="card">
+        <div class="geo-formula-note">
+          <span class="geo-formula">Real distance = Map distance × Scale</span>
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Map distance (cm)</label><input type="number" id="md_map" class="geo-input" step="any" value="5"></div>
+          <div><label>Scale (1 : x)</label><input type="number" id="md_scale" class="geo-input" step="any" value="50000"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapDistance()">Calculate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Real Distance</div>
+        <div id="md_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+      </div>
+      <div class="card geo-hidden" id="md_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="md_steps"></div>
+      </div>
+    </div>
+
+    <div id="map-gradient" class="map-subpanel geo-hidden">
+      <div class="card">
+        <div class="geo-formula-note">
+          <span class="geo-formula">Gradient = Vertical interval ÷ Horizontal equivalent</span><br>
+          Both must be in the same unit (usually metres).
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Vertical interval (m)</label><input type="number" id="mg_vi" class="geo-input" step="any" value="100"></div>
+          <div><label>Horizontal equivalent (m)</label><input type="number" id="mg_he" class="geo-input" step="any" value="500"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapGradient()">Calculate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Gradient</div>
+        <div id="mg_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+      </div>
+      <div class="card geo-hidden" id="mg_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="mg_steps"></div>
+      </div>
+    </div>
+
+    <div id="map-ve" class="map-subpanel geo-hidden">
+      <div class="card">
+        <div class="geo-formula-note">
+          <span class="geo-formula">Vertical exaggeration = Vertical scale ÷ Horizontal scale</span>
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Vertical scale (1 : x)</label><input type="number" id="mv_vs" class="geo-input" step="any" value="2000"></div>
+          <div><label>Horizontal scale (1 : x)</label><input type="number" id="mv_hs" class="geo-input" step="any" value="50000"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapVE()">Calculate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Vertical Exaggeration</div>
+        <div id="mv_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+      </div>
+      <div class="card geo-hidden" id="mv_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="mv_steps"></div>
+      </div>
+    </div>
+
+    <div id="map-magdec" class="map-subpanel geo-hidden">
+      <div class="card">
+        <div class="geo-formula-note">
+          <span class="geo-formula">Present declination = Map declination + (Years elapsed × Annual change)</span><br>
+          West declination means subtract, East means add (check the sign).
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Map declination (°) — use − for west</label><input type="number" id="mmd_map" class="geo-input" step="any" value="22"></div>
+          <div><label>Annual change (°) — use − for decrease</label><input type="number" id="mmd_change" class="geo-input" step="any" value="0.03"></div>
+          <div><label>Map year</label><input type="number" id="mmd_mapyear" class="geo-input" step="any" value="2000"></div>
+          <div><label>Current year</label><input type="number" id="mmd_nowyear" class="geo-input" step="any" value="2026"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapMagDec()">Calculate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Present Declination</div>
+        <div id="mmd_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+      </div>
+      <div class="card geo-hidden" id="mmd_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="mmd_steps"></div>
+      </div>
+    </div>
+
+    <div id="map-area" class="map-subpanel geo-hidden">
+      <div class="card">
+        <div class="geo-formula-note">
+          <span class="geo-formula">Real area = Map length × Map breadth × (scale)²</span>
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Map length (cm)</label><input type="number" id="ma_len" class="geo-input" step="any" value="4"></div>
+          <div><label>Map breadth (cm)</label><input type="number" id="ma_brd" class="geo-input" step="any" value="3"></div>
+          <div><label>Scale (1 : x)</label><input type="number" id="ma_scale" class="geo-input" step="any" value="50000"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapArea()">Calculate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Real Area</div>
+        <div id="ma_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+      </div>
+      <div class="card geo-hidden" id="ma_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="ma_steps"></div>
+      </div>
+    </div>
+
+    <div id="map-bearing" class="map-subpanel geo-hidden">
+      <div class="card">
+        <div class="geo-formula-note">
+          Enter two points. Bearing is measured clockwise from true north (0–360°).
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Point A — x (cm)</label><input type="number" id="mb_ax" class="geo-input" step="any" value="2"></div>
+          <div><label>Point A — y (cm)</label><input type="number" id="mb_ay" class="geo-input" step="any" value="2"></div>
+          <div><label>Point B — x (cm)</label><input type="number" id="mb_bx" class="geo-input" step="any" value="5"></div>
+          <div><label>Point B — y (cm)</label><input type="number" id="mb_by" class="geo-input" step="any" value="6"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapBearing()">Calculate</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Bearing &amp; Direction</div>
+        <div id="mb_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+      </div>
+      <div class="card geo-hidden" id="mb_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="mb_steps"></div>
+      </div>
+    </div>
+
+    <div id="map-coords" class="map-subpanel geo-hidden">
+      <div class="card">
+        <div class="geo-formula-note">
+          Convert decimal degrees to degrees-minutes-seconds, or read coordinates from a map.
+        </div>
+        <div class="geo-input-grid">
+          <div><label>Decimal degrees</label><input type="number" id="mc_dd" class="geo-input" step="any" value="-29.8587"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMapCoords()">Convert</button></div>
+      </div>
+      <div class="card">
+        <div class="result-label">Coordinates</div>
+        <div id="mc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter value and click Convert.</div></div>
+      </div>
+      <div class="card geo-hidden" id="mc_steps_card">
+        <div class="result-label">Step-by-Step</div>
+        <div id="mc_steps"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tool-midlat" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Mid-latitude cyclone stages:</strong> Initial → Wave formation → Mature → Occlusion.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Stage or description</label>
+        <input type="text" id="ml_query" class="geo-input" placeholder="e.g. wave, mature, occlusion, polar front" value="mature">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMidLat()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="ml_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter stage and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-tropical" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Tropical cyclone stages:</strong> Initial → Development → Mature → Decaying. Conditions: sea temp ≥ 26.5°C, low pressure, low friction.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Stage or description</label>
+        <input type="text" id="tp_query" class="geo-input" placeholder="e.g. eye, eye wall, vortex, mature" value="eye">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoTropical()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="tp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter stage and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-drainage" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Drainage patterns:</strong> Dendritic (uniform rock), Trellis (folded strata), Radial (dome), Rectangular (jointed rock).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Pattern or description</label>
+        <input type="text" id="dg_query" class="geo-input" placeholder="e.g. tree-like, folded, circular around dome" value="dendritic">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoDrainage()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="dg_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter pattern and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-meander" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Meander features:</strong> Undercut slope (outer bank, erosion), Slip-off slope (inner bank, deposition), Oxbow lake (cut off loop).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Feature</label>
+        <input type="text" id="mn_query" class="geo-input" placeholder="e.g. undercut, slip-off, oxbow" value="undercut">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoMeander()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="mn_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter feature and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-rivergrading" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>River grading:</strong> Graded (smooth concave profile, equilibrium). Ungraded (irregular, waterfalls, rapids). Rejuvenation (drop in sea level, tectonic uplift, river capture).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Topic</label>
+        <select id="rg_topic" class="geo-input">
+          <option value="graded">Graded river</option>
+          <option value="ungraded">Ungraded river</option>
+          <option value="rejuvenation">Rejuvenation</option>
+          <option value="knickpoint">Knickpoint</option>
+          <option value="incised">Incised meander</option>
+          <option value="terrace">River terrace</option>
+          <option value="capture">River capture</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoRiverGrading()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="rg_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick topic and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-urbanzone" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Urban land use zones:</strong> CBD, Transition zone, Industrial zone, Residential zone, Rural-urban fringe.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Zone or description</label>
+        <input type="text" id="uz_query" class="geo-input" placeholder="e.g. tall buildings, mixed land use, factories" value="CBD">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoUrbanZone()">Identify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="uz_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter zone and click Identify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-centralplace" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Central place theory:</strong> threshold population (minimum customers), range (max distance), sphere of influence (catchment area).
+      </div>
+      <div class="geo-input-grid">
+        <div><label>Type of good</label>
+          <select id="cp_good" class="geo-input">
+            <option value="low">Low order (bread, milk)</option>
+            <option value="high">High order (furniture, cars)</option>
+          </select>
+        </div>
+        <div><label>Size of settlement</label>
+          <select id="cp_size" class="geo-input">
+            <option value="village">Village</option>
+            <option value="town">Town</option>
+            <option value="city">City</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoCentralPlace()">Compare</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Analysis</div>
+      <div id="cp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick options and click Compare.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-econsector" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Four economic sectors:</strong> Primary (extraction), Secondary (manufacturing), Tertiary (services), Quaternary (knowledge).
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Activity or sector name</label>
+        <input type="text" id="ec_query" class="geo-input" placeholder="e.g. maize farming, manufacturing, banking" value="maize farming">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoEconSector()">Classify</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Sector</div>
+      <div id="ec_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter activity and click Classify.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-fluvial" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Fluvial landforms:</strong> Waterfalls, rapids, gorges, meanders, oxbow lakes, braided streams, floodplains, levees, deltas.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Landform</label>
+        <input type="text" id="fl_query" class="geo-input" placeholder="e.g. waterfall, delta, braided stream, levee" value="delta">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoFluvial()">Explain</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="fl_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter landform and click Explain.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-hierarchy" class="geo-tool-panel geo-hidden">
+    <div class="card">
+      <div class="geo-formula-note">
+        <strong>Settlement hierarchy</strong> (small → large): Isolated farmstead → Hamlet → Village → Town → City → Metropolis → Conurbation → Megalopolis.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Settlement type or size</label>
+        <input type="text" id="hs_query" class="geo-input" placeholder="e.g. hamlet, metropolis, conurbation" value="city">
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="geoHierarchy()">Look Up</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="hs_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter settlement type and click Look Up.</div></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+/* Shared helpers */
+function geoFmt(n) {
+  if (!isFinite(n)) return '—';
+  if (n === 0) return '0';
+  if (Number.isInteger(n)) return n.toLocaleString();
+  return parseFloat(n.toFixed(2)).toLocaleString();
+}
+function geoShowSteps(stepsId, cardId, steps) {
+  const el = document.getElementById(stepsId);
+  if (!el) return;
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="geo-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  const card = document.getElementById(cardId);
+  if (card) card.classList.remove('geo-hidden');
+}
+function geoResult(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+/* Grade switching */
+let geoGrade = 10;
+let geoTool10 = 'atmoslayer';
+let geoTool11 = 'pressurebelt';
+let geoTool12 = 'mapwork';
+
+function geoSetGrade(g) {
+  geoGrade = g;
+  document.getElementById('tabG10').classList.toggle('active', g === 10);
+  document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('tabG12').classList.toggle('active', g === 12);
+  document.getElementById('geoGrade10Tools').classList.toggle('geo-hidden', g !== 10);
+  document.getElementById('geoGrade11Tools').classList.toggle('geo-hidden', g !== 11);
+  document.getElementById('geoGrade12Tools').classList.toggle('geo-hidden', g !== 12);
+  const tool = g === 10 ? geoTool10 : g === 11 ? geoTool11 : geoTool12;
+  geoApplyPill(g, tool);
+  geoShowPanel(tool);
+}
+function geoSelect(grade, tool) {
+  if (grade === 10) geoTool10 = tool;
+  else if (grade === 11) geoTool11 = tool;
+  else geoTool12 = tool;
+  geoApplyPill(grade, tool);
+  geoShowPanel(tool);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function geoApplyPill(grade, tool) {
+  document.querySelectorAll('.geo-tool-pill').forEach(p => {
+    const pG = parseInt(p.getAttribute('data-grade'));
+    const pT = p.getAttribute('data-tool');
+    p.classList.toggle('active', pG === grade && pT === tool);
+  });
+}
+function geoShowPanel(tool) {
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    p.classList.toggle('geo-hidden', p.id !== 'tool-' + tool);
+  });
+}
+
+/* Mapwork sub-tabs */
+function geoMapSub(sub) {
+  document.querySelectorAll('.geo-subpill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-map') === sub);
+  });
+  document.querySelectorAll('.map-subpanel').forEach(p => p.classList.add('geo-hidden'));
+  const target = document.getElementById('map-' + sub);
+  if (target) target.classList.remove('geo-hidden');
+}
+
+/* Pop-up toast logic */
+function geoShowToast() {
+  try {
+    if (localStorage.getItem('geoCalcTipShown') === '1') return;
+    const toast = document.getElementById('geoToast');
+    setTimeout(() => toast.classList.add('show'), 500);
+    setTimeout(() => geoDismissToast(), 5500);
+  } catch (e) {}
+}
+function geoDismissToast() {
+  const toast = document.getElementById('geoToast');
+  if (toast) toast.classList.remove('show');
+  try { localStorage.setItem('geoCalcTipShown', '1'); } catch (e) {}
+}
+function geoJumpTo12() {
+  geoSetGrade(12);
+  geoDismissToast();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============ GRADE 10 TOOLS ============ */
+
+function geoAtmosLayer() {
+  const q = document.getElementById('al_query').value.toLowerCase().trim();
+  const db = {
+    'troposphere': 'Closest to Earth\'s surface (0–12 km). Densest layer. Contains most water vapour and oxygen. Temperature DECREASES with altitude. All weather happens here.',
+    'stratosphere': 'Above troposphere (12–50 km). Contains the OZONE LAYER, which absorbs UV radiation. Temperature INCREASES with altitude. Airplanes fly here.',
+    'mesosphere': 'Middle layer (50–80 km). Meteors burn up here. Temperature DECREASES with altitude. Coldest layer (~−80 °C).',
+    'thermosphere': 'Outer layer (80 km+). Temperature INCREASES with altitude (can reach 500–1800 °C). Air is very thin. Auroras occur here.',
+    'ozone': 'Found in the STRATOSPHERE. Absorbs harmful UV radiation from the sun. Protects life on Earth. Thinned by CFCs (chlorofluorocarbons).',
+    'weather': 'All weather (rain, clouds, storms) happens in the TROPOSPHERE. Temperature decreases with altitude.',
+    'meteor': 'Meteors burn up in the MESOSPHERE. This protects the Earth from small space rocks.',
+    'uv': 'UV radiation is absorbed by the OZONE LAYER in the STRATOSPHERE.',
+    'pressure': 'Air pressure DECREASES with altitude. Highest at the surface in the TROPOSPHERE.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('al_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('al_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: troposphere, stratosphere, mesosphere, thermosphere, ozone, weather, meteor, UV.</div>');
+  }
+}
+
+function geoHeatTransfer() {
+  const q = document.getElementById('ht_query').value.toLowerCase();
+  const db = {
+    'conduction': 'Transfer of heat between substances in DIRECT CONTACT. Example: air touching warm ground.',
+    'convection': 'Transfer of heat through a FLUID (liquid or gas) by molecular motion. Warm air rises, cools, sinks.',
+    'radiation': 'Energy transmitted as RAYS or WAVES. Example: solar energy from the sun.',
+    'terrestrial': 'Long-wave radiation emitted by the Earth\'s surface after it is heated by the sun.',
+    'scattering': 'Small particles diffuse sun\'s rays in random directions. About 8% of solar energy is scattered.',
+    'reflection': 'Sun\'s energy is sent back in the direction it came from. Clouds appear white because they reflect light.',
+    'absorption': 'Clouds, water vapour, ozone, and dust absorb energy. About 24% of solar energy is absorbed.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('ht_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('ht_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: conduction, convection, radiation, terrestrial, scattering, reflection, absorption.</div>');
+  }
+}
+
+function geoCloudType() {
+  const q = document.getElementById('ct_query').value.toLowerCase();
+  const db = {
+    'cumulonimbus': 'Tall, dark, vertically formed cloud. Brings HEAVY rain, thunderstorms, hail, and lightning.',
+    'nimbostratus': 'Dark grey, layered cloud. Brings steady, moderate, continuous rainfall.',
+    'stratus': 'Low, flat, uniform layer. Brings drizzle or overcast conditions.',
+    'cumulus': 'Fluffy, white, fair-weather cloud. Grows vertically on warm days.',
+    'cirrus': 'High, wispy, feathery cloud. Made of ice crystals. Fair weather.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('ct_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('ct_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: cumulonimbus, nimbostratus, stratus, cumulus, cirrus.</div>');
+  }
+}
+
+function geoRainfall() {
+  const t = document.getElementById('rf_type').value;
+  const map = {
+    relief: {
+      name: 'Relief (orographic) rainfall',
+      how: 'Moist air is forced to rise over a mountain. As it rises it cools, condenses, and rains on the windward side. The leeward side is dry — this is the RAIN SHADOW.',
+      where: 'Eastern slopes of the Drakensberg, Himalayan foothills, coastal mountains.'
+    },
+    convectional: {
+      name: 'Convectional rainfall',
+      how: 'Hot day heats the ground. Moist air rises rapidly, cools, condenses to form cumulonimbus clouds. Heavy afternoon thunderstorms occur.',
+      where: 'Interior of South Africa in summer, equatorial regions.'
+    },
+    frontal: {
+      name: 'Frontal (cyclonic) rainfall',
+      how: 'Warm and cold air masses meet at a front. Warm air is forced to rise over cold air. It cools, condenses, and produces rainfall along the front.',
+      where: 'Western Cape in winter (mid-latitude cyclones).'
+    }
+  };
+  const i = map[t];
+  geoResult('rf_result', '<div class="geo-answer multi">' + i.name + '</div><div class="result-sub">' + i.how + '</div><div class="result-sub" style="margin-top:8px;"><strong>Where:</strong> ' + i.where + '</div>');
+}
+
+function geoStation() {
+  const temp = parseFloat(document.getElementById('st_temp').value);
+  const dew = parseFloat(document.getElementById('st_dew').value);
+  const cloud = parseFloat(document.getElementById('st_cloud').value);
+  const wind = parseFloat(document.getElementById('st_wind').value);
+  const steps = [];
+  steps.push('Air temperature: ' + temp + ' °C');
+  steps.push('Dew point: ' + dew + ' °C');
+  const diff = temp - dew;
+  steps.push('Temperature–dew point difference: ' + geoFmt(diff) + ' °C');
+  if (diff < 2) steps.push('Very close → air is nearly saturated → high humidity → fog/rain likely.');
+  else if (diff < 6) steps.push('Moderate difference → moderate humidity.');
+  else steps.push('Large difference → dry air.');
+  steps.push('Cloud cover: ' + cloud + '/8 oktas');
+  if (cloud === 0) steps.push('Clear skies');
+  else if (cloud <= 2) steps.push('Mostly clear');
+  else if (cloud <= 5) steps.push('Partly cloudy');
+  else if (cloud < 8) steps.push('Mostly cloudy');
+  else steps.push('Overcast');
+  steps.push('Wind speed: ' + wind + ' knots');
+  geoResult('st_result',
+    '<div class="geo-answer">' + temp + ' °C</div>' +
+    '<div class="geo-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Dew point</span><span class="result-cell-value">' + dew + ' °C</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Cloud</span><span class="result-cell-value">' + cloud + '/8</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Wind</span><span class="result-cell-value">' + wind + ' kt</span></div>' +
+    '</div>');
+  geoShowSteps('st_steps', 'st_steps_card', steps);
+}
+
+function geoPlateBound() {
+  const t = document.getElementById('pb_type').value;
+  const map = {
+    convergent: {
+      name: 'Convergent (destructive) boundary',
+      desc: 'Two plates move TOWARD each other. One plate (usually oceanic) is subducted under the other (continental). Creates deep-sea trenches, volcanic mountain ranges, fold mountains, and earthquakes.',
+      example: 'Andes Mountains (South America), Japan trench.'
+    },
+    divergent: {
+      name: 'Divergent (constructive) boundary',
+      desc: 'Two plates move APART. Magma rises to fill the gap, creating new crust. Forms mid-ocean ridges, rift valleys, and shield volcanoes.',
+      example: 'Mid-Atlantic Ridge, East African Rift Valley.'
+    },
+    transform: {
+      name: 'Transform (conservative) boundary',
+      desc: 'Two plates slide PAST each other horizontally. Crust is neither created nor destroyed. Causes friction, then sudden release → EARTHQUAKES.',
+      example: 'San Andreas Fault (California).'
+    }
+  };
+  const i = map[t];
+  geoResult('pb_result', '<div class="geo-answer multi">' + i.name + '</div><div class="result-sub">' + i.desc + '</div><div class="result-sub" style="margin-top:8px;"><strong>Example:</strong> ' + i.example + '</div>');
+}
+
+function geoFoldFault() {
+  const q = document.getElementById('ff_query').value.toLowerCase();
+  const db = {
+    'anticline': 'An UPWARD fold in rock layers. The oldest rocks are in the centre.',
+    'syncline': 'A DOWNWARD fold in rock layers. The youngest rocks are in the centre.',
+    'symmetrical': 'A fold with EQUAL pressure from both sides. Both limbs dip at the same angle.',
+    'asymmetrical': 'A fold where pressure is greater from ONE side. The fold leans to one side.',
+    'overfold': 'Pressure is even greater on one side. One limb becomes very steep.',
+    'overthrust': 'Extreme pressure from one side causes the fold to break and push over.',
+    'normal fault': 'TENSION pulls the crust apart. The hanging wall drops relative to the footwall. Creates horst and graben.',
+    'reverse fault': 'COMPRESSION pushes the crust together. The hanging wall is pushed up over the footwall.',
+    'horst': 'An UPLIFTED block of land between two parallel normal faults. Forms a block mountain.',
+    'graben': 'A block of land that SLIPPED DOWN between two parallel faults. Forms a rift valley.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k) || k.includes(q)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('ff_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('ff_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: anticline, syncline, horst, graben, overfold, overthrust, normal fault.</div>');
+  }
+}
+
+function geoEarthquake() {
+  const q = document.getElementById('eq_query').value.toLowerCase();
+  const db = {
+    'focus': 'The point UNDERGROUND where an earthquake originates. Directly below the epicentre.',
+    'epicentre': 'The point ON THE SURFACE directly above the focus. The greatest damage occurs here.',
+    'p wave': 'Primary waves. Fastest waves. Push/pull (back and forth). Travel through solids and liquids.',
+    's wave': 'Secondary waves. Slower than P-waves. Move side to side. Travel only through solids.',
+    'l wave': 'Surface waves. Result when P and S waves reach the surface. Cause the MOST damage.',
+    'seismograph': 'Instrument that MEASURES the vibrations of an earthquake.',
+    'seismogram': 'The GRAPH drawn by a seismograph showing the vibrations.',
+    'richter': 'Scale used to MEASURE the magnitude (strength) of an earthquake. Each whole number = 10× stronger.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('eq_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('eq_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: focus, epicentre, P wave, S wave, L wave, seismograph, Richter.</div>');
+  }
+}
+
+function geoVolcano() {
+  const t = document.getElementById('vc_type').value;
+  const map = {
+    shield: { name: 'Shield volcano', desc: 'BROAD, gently sloping sides. Lava is RUNNY and flows far. NON-explosive eruptions. Forms from repeated lava flows.', ex: 'Mauna Loa (Hawaii)' },
+    composite: { name: 'Composite (stratovolcano)', desc: 'STEEP-sided, conical shape. Alternating layers of lava and ash. EXPLOSIVE eruptions. Pyroclastic flows possible.', ex: 'Mount Fuji (Japan), Mount Etna (Italy)' },
+    cinder: { name: 'Cinder cone', desc: 'SMALL, steep, cone-shaped. EXPLOSIVE — ejects ash, cinders, and small rocks. Short-lived.', ex: 'Paricutin (Mexico), Sunset Crater (USA)' }
+  };
+  const i = map[t];
+  geoResult('vc_result', '<div class="geo-answer multi">' + i.name + '</div><div class="result-sub">' + i.desc + '</div><div class="result-sub" style="margin-top:8px;"><strong>Example:</strong> ' + i.ex + '</div>');
+}
+
+function geoPopDensity() {
+  const pop = parseFloat(document.getElementById('pd_pop').value);
+  const area = parseFloat(document.getElementById('pd_area').value);
+  if ([pop, area].some(v => isNaN(v)) || area === 0) {
+    geoResult('pd_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields. Area must not be 0.</div>');
+    return;
+  }
+  const density = pop / area;
+  const steps = [];
+  steps.push('Density = Population ÷ Area');
+  steps.push('= ' + geoFmt(pop) + ' ÷ ' + geoFmt(area));
+  steps.push('= ' + geoFmt(density) + ' people per km²');
+  geoResult('pd_result', '<div class="geo-answer">' + geoFmt(density) + '</div><div class="result-sub">people per km²</div>');
+  geoShowSteps('pd_steps', 'pd_steps_card', steps);
+}
+
+/* ============ GRADE 11 TOOLS ============ */
+
+function geoPressureBelt() {
+  const lat = document.getElementById('prb_lat').value;
+  const map = {
+    '0': { name: 'Equatorial low pressure', desc: 'Also called the ITCZ (Inter-Tropical Convergence Zone). Intense heating → rising air → low pressure. Moisture-laden → thunderstorms and high rainfall.' },
+    '30': { name: 'Subtropical high pressure', desc: 'Subsiding (sinking) air. Warm and dry. Forms DESERTS (Sahara, Kalahari). Clear skies, low rainfall.' },
+    '60': { name: 'Subpolar low pressure', desc: 'Convergence of warm westerlies and cold polar easterlies. Warm air forced to rise → low pressure. Polar front. Mid-latitude cyclones originate here.' },
+    '90': { name: 'Polar high pressure', desc: 'Cold, dense air subsides over the poles. Stable, clear, cold conditions.' }
+  };
+  const i = map[lat];
+  geoResult('prb_result', '<div class="geo-answer multi">' + i.name + '</div><div class="result-sub">' + i.desc + '</div>');
+}
+
+function geoTriCell() {
+  const q = document.getElementById('tc_query').value.toLowerCase();
+  const db = {
+    'trade': 'Trade winds originate in the HADLEY CELL. Blow from subtropical high (30°) towards the equatorial low (0°). Northeast in N. Hemisphere, southeast in S. Hemisphere.',
+    'westerl': 'Westerlies originate in the FERREL CELL. Blow from subtropical high (30°) towards subpolar low (60°). Southwest in N. Hemisphere, northwest in S. Hemisphere.',
+    'polar easterl': 'Polar easterlies originate in the POLAR CELL. Blow from polar high (90°) towards subpolar low (60°). Cold winds.',
+    'hadley': 'Hadley cell — 0° to 30°. Air rises at the equator (ITCZ), moves polewards in the upper atmosphere, sinks at 30° as subtropical high.',
+    'ferrel': 'Ferrel cell — 30° to 60°. Mid-latitude cell. Surface winds are westerlies.',
+    'polar': 'Polar cell — 60° to 90°. Air sinks at the pole, moves equatorward as polar easterlies, rises at 60° where it meets westerlies.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('tc_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('tc_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: trade winds, westerlies, polar easterlies, Hadley, Ferrel, Polar.</div>');
+  }
+}
+
+function geoOceanCurrent() {
+  const c = document.getElementById('oc_coast').value;
+  const map = {
+    east: {
+      name: 'Warm ocean current (East coast — Agulhas)',
+      desc: 'Warm water flows along the east coast. Warmer air above the current. Onshore winds carry MOISTURE to the coast. Year-round rainfall on the east coast. Higher temperatures, higher humidity.',
+      ex: 'Durban (KZN) — warm, humid summers with frequent rain.'
+    },
+    west: {
+      name: 'Cold ocean current (West coast — Benguela)',
+      desc: 'Cold water flows along the west coast. Cooler air above the current. Air holds little moisture → dry conditions. Fog and mist may form when moist air blows over cold water.',
+      ex: 'Namib Desert — driest coastal desert in the world despite proximity to ocean.'
+    }
+  };
+  const i = map[c];
+  geoResult('oc_result', '<div class="geo-answer multi">' + i.name + '</div><div class="result-sub">' + i.desc + '</div><div class="result-sub" style="margin-top:8px;"><strong>Example:</strong> ' + i.ex + '</div>');
+}
+
+function geoDrought() {
+  const q = document.getElementById('dr_query').value.toLowerCase();
+  const physical = ['climate change', 'high temperature', 'el nino', 'cold ocean current', 'changing rainfall', 'increased evaporation'];
+  const human = ['overgrazing', 'deforestation', 'over-cultivation', 'overuse of natural resources', 'overcultivation'];
+  let type = 'Unknown';
+  let detail = '';
+  for (const p of physical) { if (q.includes(p)) { type = 'Physical (natural) cause'; detail = 'Related to climate and natural systems. Contributes to reduced rainfall or increased evaporation.'; break; } }
+  if (type === 'Unknown') {
+    for (const h of human) { if (q.includes(h)) { type = 'Human cause'; detail = 'Caused by unsustainable land use practices. Damages vegetation, increases soil erosion, and reduces the land\'s ability to retain water.'; break; } }
+  }
+  if (type === 'Unknown') detail = 'Not recognized. Try: overgrazing, deforestation, over-cultivation (human) or climate change, El Niño, drought (physical).';
+  geoResult('dr_result', '<div class="geo-answer multi">' + type + '</div><div class="result-sub">' + detail + '</div>');
+}
+
+function geoInclined() {
+  const a = parseFloat(document.getElementById('in_angle').value);
+  if (isNaN(a)) { geoResult('in_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter an angle.</div>'); return; }
+  let name = '';
+  let desc = '';
+  if (a < 10) { name = 'Almost horizontal strata'; desc = 'Not a distinct landform type. Strata are nearly flat.'; }
+  else if (a <= 25) { name = 'Cuesta'; desc = 'Gentle dip (10–25°). Clear difference between the scarp slope (steep) and dip slope (gentle). Common in sedimentary rock areas like the Karoo.'; }
+  else if (a <= 45) { name = 'Homoclinal ridge'; desc = 'Moderate dip (25–45°). Smaller difference between scarp and dip slopes than a cuesta. Steeper escarpment at the front.'; }
+  else { name = 'Hogsback'; desc = 'Steep dip (>45°). Very little difference between the scarp and dip slopes. Usually formed where soft rock has eroded away exposing a hard quartzite ridge.'; }
+  geoResult('in_result', '<div class="geo-answer multi">' + name + '</div><div class="result-sub">' + desc + '</div>');
+}
+
+function geoMassMovement() {
+  const q = document.getElementById('mm_query').value.toLowerCase();
+  const db = {
+    'soil creep': { n: 'Soil creep', d: 'Slowest movement — about 1 cm per year. Evidence: tilted poles, leaning fences.' },
+    'slow 1cm': { n: 'Soil creep', d: 'Slowest movement — about 1 cm per year. Evidence: tilted poles, leaning fences.' },
+    'solifluction': { n: 'Solifluction', d: 'Movement of saturated topsoil on frozen ground. 5 cm to 1 m per year. Common in cold climates.' },
+    'mudflow': { n: 'Mudflow', d: 'Rapid movement of saturated soil on steep slopes (>40°). Waterlogged material flows like a river.' },
+    'landslide': { n: 'Landslide', d: 'An entire mass of material moves rapidly downslope. Very destructive. Triggered by heavy rain, earthquakes, or undercutting.' },
+    'rockfall': { n: 'Rockfall', d: 'Rapid free fall or downslope rolling of rocks. Common on steep cliffs after weathering.' }
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = db[k]; break; } }
+  if (found) {
+    geoResult('mm_result', '<div class="geo-answer multi">' + found.n + '</div><div class="result-sub">' + found.d + '</div>');
+  } else {
+    geoResult('mm_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: soil creep, solifluction, mudflow, landslide, rockfall.</div>');
+  }
+}
+
+function geoSlopeElements() {
+  const q = document.getElementById('se_query').value.toLowerCase();
+  const db = {
+    'convex': { n: 'Crest', d: 'Top of the slope. Convex shape. Soil creeps and weathering occur here.' },
+    'top': { n: 'Crest', d: 'Top of the slope. Convex shape. Soil creeps and weathering occur here.' },
+    'vertical': { n: 'Cliff', d: 'Steep vertical slope. Angle >80°. Rockfalls occur here. Parallel retreat of the slope.' },
+    'steep': { n: 'Cliff', d: 'Steep vertical slope. Angle >80°. Rockfalls occur here.' },
+    'debris': { n: 'Talus', d: 'Uniform slope. Angle 20–35°. Debris accumulates here. A break in gradient (knickpoint) forms between the talus and the pediment.' },
+    'base': { n: 'Pediment', d: 'Flatter slope at the base of the slope. Angle 1–7°. Covered with weathered material. Suitable for farming.' },
+    'flatter': { n: 'Pediment', d: 'Flatter slope at the base. Angle 1–7°. Suitable for farming.' }
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = db[k]; break; } }
+  if (found) {
+    geoResult('se_result', '<div class="geo-answer multi">' + found.n + '</div><div class="result-sub">' + found.d + '</div>');
+  } else {
+    geoResult('se_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: convex, vertical, steep, debris, base, flatter.</div>');
+  }
+}
+
+function geoDevIndicators() {
+  const hdiA = parseFloat(document.getElementById('dv_hdi_a').value);
+  const hdiB = parseFloat(document.getElementById('dv_hdi_b').value);
+  const leA = parseFloat(document.getElementById('dv_le_a').value);
+  const leB = parseFloat(document.getElementById('dv_le_b').value);
+  const litA = parseFloat(document.getElementById('dv_lit_a').value);
+  const litB = parseFloat(document.getElementById('dv_lit_b').value);
+  if ([hdiA, hdiB, leA, leB, litA, litB].some(v => isNaN(v))) {
+    geoResult('dv_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+    return;
+  }
+  const moreDev = (hdiA > hdiB ? 'Country A' : 'Country B');
+  const lessDev = (hdiA > hdiB ? 'Country B' : 'Country A');
+  geoResult('dv_result',
+    '<div class="geo-answer multi">' + moreDev + ' is more developed</div>' +
+    '<div class="geo-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">HDI A vs B</span><span class="result-cell-value">' + hdiA + ' vs ' + hdiB + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Life exp. A vs B</span><span class="result-cell-value">' + leA + ' vs ' + leB + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Literacy A vs B</span><span class="result-cell-value">' + litA + '% vs ' + litB + '%</span></div>' +
+    '</div>' +
+    '<div class="result-sub" style="margin-top:12px;">' + moreDev + ' has higher values across all three indicators (HDI, life expectancy, literacy), suggesting better quality of life and access to services. ' + lessDev + ' should focus on improving healthcare, education, and income.</div>');
+}
+
+function geoTradeBalance() {
+  const exp = parseFloat(document.getElementById('tb_exp').value);
+  const imp = parseFloat(document.getElementById('tb_imp').value);
+  if ([exp, imp].some(v => isNaN(v))) {
+    geoResult('tb_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields.</div>');
+    return;
+  }
+  const bal = exp - imp;
+  const isSurplus = bal >= 0;
+  const steps = [];
+  steps.push('Trade balance = Exports − Imports');
+  steps.push('= ' + geoFmt(exp) + ' − ' + geoFmt(imp) + ' = ' + (bal >= 0 ? '+' : '') + geoFmt(bal));
+  steps.push(isSurplus ? 'Positive → TRADE SURPLUS (country earns more than it spends).' : 'Negative → TRADE DEFICIT (country spends more than it earns).');
+  geoResult('tb_result',
+    '<div class="geo-answer" style="color:' + (isSurplus ? 'var(--success)' : 'var(--danger)') + ';">' + (isSurplus ? 'Surplus' : 'Deficit') + ' ' + (bal >= 0 ? '+' : '') + geoFmt(bal) + '</div>' +
+    '<div class="result-sub">' + (isSurplus ? 'Country earns more from exports than it spends on imports.' : 'Country spends more on imports than it earns from exports.') + '</div>');
+  geoShowSteps('tb_steps', 'tb_steps_card', steps);
+}
+
+function geoEnergySource() {
+  const q = document.getElementById('es_query').value.toLowerCase();
+  const conv = ['coal', 'oil', 'natural gas', 'nuclear', 'fossil'];
+  const nonconv = ['solar', 'wind', 'hydro', 'tidal', 'geothermal', 'biomass', 'renewable'];
+  let type = 'Unknown';
+  let detail = '';
+  for (const c of conv) {
+    if (q.includes(c)) {
+      type = 'Conventional (non-renewable)';
+      detail = 'Fossil fuel or nuclear. Limited supply. High carbon emissions (except nuclear). Major source of South Africa\'s electricity.';
+      break;
+    }
+  }
+  if (type === 'Unknown') {
+    for (const n of nonconv) {
+      if (q.includes(n)) {
+        type = 'Non-conventional (renewable)';
+        detail = 'Natural, constantly replenished source. Low or no carbon emissions. Sustainable for future generations.';
+        break;
+      }
+    }
+  }
+  if (type === 'Unknown') detail = 'Try: coal, oil, natural gas, nuclear, solar, wind, hydro, tidal, geothermal, biomass.';
+  geoResult('es_result', '<div class="geo-answer multi">' + type + '</div><div class="result-sub">' + detail + '</div>');
+}
+
+/* ============ GRADE 12 TOOLS ============ */
+
+function geoMapDistance() {
+  const map = parseFloat(document.getElementById('md_map').value);
+  const scale = parseFloat(document.getElementById('md_scale').value);
+  if ([map, scale].some(v => isNaN(v)) || scale === 0) {
+    geoResult('md_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields. Scale cannot be 0.</div>');
+    return;
+  }
+  const realCm = map * scale;
+  const realKm = realCm / 100000;
+  const steps = [];
+  steps.push('Real distance = Map distance × Scale');
+  steps.push('= ' + map + ' cm × ' + geoFmt(scale));
+  steps.push('= ' + geoFmt(realCm) + ' cm');
+  steps.push('= ' + geoFmt(realKm) + ' km');
+  geoResult('md_result',
+    '<div class="geo-answer">' + geoFmt(realKm) + ' km</div>' +
+    '<div class="result-sub">' + geoFmt(realCm) + ' cm on the ground</div>');
+  geoShowSteps('md_steps', 'md_steps_card', steps);
+}
+
+function geoMapGradient() {
+  const vi = parseFloat(document.getElementById('mg_vi').value);
+  const he = parseFloat(document.getElementById('mg_he').value);
+  if ([vi, he].some(v => isNaN(v)) || he === 0) {
+    geoResult('mg_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields. Horizontal equivalent cannot be 0.</div>');
+    return;
+  }
+  const grad = vi / he;
+  const ratio = '1 : ' + geoFmt(1 / grad);
+  const steps = [];
+  steps.push('Gradient = Vertical interval ÷ Horizontal equivalent');
+  steps.push('= ' + geoFmt(vi) + ' m ÷ ' + geoFmt(he) + ' m');
+  steps.push('= ' + geoFmt(grad));
+  steps.push('Ratio form: ' + ratio);
+  let desc = grad < 0.05 ? 'Very gentle slope' : grad < 0.15 ? 'Gentle slope' : grad < 0.3 ? 'Moderate slope' : 'Steep slope';
+  steps.push('Type: ' + desc);
+  geoResult('mg_result',
+    '<div class="geo-answer">' + ratio + '</div>' +
+    '<div class="result-sub">' + desc + '</div>');
+  geoShowSteps('mg_steps', 'mg_steps_card', steps);
+}
+
+function geoMapVE() {
+  const vs = parseFloat(document.getElementById('mv_vs').value);
+  const hs = parseFloat(document.getElementById('mv_hs').value);
+  if ([vs, hs].some(v => isNaN(v)) || hs === 0) {
+    geoResult('mv_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill both fields.</div>');
+    return;
+  }
+  const ve = hs / vs;
+  const steps = [];
+  steps.push('VE = Horizontal scale ÷ Vertical scale');
+  steps.push('= ' + geoFmt(hs) + ' ÷ ' + geoFmt(vs));
+  steps.push('= ' + geoFmt(ve) + '×');
+  geoResult('mv_result',
+    '<div class="geo-answer">' + geoFmt(ve) + '×</div>' +
+    '<div class="result-sub">Vertical exaggeration</div>');
+  geoShowSteps('mv_steps', 'mv_steps_card', steps);
+}
+
+function geoMapMagDec() {
+  const mapDec = parseFloat(document.getElementById('mmd_map').value);
+  const change = parseFloat(document.getElementById('mmd_change').value);
+  const mapYear = parseFloat(document.getElementById('mmd_mapyear').value);
+  const nowYear = parseFloat(document.getElementById('mmd_nowyear').value);
+  if ([mapDec, change, mapYear, nowYear].some(v => isNaN(v))) {
+    geoResult('mmd_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+    return;
+  }
+  const years = nowYear - mapYear;
+  const totalChange = years * change;
+  const present = mapDec + totalChange;
+  const steps = [];
+  steps.push('Years elapsed = ' + nowYear + ' − ' + mapYear + ' = ' + years + ' years');
+  steps.push('Total change = ' + years + ' × ' + change + '° = ' + geoFmt(totalChange) + '°');
+  steps.push('Present declination = ' + mapDec + '° + (' + geoFmt(totalChange) + '°)');
+  steps.push('= ' + geoFmt(present) + '° ' + (present >= 0 ? 'west' : 'east'));
+  geoResult('mmd_result',
+    '<div class="geo-answer">' + geoFmt(Math.abs(present)) + '° ' + (present >= 0 ? 'west' : 'east') + '</div>' +
+    '<div class="result-sub">Present magnetic declination</div>');
+  geoShowSteps('mmd_steps', 'mmd_steps_card', steps);
+}
+
+function geoMapArea() {
+  const len = parseFloat(document.getElementById('ma_len').value);
+  const brd = parseFloat(document.getElementById('ma_brd').value);
+  const scale = parseFloat(document.getElementById('ma_scale').value);
+  if ([len, brd, scale].some(v => isNaN(v))) {
+    geoResult('ma_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+    return;
+  }
+  const mapArea = len * brd;
+  const realCm2 = mapArea * scale * scale;
+  const realKm2 = realCm2 / 1e10;
+  const steps = [];
+  steps.push('Map area = Length × Breadth = ' + len + ' × ' + brd + ' = ' + geoFmt(mapArea) + ' cm²');
+  steps.push('Real area = Map area × Scale² = ' + geoFmt(mapArea) + ' × ' + geoFmt(scale * scale));
+  steps.push('= ' + geoFmt(realCm2) + ' cm²');
+  steps.push('= ' + geoFmt(realKm2) + ' km²');
+  geoResult('ma_result',
+    '<div class="geo-answer">' + geoFmt(realKm2) + ' km²</div>' +
+    '<div class="result-sub">Real area</div>');
+  geoShowSteps('ma_steps', 'ma_steps_card', steps);
+}
+
+function geoMapBearing() {
+  const ax = parseFloat(document.getElementById('mb_ax').value);
+  const ay = parseFloat(document.getElementById('mb_ay').value);
+  const bx = parseFloat(document.getElementById('mb_bx').value);
+  const by = parseFloat(document.getElementById('mb_by').value);
+  if ([ax, ay, bx, by].some(v => isNaN(v))) {
+    geoResult('mb_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill all fields.</div>');
+    return;
+  }
+  const dx = bx - ax;
+  const dy = by - ay;
+  let bearing = Math.atan2(dx, dy) * 180 / Math.PI;
+  if (bearing < 0) bearing += 360;
+  let compass = '';
+  if (bearing < 22.5 || bearing >= 337.5) compass = 'North';
+  else if (bearing < 67.5) compass = 'North-East';
+  else if (bearing < 112.5) compass = 'East';
+  else if (bearing < 157.5) compass = 'South-East';
+  else if (bearing < 202.5) compass = 'South';
+  else if (bearing < 247.5) compass = 'South-West';
+  else if (bearing < 292.5) compass = 'West';
+  else compass = 'North-West';
+  const steps = [];
+  steps.push('Δx = ' + bx + ' − ' + ax + ' = ' + dx + ' cm');
+  steps.push('Δy = ' + by + ' − ' + ay + ' = ' + dy + ' cm');
+  steps.push('Bearing = atan2(Δx, Δy) = ' + geoFmt(bearing) + '°');
+  steps.push('Direction: ' + compass);
+  geoResult('mb_result',
+    '<div class="geo-answer">' + geoFmt(bearing) + '°</div>' +
+    '<div class="result-sub">Bearing from A to B (' + compass + ')</div>');
+  geoShowSteps('mb_steps', 'mb_steps_card', steps);
+}
+
+function geoMapCoords() {
+  const dd = parseFloat(document.getElementById('mc_dd').value);
+  if (isNaN(dd)) {
+    geoResult('mc_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Enter a decimal degree value.</div>');
+    return;
+  }
+  const sign = dd < 0 ? 'S/W' : 'N/E';
+  const abs = Math.abs(dd);
+  const deg = Math.floor(abs);
+  const minFloat = (abs - deg) * 60;
+  const min = Math.floor(minFloat);
+  const sec = (minFloat - min) * 60;
+  const steps = [];
+  steps.push('Decimal degrees: ' + dd + '°');
+  steps.push('Absolute value: ' + abs + '°');
+  steps.push('Degrees: ' + deg + '°');
+  steps.push('Minutes: ' + min + '\'');
+  steps.push('Seconds: ' + geoFmt(sec) + '"');
+  steps.push('Hemisphere: ' + sign);
+  geoResult('mc_result',
+    '<div class="geo-answer">' + deg + '° ' + min + '\' ' + geoFmt(sec) + '" ' + sign + '</div>' +
+    '<div class="result-sub">Degrees, minutes, seconds</div>');
+  geoShowSteps('mc_steps', 'mc_steps_card', steps);
+}
+
+function geoMidLat() {
+  const q = document.getElementById('ml_query').value.toLowerCase();
+  const db = {
+    'initial': 'Initial stage: Warm westerlies meet cold polar easterlies along the polar front (60°). Front is stationary. Coriolis force deflects air.',
+    'wave': 'Wave formation: A wave develops along the polar front due to friction between the two air masses. Warm air begins to be uplifted.',
+    'mature': 'Mature stage: Cold and warm fronts fully developed in a V-shape. Warm sector between the fronts. Cold sector behind cold front. Heavy rain along the cold front, light rain along the warm front.',
+    'occlusion': 'Occlusion stage: Cold front catches up to the warm front. Warm sector is squeezed out and lifted. System dissipates. Two types: cold-front occlusion and warm-front occlusion.',
+    'polar front': 'The boundary where warm westerlies (from 30°) meet cold polar easterlies (from 90°) at 60° N/S. Mid-latitude cyclones form along this front.',
+    'cold front': 'Leading edge of cold air. Steep slope. Brings heavy rain, thunderstorms, hail. Temperature drops rapidly. Pressure rises steeply.',
+    'warm front': 'Leading edge of warm air. Gentle slope. Brings light, continuous rain. Temperature rises. Pressure falls.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('ml_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('ml_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: initial, wave, mature, occlusion, polar front, cold front, warm front.</div>');
+  }
+}
+
+function geoTropical() {
+  const q = document.getElementById('tp_query').value.toLowerCase();
+  const db = {
+    'initial': 'Initial stage: Air converges towards low pressure. A vortex forms. Pressure ~1002 hPa. Wind speeds up to 60 km/h.',
+    'development': 'Development stage: Storm intensifies. Pressure drops below 990 hPa. Wind speeds ~120 km/h. Eye begins to form. Cumulonimbus clouds swirl around the eye.',
+    'mature': 'Mature stage: Maximum intensity. Pressure ~950 hPa. Wind speeds exceed 180 km/h. Fully developed eye (clear, cloudless, subsiding air). Torrential rain, thunder, lightning.',
+    'decaying': 'Decaying stage: Storm weakens when it moves over land (loses moisture), enters cooler water, or meets a cold front. Wind speed drops.',
+    'eye': 'The centre of a tropical cyclone. CALM winds, clear skies, LOWEST pressure. Subsiding air warms and evaporates moisture → no clouds.',
+    'eye wall': 'The ring of cumulonimbus clouds around the eye. STRONGEST winds and heaviest rain occur here.',
+    'vortex': 'The swirling mass of clouds around the eye. The two sides (vortex 1 and vortex 2) rotate around the eye.',
+    'conditions': 'Necessary conditions: sea surface temperature ≥ 26.5 °C, high evaporation, low pressure, low friction (open ocean), warm moist air.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('tp_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('tp_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: initial, development, mature, decaying, eye, eye wall, vortex, conditions.</div>');
+  }
+}
+
+function geoDrainage() {
+  const q = document.getElementById('dg_query').value.toLowerCase();
+  const db = {
+    'dendritic': 'Dendritic: Tree-like (branches). Forms on rock of UNIFORM resistance. Tributaries join the main stream at acute angles.',
+    'trellis': 'Trellis: Parallel main streams with short tributaries. Forms on FOLDED strata (alternating hard and soft rock).',
+    'radial': 'Radial: Streams flow outward from a central high point (dome or volcano). Forms on DOME-shaped topography.',
+    'rectangular': 'Rectangular: Streams meet at RIGHT ANGLES. Forms where rock has JOINTS or faults.',
+    'deranged': 'Deranged: No clear pattern. Common in flat, waterlogged areas.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('dg_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('dg_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: dendritic, trellis, radial, rectangular, deranged.</div>');
+  }
+}
+
+function geoMeander() {
+  const q = document.getElementById('mn_query').value.toLowerCase();
+  const db = {
+    'undercut': 'Undercut slope: OUTER bank of a meander. Concave shape. Fastest flow. EROSION (undercutting) occurs. Deep water. River cliff may form.',
+    'slip-off': 'Slip-off slope: INNER bank of a meander. Convex shape. Slowest flow. DEPOSITION occurs. Shallow water.',
+    'oxbow': 'Oxbow lake: A crescent-shaped lake formed when a meander loop is cut off from the main river channel. Erosion narrows the meander neck until the river takes a shorter path. The old loop is abandoned.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('mn_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('mn_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: undercut, slip-off, oxbow.</div>');
+  }
+}
+
+function geoRiverGrading() {
+  const t = document.getElementById('rg_topic').value;
+  const map = {
+    graded: { n: 'Graded river', d: 'A river in EQUILIBRIUM — erosion rate = deposition rate. Smooth, concave longitudinal profile. No waterfalls or rapids. Reached after long periods of erosion.' },
+    ungraded: { n: 'Ungraded river', d: 'Irregular riverbed with waterfalls and rapids. Vertical (downward) erosion dominates. Steep gradient in the upper course.' },
+    rejuvenation: { n: 'Rejuvenation', d: 'Renewed vertical erosion due to: (1) drop in sea level, (2) tectonic uplift, (3) increased rainfall, (4) river capture. Creates knickpoints, gorges, incised meanders, river terraces.' },
+    knickpoint: { n: 'Knickpoint', d: 'A sudden break or step in the river\'s longitudinal profile. Marks the point where rejuvenation begins. Often marked by a waterfall or rapids.' },
+    incised: { n: 'Incised meander', d: 'A meander that has been cut DEEPLY into the landscape. Forms when rejuvenation causes a meandering river to erode vertically. Steep sides, deep valley.' },
+    terrace: { n: 'River terrace', d: 'A step-like bench alongside a river valley. Represents a FORMER FLOODPLAIN left above the current river level after rejuvenation.' },
+    capture: { n: 'River capture', d: 'One river (the captor) erodes headward and captures the headwaters of another river (the captured). Caused by differences in gradient, rock type, or rainfall. Creates an ELBOW of capture, a wind gap, and a misfit stream.' }
+  };
+  const i = map[t];
+  geoResult('rg_result', '<div class="geo-answer multi">' + i.n + '</div><div class="result-sub">' + i.d + '</div>');
+}
+
+function geoUrbanZone() {
+  const q = document.getElementById('uz_query').value.toLowerCase();
+  const db = {
+    'cbd': 'CBD (Central Business District): Commercial centre of the city. Tall buildings, high density. Highest land value. Maximum accessibility. Banks, offices, shops, hotels.',
+    'transition': 'Transition zone: Zone of MIXED land use around the CBD. Old, dilapidated buildings. Warehouses and small industries. Informal housing common. High crime. Urban decay often begins here.',
+    'industrial': 'Industrial zone: Factories and warehouses. Near transport routes (railways, highways). Large flat land. Noise and air pollution. Heavy, bulky goods.',
+    'residential': 'Residential zone: Areas where people live. Different income groups live in different areas. Low, middle, and high-income housing. Density varies with income.',
+    'fringe': 'Rural-urban fringe: Outer edge of the city. New housing developments. Farms and small holdings. Airports and large shopping centres. Flat, cheap land. Future urban expansion.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k) || k.includes(q)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('uz_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('uz_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: CBD, transition, industrial, residential, fringe.</div>');
+  }
+}
+
+function geoCentralPlace() {
+  const good = document.getElementById('cp_good').value;
+  const size = document.getElementById('cp_size').value;
+  const sizeMap = { village: 'small', town: 'medium', city: 'large' };
+  let analysis = '';
+  if (good === 'low') {
+    if (size === 'village') analysis = 'Low order goods in a village: This is the TYPICAL situation. Villages offer convenience goods like bread and milk. Small threshold population and small range. Low order centres.';
+    else if (size === 'town') analysis = 'Low order goods in a town: Fine. Towns serve the daily needs of local residents. Also have some high order goods.';
+    else analysis = 'Low order goods in a city: Fine — cities have all types of shops, including convenience stores in every neighbourhood.';
+  } else {
+    if (size === 'village') analysis = 'High order goods in a village: UNLIKELY — the threshold population is too small for high order shops. These shops would not be profitable.';
+    else if (size === 'town') analysis = 'High order goods in a town: Possible but unusual. Some towns attract customers from surrounding areas for larger purchases.';
+    else analysis = 'High order goods in a city: TYPICAL. Cities have LARGE threshold populations and LARGE spheres of influence. High order centres are usually found in cities.';
+  }
+  geoResult('cp_result', '<div class="geo-answer multi">' + (good === 'low' ? 'Low order good' : 'High order good') + ' in a ' + size + '</div><div class="result-sub">' + analysis + '</div>');
+}
+
+function geoEconSector() {
+  const q = document.getElementById('ec_query').value.toLowerCase();
+  const db = {
+    'primary': { n: 'Primary sector', d: 'Extraction and gathering of raw materials. Mining, farming, fishing, forestry, quarrying.' },
+    'mining': { n: 'Primary sector', d: 'Mining is a primary activity — extraction of minerals directly from the earth.' },
+    'maize': { n: 'Primary sector', d: 'Maize farming is a primary activity — agriculture (extraction of crops from the soil).' },
+    'secondary': { n: 'Secondary sector', d: 'Manufacturing and processing. Turns raw materials into finished goods. Adds value. Examples: factories, food processing, textiles, vehicle assembly.' },
+    'manufact': { n: 'Secondary sector', d: 'Manufacturing is a secondary activity — processing raw materials into value-added products.' },
+    'tertiary': { n: 'Tertiary sector', d: 'Services and distribution. Retail, transport, healthcare, banking, tourism, education.' },
+    'bank': { n: 'Tertiary sector', d: 'Banking is a tertiary activity — financial services to consumers.' },
+    'quaternary': { n: 'Quaternary sector', d: 'Knowledge and information. R&D, software engineering, data analytics, AI, high-tech services.' },
+    'research': { n: 'Quaternary sector', d: 'Research and development is a quaternary activity — knowledge-based and high-tech.' }
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = db[k]; break; } }
+  if (found) {
+    geoResult('ec_result', '<div class="geo-answer multi">' + found.n + '</div><div class="result-sub">' + found.d + '</div>');
+  } else {
+    geoResult('ec_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: primary, mining, maize, manufacturing, banking, research, tertiary, quaternary.</div>');
+  }
+}
+
+function geoFluvial() {
+  const q = document.getElementById('fl_query').value.toLowerCase();
+  const db = {
+    'waterfall': 'Waterfall: Formed where a river flows over HARD ROCK that overlies SOFT ROCK. Soft rock erodes faster, creating a steep drop. Plunge pool forms at the base. The waterfall retreats upstream over time, leaving a gorge.',
+    'rapids': 'Rapids: Fast-flowing, turbulent water over a STEEP, ROCKY riverbed. Form where the river flows over resistant rock or a sudden change in gradient.',
+    'gorge': 'Gorge: A DEEP, NARROW valley with steep sides. Formed by intense vertical erosion, often after a waterfall retreats upstream.',
+    'meander': 'Meander: A curve or bend in a river. Undercut slope on the outer bank (erosion), slip-off slope on the inner bank (deposition).',
+    'oxbow': 'Oxbow lake: A crescent-shaped lake that forms when a meander loop is CUT OFF from the main channel.',
+    'braided': 'Braided stream: A river divided into TWO OR MORE channels by sandbars or islands. Forms where the river carries MORE sediment than it can transport.',
+    'floodplain': 'Floodplain: A WIDE, FLAT area of land on both banks of a river. Formed by repeated flooding that deposits layers of ALLUVIUM (fertile sediment).',
+    'levee': 'Natural levee: A RAISED BANK of sand, silt, and sediment that forms naturally along a river after repeated flooding. Coarse sediment dropped when floodwaters overflow the banks and lose energy.',
+    'delta': 'Delta: A LOW-LYING depositional landform at the mouth of a river. Forms when the river loses energy and deposits its sediment load. The river splits into several channels called DISTRIBUTARIES.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('fl_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('fl_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: waterfall, rapids, gorge, meander, oxbow, braided, floodplain, levee, delta.</div>');
+  }
+}
+
+function geoHierarchy() {
+  const q = document.getElementById('hs_query').value.toLowerCase();
+  const db = {
+    'farmstead': 'Isolated farmstead: A SINGLE farm with a main building and outbuildings. Smallest rural settlement.',
+    'hamlet': 'Hamlet: A SMALL GROUPING of farmsteads. Small rural settlement.',
+    'village': 'Village: A rural settlement that offers both RURAL and urban functions. Smallest urban-like settlement.',
+    'town': 'Town: An urban area that does NOT offer an extensive range of urban functions. Smaller than a city.',
+    'city': 'City: A LARGE urban centre. Offers a variety of services including specialised functions like judicial and financial.',
+    'metropolis': 'Metropolis: A single large city surrounded by many independent towns. Example: Durban (with Pinetown, Tongaat, Amanzimtoti).',
+    'conurbation': 'Conurbation: A COMBINATION of many towns and cities that merge with each other. Example: Johannesburg–Midrand–Pretoria.',
+    'megalopolis': 'Megalopolis: The LARGEST settlement. Forms when many conurbations join together. Example: Boston–New York–Washington.'
+  };
+  let found = null;
+  for (const k in db) { if (q.includes(k)) { found = { k, v: db[k] }; break; } }
+  if (found) {
+    geoResult('hs_result', '<div class="geo-answer multi" style="text-transform:capitalize;">' + found.k + '</div><div class="result-sub">' + found.v + '</div>');
+  } else {
+    geoResult('hs_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Try: farmstead, hamlet, village, town, city, metropolis, conurbation, megalopolis.</div>');
+  }
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', function () {
+  geoSetGrade(10);
+  geoShowToast();
+});
+</script>
+</body>
+</html>

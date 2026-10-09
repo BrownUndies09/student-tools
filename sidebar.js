@@ -62,6 +62,12 @@ const SIDEBAR_TOOLS = [
     ]
   },
   {
+    group: 'NSC Geography',
+    tools: [
+      { label: 'Geography (Gr 10–12)', icon: '🌍', href: 'geography.html' }
+    ]
+  },
+  {
     group: 'Planning Tools',
     tools: [
       { label: 'Study Schedule', icon: '📅', href: 'schedule.html' }
