@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accounting Tools - Grade 10, 11 & 12 NSC Calculator</title>
+<meta name="description" content="Free NSC Accounting tools for Grade 10, 11 and 12. Financial statements, ratios, reconciliations, cost accounting, VAT, budgets, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  .acc-tool-select { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .acc-tool-pill {
+    padding: 7px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: 100px; font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .acc-tool-pill:hover { border-color: var(--accent); color: var(--text); }
+  .acc-tool-pill.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  .acc-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .acc-input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .acc-input-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 500px) {
+    .acc-input-grid, .acc-input-grid-3, .acc-input-grid-4 { grid-template-columns: 1fr; }
+  }
+  .acc-answer {
+    font-size: 26px; font-weight: 700; letter-spacing: -1px; color: var(--success);
+    font-family: var(--font-mono); margin: 8px 0; word-break: break-word; line-height: 1.2;
+  }
+  .acc-answer.multi { font-size: 18px; }
+  .acc-input { font-family: var(--font-mono); font-size: 15px; padding: 12px 14px; }
+  .acc-step {
+    padding: 12px 16px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm); margin-bottom: 8px; font-family: var(--font-mono);
+    font-size: 13px; color: var(--text); line-height: 1.65;
+  }
+  .acc-step .step-num {
+    display: inline-block; width: 22px; height: 22px; background: var(--accent);
+    color: var(--accent-text); border-radius: 50%; font-size: 11px; text-align: center;
+    line-height: 22px; font-weight: 600; margin-right: 10px; flex-shrink: 0;
+  }
+  .acc-step .step-row { display: flex; align-items: flex-start; }
+  .acc-formula {
+    display: inline-block; padding: 2px 8px; background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--text); margin: 0 2px;
+  }
+  .acc-formula-note {
+    padding: 10px 14px; background: var(--glass-strong); border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent); border-radius: 10px; font-size: 12px;
+    color: var(--text-muted); line-height: 1.7; margin-bottom: 12px;
+  }
+  .acc-formula-note strong { color: var(--text); }
+  .acc-result-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .acc-hidden { display: none !important; }
+  .acc-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .acc-table th, .acc-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .acc-table th { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); }
+  .acc-table .num { text-align: right; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+
+<div class="orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu"></button>
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo">S</span>
+        <span>StudyTools</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <header class="tool-header">
+    <a href="index.html" class="back-link">← All tools</a>
+    <h1>Accounting Tools</h1>
+    <p>NSC Grade 10, 11 &amp; 12 Accounting calculators with step-by-step working.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab active" id="tabG10" onclick="accSetGrade(10)">Grade 10</button>
+      <button class="tab" id="tabG11" onclick="accSetGrade(11)">Grade 11</button>
+      <button class="tab" id="tabG12" onclick="accSetGrade(12)">Grade 12</button>
+    </div>
+
+    <div id="accGrade10Tools">
+      <div class="acc-tool-select">
+        <button class="acc-tool-pill active" data-g10="equation" onclick="accSelect10('equation')">Accounting Equation</button>
+        <button class="acc-tool-pill" data-g10="wages" onclick="accSelect10('wages')">Wages Journal</button>
+        <button class="acc-tool-pill" data-g10="salaryscale" onclick="accSelect10('salaryscale')">Salary Scale</button>
+        <button class="acc-tool-pill" data-g10="trading" onclick="accSelect10('trading')">Trading Account</button>
+        <button class="acc-tool-pill" data-g10="pl" onclick="accSelect10('pl')">Profit &amp; Loss</button>
+        <button class="acc-tool-pill" data-g10="sci" onclick="accSelect10('sci')">Income Statement</button>
+        <button class="acc-tool-pill" data-g10="sfp" onclick="accSelect10('sfp')">Balance Sheet</button>
+        <button class="acc-tool-pill" data-g10="depreciation" onclick="accSelect10('depreciation')">Depreciation</button>
+        <button class="acc-tool-pill" data-g10="cost" onclick="accSelect10('cost')">Cost Accounting</button>
+        <button class="acc-tool-pill" data-g10="budget" onclick="accSelect10('budget')">Cash Budget</button>
+      </div>
+    </div>
+
+    <div id="accGrade11Tools" class="acc-hidden">
+      <div class="acc-tool-select">
+        <button class="acc-tool-pill active" data-g11="bankrec" onclick="accSelect11('bankrec')">Bank Reconciliation</button>
+        <button class="acc-tool-pill" data-g11="debtorsrec" onclick="accSelect11('debtorsrec')">Debtors Reconciliation</button>
+        <button class="acc-tool-pill" data-g11="creditorsrec" onclick="accSelect11('creditorsrec')">Creditors Reconciliation</button>
+        <button class="acc-tool-pill" data-g11="fixedassetnote" onclick="accSelect11('fixedassetnote')">Fixed Asset Note</button>
+        <button class="acc-tool-pill" data-g11="assetdisposal" onclick="accSelect11('assetdisposal')">Asset Disposal</button>
+        <button class="acc-tool-pill" data-g11="sci11" onclick="accSelect11('sci11')">Income Statement</button>
+        <button class="acc-tool-pill" data-g11="sfp11" onclick="accSelect11('sfp11')">Balance Sheet</button>
+        <button class="acc-tool-pill" data-g11="breakeven" onclick="accSelect11('breakeven')">Break-even</button>
+        <button class="acc-tool-pill" data-g11="inventory" onclick="accSelect11('inventory')">Periodic Inventory</button>
+        <button class="acc-tool-pill" data-g11="vat" onclick="accSelect11('vat')">VAT</button>
+      </div>
+    </div>
+
+    <div id="accGrade12Tools" class="acc-hidden">
+      <div class="acc-tool-select">
+        <button class="acc-tool-pill active" data-g12="company_is" onclick="accSelect12('company_is')">Company Income Statement</button>
+        <button class="acc-tool-pill" data-g12="netprofit" onclick="accSelect12('netprofit')">Correct Net Profit</button>
+        <button class="acc-tool-pill" data-g12="cashflow" onclick="accSelect12('cashflow')">Cash Flow Statement</button>
+        <button class="acc-tool-pill" data-g12="ratios" onclick="accSelect12('ratios')">Financial Indicators</button>
+        <button class="acc-tool-pill" data-g12="analysis" onclick="accSelect12('analysis')">Analysis Helper</button>
+        <button class="acc-tool-pill" data-g12="fasset12" onclick="accSelect12('fasset12')">Fixed Asset Note</button>
+        <button class="acc-tool-pill" data-g12="inventory12" onclick="accSelect12('inventory12')">Inventory Valuation</button>
+        <button class="acc-tool-pill" data-g12="be12" onclick="accSelect12('be12')">Break-even</button>
+        <button class="acc-tool-pill" data-g12="rec12" onclick="accSelect12('rec12')">Reconciliations</button>
+        <button class="acc-tool-pill" data-g12="vat12" onclick="accSelect12('vat12')">VAT &amp; Tax</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GRADE 10 ==================== -->
+
+  <div id="tool-equation" class="acc-tool-panel">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Accounting Equation:</strong> <span class="acc-formula">A = E + L</span><br>
+        Every transaction affects two or more elements. Enter any two, leave the third blank.
+      </div>
+      <div class="acc-input-grid-3">
+        <div><label>Assets (R)</label><input type="number" id="eq_a" class="acc-input" step="any" placeholder="leave blank if unknown"></div>
+        <div><label>Owner's Equity (R)</label><input type="number" id="eq_e" class="acc-input" step="any" placeholder="leave blank if unknown"></div>
+        <div><label>Liabilities (R)</label><input type="number" id="eq_l" class="acc-input" step="any" placeholder="leave blank if unknown"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accEquation()">Solve</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="eq_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter two values, leave one blank.</div></div>
+    </div>
+    <div class="card acc-hidden" id="eq_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="eq_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-wages" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Wages Journal:</strong> basic wage + overtime − deductions = net wage.<br>
+        <span class="acc-formula">Overtime = hours × rate × 1.5</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Normal hours</label><input type="number" id="wg_norm" class="acc-input" step="any" value="40"></div>
+        <div><label>Overtime hours</label><input type="number" id="wg_ot" class="acc-input" step="any" value="5"></div>
+        <div><label>Hourly rate (R)</label><input type="number" id="wg_rate" class="acc-input" step="any" value="50"></div>
+        <div><label>Deductions (R)</label><input type="number" id="wg_ded" class="acc-input" step="any" value="200"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accWages()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Wages</div>
+      <div id="wg_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="wg_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="wg_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-salaryscale" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Salary scale:</strong> <span class="acc-formula">Start × annual increase − notch − final max</span><br>
+        Enter scale values from the exam. Example: <em>270 000 × 18 000 − 306 000 × 27 000 − 360 000</em>
+      </div>
+      <div class="acc-input-grid-4">
+        <div><label>Starting salary</label><input type="number" id="ss_start" class="acc-input" step="any" value="270000"></div>
+        <div><label>1st annual increase</label><input type="number" id="ss_inc1" class="acc-input" step="any" value="18000"></div>
+        <div><label>1st notch</label><input type="number" id="ss_notch" class="acc-input" step="any" value="306000"></div>
+        <div><label>2nd annual increase</label><input type="number" id="ss_inc2" class="acc-input" step="any" value="27000"></div>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Final maximum</label><input type="number" id="ss_max" class="acc-input" step="any" value="360000"></div>
+        <div><label>Year to solve for (1–6)</label><input type="number" id="ss_year" class="acc-input" step="any" value="3"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accSalaryScale()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="ss_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter scale values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="ss_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ss_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-trading" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Trading Account:</strong><br>
+        <span class="acc-formula">Cost of sales = Opening stock + Purchases + Carriage − Returns − Closing stock</span><br>
+        <span class="acc-formula">Gross profit = Sales − Cost of sales</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Opening stock</label><input type="number" id="tr_open" class="acc-input" step="any" value="100000"></div>
+        <div><label>Purchases</label><input type="number" id="tr_purch" class="acc-input" step="any" value="500000"></div>
+        <div><label>Carriage on purchases</label><input type="number" id="tr_carr" class="acc-input" step="any" value="20000"></div>
+        <div><label>Returns to suppliers</label><input type="number" id="tr_ret" class="acc-input" step="any" value="15000"></div>
+        <div><label>Closing stock</label><input type="number" id="tr_close" class="acc-input" step="any" value="120000"></div>
+        <div><label>Sales</label><input type="number" id="tr_sales" class="acc-input" step="any" value="750000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accTrading()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="tr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="tr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="tr_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-pl" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Profit &amp; Loss:</strong> start with gross profit, add other income, subtract operating expenses.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Gross profit</label><input type="number" id="pl_gp" class="acc-input" step="any" value="250000"></div>
+        <div><label>Other income</label><input type="number" id="pl_oi" class="acc-input" step="any" value="15000"></div>
+        <div><label>Operating expenses</label><input type="number" id="pl_oe" class="acc-input" step="any" value="120000"></div>
+        <div><label>Interest on loan (expense)</label><input type="number" id="pl_int" class="acc-input" step="any" value="8000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accPL()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Answer</div>
+      <div id="pl_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="pl_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="pl_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-sci" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Statement of Comprehensive Income:</strong><br>
+        Sales − Cost of sales = Gross profit<br>
+        + Other income = Gross operating income<br>
+        − Operating expenses = Operating profit<br>
+        + Interest income − Interest expense = Net profit before tax<br>
+        − Income tax = Net profit after tax
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Sales</label><input type="number" id="sci_sales" class="acc-input" step="any" value="1000000"></div>
+        <div><label>Cost of sales</label><input type="number" id="sci_cos" class="acc-input" step="any" value="600000"></div>
+        <div><label>Other income</label><input type="number" id="sci_oi" class="acc-input" step="any" value="30000"></div>
+        <div><label>Operating expenses</label><input type="number" id="sci_oe" class="acc-input" step="any" value="200000"></div>
+        <div><label>Interest income</label><input type="number" id="sci_ii" class="acc-input" step="any" value="5000"></div>
+        <div><label>Interest on loan (expense)</label><input type="number" id="sci_int" class="acc-input" step="any" value="20000"></div>
+        <div><label>Income tax rate (%)</label><input type="number" id="sci_tax" class="acc-input" step="any" value="28"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accSCI()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Statement</div>
+      <div id="sci_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="sci_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="sci_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-sfp" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Balance Sheet:</strong> <span class="acc-formula">A = E + L</span><br>
+        Assets = Non-current + Current. Equity + Non-current liabilities + Current liabilities.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Non-current assets</label><input type="number" id="sfp_nca" class="acc-input" step="any" value="800000"></div>
+        <div><label>Current assets</label><input type="number" id="sfp_ca" class="acc-input" step="any" value="300000"></div>
+        <div><label>Owner's equity</label><input type="number" id="sfp_eq" class="acc-input" step="any" value="700000"></div>
+        <div><label>Non-current liabilities</label><input type="number" id="sfp_ncl" class="acc-input" step="any" value="250000"></div>
+        <div><label>Current liabilities</label><input type="number" id="sfp_cl" class="acc-input" step="any" value="150000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accSFP()">Check Balance</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Balance Check</div>
+      <div id="sfp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Check.</div></div>
+    </div>
+    <div class="card acc-hidden" id="sfp_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="sfp_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-depreciation" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Straight-line:</strong> <span class="acc-formula">Depreciation = Cost × Rate</span><br>
+        <strong>Diminishing balance:</strong> <span class="acc-formula">Depreciation = Carrying value × Rate</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Cost price (R)</label><input type="number" id="dp_cost" class="acc-input" step="any" value="100000"></div>
+        <div><label>Depreciation rate (%)</label><input type="number" id="dp_rate" class="acc-input" step="any" value="15"></div>
+        <div><label>Years owned</label><input type="number" id="dp_years" class="acc-input" step="any" value="3"></div>
+        <div>
+          <label>Method</label>
+          <select id="dp_method" class="acc-input">
+            <option value="straight">Straight-line</option>
+            <option value="diminishing">Diminishing balance</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accDepreciation()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Depreciation</div>
+      <div id="dp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="dp_steps_card">
+      <div class="result-label">Year by Year</div>
+      <div id="dp_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-cost" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Cost Accounting:</strong><br>
+        <span class="acc-formula">Prime cost = Direct materials + Direct labour</span><br>
+        <span class="acc-formula">Total cost = Prime cost + Factory overheads</span><br>
+        <span class="acc-formula">Unit cost = Total cost ÷ Units produced</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Direct materials</label><input type="number" id="cs_dm" class="acc-input" step="any" value="150000"></div>
+        <div><label>Direct labour</label><input type="number" id="cs_dl" class="acc-input" step="any" value="100000"></div>
+        <div><label>Factory overheads</label><input type="number" id="cs_fo" class="acc-input" step="any" value="80000"></div>
+        <div><label>Units produced</label><input type="number" id="cs_units" class="acc-input" step="any" value="1000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accCost()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Cost Analysis</div>
+      <div id="cs_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="cs_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="cs_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-budget" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Cash Budget:</strong> <span class="acc-formula">Closing bank = Opening bank + Receipts − Payments</span>
+      </div>
+      <div class="acc-input-grid-3">
+        <div><label>Opening bank balance (R)</label><input type="number" id="bd_open" class="acc-input" step="any" value="50000"></div>
+        <div><label>Total receipts (R)</label><input type="number" id="bd_rec" class="acc-input" step="any" value="200000"></div>
+        <div><label>Total payments (R)</label><input type="number" id="bd_pay" class="acc-input" step="any" value="180000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accBudget()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Closing Balance</div>
+      <div id="bd_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="bd_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="bd_steps"></div>
+    </div>
+  </div>
+
+  <!-- ==================== GRADE 11 ==================== -->
+
+  <div id="tool-bankrec" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Bank Reconciliation:</strong> adjust the bank account for items on the statement not yet in the books, then reconcile outstanding items.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Bank account balance (favourable +)</label><input type="number" id="br_bal" class="acc-input" step="any" value="15000"></div>
+        <div><label>Bank charges (not in books)</label><input type="number" id="br_charges" class="acc-input" step="any" value="250"></div>
+        <div><label>Interest received</label><input type="number" id="br_int" class="acc-input" step="any" value="80"></div>
+        <div><label>Debit orders</label><input type="number" id="br_do" class="acc-input" step="any" value="1200"></div>
+        <div><label>Direct deposits</label><input type="number" id="br_dd" class="acc-input" step="any" value="800"></div>
+        <div><label>Outstanding deposits</label><input type="number" id="br_od" class="acc-input" step="any" value="3000"></div>
+        <div><label>Outstanding EFTs</label><input type="number" id="br_oeft" class="acc-input" step="any" value="2500"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accBankRec()">Reconcile</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Reconciliation</div>
+      <div id="br_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Reconcile.</div></div>
+    </div>
+    <div class="card acc-hidden" id="br_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="br_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-debtorsrec" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Debtors Reconciliation:</strong> Debtors Control ↔ Debtors List. Both must agree after corrections.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Debtors Control balance</label><input type="number" id="dr_control" class="acc-input" step="any" value="50000"></div>
+        <div><label>Debtors List total</label><input type="number" id="dr_list" class="acc-input" step="any" value="50000"></div>
+        <div><label>Corrections to Control (+ or −)</label><input type="number" id="dr_cc" class="acc-input" step="any" value="0"></div>
+        <div><label>Corrections to List (+ or −)</label><input type="number" id="dr_cl" class="acc-input" step="any" value="0"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accDebtorsRec()">Reconcile</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="dr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Reconcile.</div></div>
+    </div>
+    <div class="card acc-hidden" id="dr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="dr_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-creditorsrec" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Creditors Reconciliation:</strong> match Creditors Control to the Creditors List and to the statement received from suppliers.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Creditors Control balance</label><input type="number" id="cr_control" class="acc-input" step="any" value="60000"></div>
+        <div><label>Creditors List total</label><input type="number" id="cr_list" class="acc-input" step="any" value="60000"></div>
+        <div><label>Corrections to Control (+ or −)</label><input type="number" id="cr_cc" class="acc-input" step="any" value="0"></div>
+        <div><label>Corrections to List (+ or −)</label><input type="number" id="cr_cl" class="acc-input" step="any" value="0"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accCreditorsRec()">Reconcile</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="cr_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Reconcile.</div></div>
+    </div>
+    <div class="card acc-hidden" id="cr_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="cr_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-fixedassetnote" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Fixed Asset Note:</strong> Carrying value at end = Carrying value at begin + Additions − Disposals − Depreciation.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Carrying value at begin</label><input type="number" id="fa_begin" class="acc-input" step="any" value="500000"></div>
+        <div><label>Additions (at cost)</label><input type="number" id="fa_add" class="acc-input" step="any" value="100000"></div>
+        <div><label>Disposals (at carrying value)</label><input type="number" id="fa_disp" class="acc-input" step="any" value="20000"></div>
+        <div><label>Depreciation</label><input type="number" id="fa_dep" class="acc-input" step="any" value="80000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accFixedAssetNote()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Carrying Value at End</div>
+      <div id="fa_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="fa_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="fa_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-assetdisposal" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Asset Disposal:</strong> <span class="acc-formula">Profit/Loss = Selling price − Carrying value</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Cost price</label><input type="number" id="ad_cost" class="acc-input" step="any" value="100000"></div>
+        <div><label>Accumulated depreciation</label><input type="number" id="ad_acc" class="acc-input" step="any" value="40000"></div>
+        <div><label>Selling price</label><input type="number" id="ad_sell" class="acc-input" step="any" value="50000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accAssetDisposal()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Profit / Loss</div>
+      <div id="ad_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="ad_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="ad_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-sci11" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Partnership Income Statement:</strong> same structure as sole trader, but profits are split by the partnership agreement.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Sales</label><input type="number" id="sc_sales" class="acc-input" step="any" value="1200000"></div>
+        <div><label>Cost of sales</label><input type="number" id="sc_cos" class="acc-input" step="any" value="700000"></div>
+        <div><label>Other income</label><input type="number" id="sc_oi" class="acc-input" step="any" value="40000"></div>
+        <div><label>Operating expenses</label><input type="number" id="sc_oe" class="acc-input" step="any" value="220000"></div>
+        <div><label>Interest income</label><input type="number" id="sc_ii" class="acc-input" step="any" value="3000"></div>
+        <div><label>Interest on loan</label><input type="number" id="sc_int" class="acc-input" step="any" value="15000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accSCI11()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Statement</div>
+      <div id="sc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="sc_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="sc_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-sfp11" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Partnership Balance Sheet:</strong> Assets = Capital + Current Accounts + Liabilities.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Non-current assets</label><input type="number" id="sp_nca" class="acc-input" step="any" value="900000"></div>
+        <div><label>Current assets</label><input type="number" id="sp_ca" class="acc-input" step="any" value="400000"></div>
+        <div><label>Capital: Partner 1</label><input type="number" id="sp_cap1" class="acc-input" step="any" value="400000"></div>
+        <div><label>Capital: Partner 2</label><input type="number" id="sp_cap2" class="acc-input" step="any" value="300000"></div>
+        <div><label>Current accounts (net)</label><input type="number" id="sp_cur" class="acc-input" step="any" value="80000"></div>
+        <div><label>Non-current liabilities</label><input type="number" id="sp_ncl" class="acc-input" step="any" value="300000"></div>
+        <div><label>Current liabilities</label><input type="number" id="sp_cl" class="acc-input" step="any" value="220000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accSFP11()">Check Balance</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Balance Check</div>
+      <div id="sp_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Check.</div></div>
+    </div>
+    <div class="card acc-hidden" id="sp_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="sp_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-breakeven" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Break-even:</strong> <span class="acc-formula">BEP (units) = Total fixed costs ÷ (Selling price − Variable cost per unit)</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Total fixed costs</label><input type="number" id="be_fc" class="acc-input" step="any" value="100000"></div>
+        <div><label>Selling price per unit</label><input type="number" id="be_sp" class="acc-input" step="any" value="200"></div>
+        <div><label>Variable cost per unit</label><input type="number" id="be_vc" class="acc-input" step="any" value="120"></div>
+        <div><label>Units produced &amp; sold</label><input type="number" id="be_units" class="acc-input" step="any" value="1500"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accBreakEven()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Break-even Analysis</div>
+      <div id="be_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="be_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="be_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-inventory" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Periodic Inventory:</strong><br>
+        <span class="acc-formula">Cost of sales = Opening + Purchases + Carriage − Returns − Closing</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Opening stock</label><input type="number" id="in_open" class="acc-input" step="any" value="50000"></div>
+        <div><label>Purchases</label><input type="number" id="in_pur" class="acc-input" step="any" value="300000"></div>
+        <div><label>Carriage on purchases</label><input type="number" id="in_car" class="acc-input" step="any" value="10000"></div>
+        <div><label>Returns to suppliers</label><input type="number" id="in_ret" class="acc-input" step="any" value="5000"></div>
+        <div><label>Closing stock</label><input type="number" id="in_clo" class="acc-input" step="any" value="60000"></div>
+        <div><label>Sales</label><input type="number" id="in_sales" class="acc-input" step="any" value="450000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accInventory()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="in_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="in_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="in_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-vat" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>VAT:</strong> standard rate is 15% in South Africa.<br>
+        <span class="acc-formula">VAT = Amount × 0.15</span><br>
+        <span class="acc-formula">Including VAT = Amount × 1.15</span><br>
+        <span class="acc-formula">Excluding VAT = Including ÷ 1.15</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Amount excluding VAT</label><input type="number" id="vt_ex" class="acc-input" step="any" value="10000"></div>
+        <div><label>Amount including VAT</label><input type="number" id="vt_inc" class="acc-input" step="any" value="11500"></div>
+        <div><label>Input VAT</label><input type="number" id="vt_in" class="acc-input" step="any" value="3000"></div>
+        <div><label>Output VAT</label><input type="number" id="vt_out" class="acc-input" step="any" value="4500"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accVAT()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">VAT</div>
+      <div id="vt_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="vt_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="vt_steps"></div>
+    </div>
+  </div>
+
+  <!-- ==================== GRADE 12 ==================== -->
+
+  <div id="tool-company_is" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Company Income Statement:</strong> same as sole trader but for a company. Income tax rate is typically 28% (or as given).
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Sales</label><input type="number" id="cis_sales" class="acc-input" step="any" value="2000000"></div>
+        <div><label>Cost of sales</label><input type="number" id="cis_cos" class="acc-input" step="any" value="1200000"></div>
+        <div><label>Other income</label><input type="number" id="cis_oi" class="acc-input" step="any" value="50000"></div>
+        <div><label>Operating expenses</label><input type="number" id="cis_oe" class="acc-input" step="any" value="350000"></div>
+        <div><label>Interest income</label><input type="number" id="cis_ii" class="acc-input" step="any" value="10000"></div>
+        <div><label>Interest on loan</label><input type="number" id="cis_int" class="acc-input" step="any" value="40000"></div>
+        <div><label>Income tax rate (%)</label><input type="number" id="cis_tax" class="acc-input" step="any" value="28"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accCompanyIS()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Income Statement</div>
+      <div id="cis_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="cis_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="cis_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-netprofit" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Correct Net Profit:</strong> adjust the given (incorrect) net profit for each error or omission. Use + for increase, − for decrease.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Incorrect net profit (R)</label><input type="number" id="np_base" class="acc-input" step="any" value="500000"></div>
+        <div><label>Adjustment 1 (+ or −)</label><input type="number" id="np_a1" class="acc-input" step="any" value="0"></div>
+        <div><label>Adjustment 2 (+ or −)</label><input type="number" id="np_a2" class="acc-input" step="any" value="0"></div>
+        <div><label>Adjustment 3 (+ or −)</label><input type="number" id="np_a3" class="acc-input" step="any" value="0"></div>
+        <div><label>Adjustment 4 (+ or −)</label><input type="number" id="np_a4" class="acc-input" step="any" value="0"></div>
+        <div><label>Adjustment 5 (+ or −)</label><input type="number" id="np_a5" class="acc-input" step="any" value="0"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accNetProfit()">Correct</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Correct Net Profit</div>
+      <div id="np_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter adjustments and click Correct.</div></div>
+    </div>
+    <div class="card acc-hidden" id="np_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="np_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-cashflow" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Cash Flow Statement:</strong><br>
+        Operating activities (from operations + interest + tax + dividends) + Investing + Financing = Net change in cash.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Cash from operations</label><input type="number" id="cf_op" class="acc-input" step="any" value="400000"></div>
+        <div><label>Interest paid</label><input type="number" id="cf_int" class="acc-input" step="any" value="40000"></div>
+        <div><label>Tax paid</label><input type="number" id="cf_tax" class="acc-input" step="any" value="120000"></div>
+        <div><label>Dividends paid</label><input type="number" id="cf_div" class="acc-input" step="any" value="80000"></div>
+        <div><label>Investing activities (net)</label><input type="number" id="cf_inv" class="acc-input" step="any" value="-250000"></div>
+        <div><label>Financing activities (net)</label><input type="number" id="cf_fin" class="acc-input" step="any" value="150000"></div>
+        <div><label>Opening cash &amp; equivalents</label><input type="number" id="cf_open" class="acc-input" step="any" value="100000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accCashFlow()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Cash Flow</div>
+      <div id="cf_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="cf_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="cf_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-ratios" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Financial Indicators (NSC formula sheet):</strong><br>
+        Enter values for TWO years and get all ratios plus commentary on the trend.
+      </div>
+
+      <div class="result-label" style="margin-top:12px;">Statement of Comprehensive Income</div>
+      <div class="acc-input-grid">
+        <div><label>Sales (2026)</label><input type="number" id="r_sales2" class="acc-input" step="any" value="2000000"></div>
+        <div><label>Sales (2025)</label><input type="number" id="r_sales1" class="acc-input" step="any" value="1800000"></div>
+        <div><label>Cost of sales (2026)</label><input type="number" id="r_cos2" class="acc-input" step="any" value="1200000"></div>
+        <div><label>Cost of sales (2025)</label><input type="number" id="r_cos1" class="acc-input" step="any" value="1100000"></div>
+        <div><label>Operating expenses (2026)</label><input type="number" id="r_oe2" class="acc-input" step="any" value="350000"></div>
+        <div><label>Operating expenses (2025)</label><input type="number" id="r_oe1" class="acc-input" step="any" value="320000"></div>
+        <div><label>Operating profit (2026)</label><input type="number" id="r_op2" class="acc-input" step="any" value="450000"></div>
+        <div><label>Operating profit (2025)</label><input type="number" id="r_op1" class="acc-input" step="any" value="380000"></div>
+        <div><label>Net profit after tax (2026)</label><input type="number" id="r_np2" class="acc-input" step="any" value="320000"></div>
+        <div><label>Net profit after tax (2025)</label><input type="number" id="r_np1" class="acc-input" step="any" value="260000"></div>
+      </div>
+
+      <div class="result-label">Statement of Financial Position</div>
+      <div class="acc-input-grid">
+        <div><label>Current assets (2026)</label><input type="number" id="r_ca2" class="acc-input" step="any" value="500000"></div>
+        <div><label>Current assets (2025)</label><input type="number" id="r_ca1" class="acc-input" step="any" value="450000"></div>
+        <div><label>Inventories (2026)</label><input type="number" id="r_inv2" class="acc-input" step="any" value="200000"></div>
+        <div><label>Inventories (2025)</label><input type="number" id="r_inv1" class="acc-input" step="any" value="180000"></div>
+        <div><label>Current liabilities (2026)</label><input type="number" id="r_cl2" class="acc-input" step="any" value="250000"></div>
+        <div><label>Current liabilities (2025)</label><input type="number" id="r_cl1" class="acc-input" step="any" value="220000"></div>
+        <div><label>Total assets (2026)</label><input type="number" id="r_ta2" class="acc-input" step="any" value="1500000"></div>
+        <div><label>Total assets (2025)</label><input type="number" id="r_ta1" class="acc-input" step="any" value="1350000"></div>
+        <div><label>Total liabilities (2026)</label><input type="number" id="r_tl2" class="acc-input" step="any" value="600000"></div>
+        <div><label>Total liabilities (2025)</label><input type="number" id="r_tl1" class="acc-input" step="any" value="550000"></div>
+        <div><label>Shareholders' equity (2026)</label><input type="number" id="r_eq2" class="acc-input" step="any" value="900000"></div>
+        <div><label>Shareholders' equity (2025)</label><input type="number" id="r_eq1" class="acc-input" step="any" value="800000"></div>
+        <div><label>Non-current liabilities (2026)</label><input type="number" id="r_ncl2" class="acc-input" step="any" value="350000"></div>
+        <div><label>Non-current liabilities (2025)</label><input type="number" id="r_ncl1" class="acc-input" step="any" value="330000"></div>
+      </div>
+
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accRatios()">Calculate All Indicators</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Indicators</div>
+      <div id="r_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter both years and click Calculate.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-analysis" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Analysis Helper:</strong> tells you what to say when asked to "comment on" or "quote indicators" for a specific ratio trend.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Financial indicator</label>
+        <select id="an_ind" class="acc-input" onchange="accAnalysisChange()">
+          <option value="current">Current ratio (liquidity)</option>
+          <option value="acid">Acid-test ratio (liquidity)</option>
+          <option value="debt">Debt-equity ratio (risk & gearing)</option>
+          <option value="solvency">Solvency ratio</option>
+          <option value="gpmargin">Gross profit on sales (profitability)</option>
+          <option value="npmargin">Net profit on sales (profitability)</option>
+          <option value="opmargin">Operating profit on sales (efficiency)</option>
+          <option value="opexp">Operating expenses on sales (efficiency)</option>
+          <option value="roshe">Return on shareholders' equity (return)</option>
+          <option value="roce">Return on capital employed (return)</option>
+          <option value="stockholding">Stock holding period (efficiency)</option>
+          <option value="debtors">Debtors collection period</option>
+          <option value="creditors">Creditors payment period</option>
+          <option value="eps">Earnings per share (return)</option>
+          <option value="dps">Dividends per share (return)</option>
+          <option value="nav">Net asset value per share</option>
+        </select>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Year 1 value</label><input type="number" id="an_v1" class="acc-input" step="any" value="0"></div>
+        <div><label>Year 2 value</label><input type="number" id="an_v2" class="acc-input" step="any" value="0"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accAnalysis()">Comment</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Commentary</div>
+      <div id="an_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick indicator, enter values, click Comment.</div></div>
+    </div>
+  </div>
+
+  <div id="tool-fasset12" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Company Fixed Asset Note:</strong> same as Gr 11 but for each asset class. Enter values per class.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Carrying value at begin</label><input type="number" id="fa12_beg" class="acc-input" step="any" value="800000"></div>
+        <div><label>Additions (at cost)</label><input type="number" id="fa12_add" class="acc-input" step="any" value="200000"></div>
+        <div><label>Disposals (at CV)</label><input type="number" id="fa12_dis" class="acc-input" step="any" value="30000"></div>
+        <div><label>Depreciation</label><input type="number" id="fa12_dep" class="acc-input" step="any" value="120000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accFixedAsset12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Carrying Value at End</div>
+      <div id="fa12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="fa12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="fa12_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-inventory12" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Inventory Valuation methods:</strong>
+        <span class="acc-formula">FIFO — oldest stock sold first</span>
+        <span class="acc-formula">Weighted average — total cost ÷ total units</span>
+        <span class="acc-formula">Specific ID — track each item individually</span>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Method</label>
+        <select id="iv_method" class="acc-input" onchange="accInvChange()">
+          <option value="wavg">Weighted average</option>
+          <option value="fifo">FIFO (oldest first)</option>
+        </select>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Opening units</label><input type="number" id="iv_ou" class="acc-input" step="any" value="100"></div>
+        <div><label>Opening cost per unit</label><input type="number" id="iv_oc" class="acc-input" step="any" value="50"></div>
+        <div><label>Purchase units</label><input type="number" id="iv_pu" class="acc-input" step="any" value="200"></div>
+        <div><label>Purchase cost per unit</label><input type="number" id="iv_pc" class="acc-input" step="any" value="60"></div>
+        <div><label>Units sold</label><input type="number" id="iv_sold" class="acc-input" step="any" value="180"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accInventory12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Closing Stock Value</div>
+      <div id="iv_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="iv_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="iv_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-be12" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Break-even (advanced):</strong> includes unit cost, margin of safety, and profit at current production.
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Total fixed costs</label><input type="number" id="be12_fc" class="acc-input" step="any" value="150000"></div>
+        <div><label>Selling price per unit</label><input type="number" id="be12_sp" class="acc-input" step="any" value="250"></div>
+        <div><label>Variable cost per unit</label><input type="number" id="be12_vc" class="acc-input" step="any" value="150"></div>
+        <div><label>Units produced &amp; sold</label><input type="number" id="be12_units" class="acc-input" step="any" value="2000"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accBreakEven12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Break-even &amp; Profit</div>
+      <div id="be12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="be12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="be12_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-rec12" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>Reconciliation (advanced):</strong> handles bank, debtors, and creditors reconciliations with multiple adjustments.
+      </div>
+      <div style="margin-bottom:10px;">
+        <label>Type</label>
+        <select id="rc_type" class="acc-input">
+          <option value="bank">Bank reconciliation</option>
+          <option value="debtors">Debtors reconciliation</option>
+          <option value="creditors">Creditors reconciliation</option>
+        </select>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Main balance (control or bank)</label><input type="number" id="rc_bal" class="acc-input" step="any" value="50000"></div>
+        <div><label>Adjustments in books (+/−)</label><input type="number" id="rc_book" class="acc-input" step="any" value="0"></div>
+        <div><label>Adjustments in external record (+/−)</label><input type="number" id="rc_ext" class="acc-input" step="any" value="0"></div>
+        <div><label>Outstanding items (deposits/EFTs)</label><input type="number" id="rc_out" class="acc-input" step="any" value="0"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accRec12()">Reconcile</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Reconciliation</div>
+      <div id="rc_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Pick type and enter values, click Reconcile.</div></div>
+    </div>
+    <div class="card acc-hidden" id="rc_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="rc_steps"></div>
+    </div>
+  </div>
+
+  <div id="tool-vat12" class="acc-tool-panel acc-hidden">
+    <div class="card">
+      <div class="acc-formula-note">
+        <strong>VAT &amp; Tax:</strong> standard VAT = 15%. Companies pay income tax (28% typically).<br>
+        <span class="acc-formula">VAT payable = Output − Input</span>
+      </div>
+      <div class="acc-input-grid">
+        <div><label>Output VAT</label><input type="number" id="vt12_out" class="acc-input" step="any" value="60000"></div>
+        <div><label>Input VAT</label><input type="number" id="vt12_in" class="acc-input" step="any" value="40000"></div>
+        <div><label>Net profit before tax</label><input type="number" id="vt12_pbt" class="acc-input" step="any" value="500000"></div>
+        <div><label>Income tax rate (%)</label><input type="number" id="vt12_rate" class="acc-input" step="any" value="28"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary btn-block" onclick="accVAT12()">Calculate</button></div>
+    </div>
+    <div class="card">
+      <div class="result-label">Result</div>
+      <div id="vt12_result"><div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Enter values and click Calculate.</div></div>
+    </div>
+    <div class="card acc-hidden" id="vt12_steps_card">
+      <div class="result-label">Step-by-Step</div>
+      <div id="vt12_steps"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-note">
+      StudyTools is a free side project. To keep it running and add more tools, I display a few ads. No paywalls, no sign-ups, no data selling. Just free tools for students.
+    </div>
+    Free student tools. Made for students.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="sidebar.js"></script>
+<script>
+/* Shared helpers */
+function accFmt(n) {
+  if (!isFinite(n)) return '—';
+  if (n === 0) return '0';
+  if (Number.isInteger(n)) return n.toLocaleString();
+  return parseFloat(n.toFixed(2)).toLocaleString();
+}
+function accShowSteps(stepsId, cardId, steps) {
+  const el = document.getElementById(stepsId);
+  if (!el) return;
+  el.innerHTML = steps.map((s, i) =>
+    '<div class="acc-step"><div class="step-row"><span class="step-num">' + (i + 1) + '</span><span>' + escapeHtml(s) + '</span></div></div>'
+  ).join('');
+  const card = document.getElementById(cardId);
+  if (card) card.classList.remove('acc-hidden');
+}
+function accResult(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+/* Grade switching */
+let accGrade = 10;
+let accTool10 = 'equation';
+let accTool11 = 'bankrec';
+let accTool12 = 'company_is';
+
+function accSetGrade(g) {
+  accGrade = g;
+  document.getElementById('tabG10').classList.toggle('active', g === 10);
+  document.getElementById('tabG11').classList.toggle('active', g === 11);
+  document.getElementById('tabG12').classList.toggle('active', g === 12);
+  document.getElementById('accGrade10Tools').classList.toggle('acc-hidden', g !== 10);
+  document.getElementById('accGrade11Tools').classList.toggle('acc-hidden', g !== 11);
+  document.getElementById('accGrade12Tools').classList.toggle('acc-hidden', g !== 12);
+  let current = g === 10 ? accTool10 : g === 11 ? accTool11 : accTool12;
+  document.querySelectorAll('[id^="tool-"]').forEach(p => {
+    p.classList.toggle('acc-hidden', p.id !== 'tool-' + current);
+  });
+}
+function accSelect10(t) { accTool10 = t; accSetGrade(10); window.scrollTo({top:0,behavior:'smooth'}); }
+function accSelect11(t) { accTool11 = t; accSetGrade(11); window.scrollTo({top:0,behavior:'smooth'}); }
+function accSelect12(t) { accTool12 = t; accSetGrade(12); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ========== GRADE 10 TOOLS ========== */
+
+function accEquation() {
+  let a = document.getElementById('eq_a').value === '' ? null : parseFloat(document.getElementById('eq_a').value);
+  let e = document.getElementById('eq_e').value === '' ? null : parseFloat(document.getElementById('eq_e').value);
+  let l = document.getElementById('eq_l').value === '' ? null : parseFloat(document.getElementById('eq_l').value);
+  const steps = [];
+  let html = '';
+  if (a === null && e !== null && l !== null) {
+    a = e + l;
+    steps.push('A = E + L = ' + accFmt(e) + ' + ' + accFmt(l) + ' = ' + accFmt(a));
+    html = '<div class="acc-answer">Assets = R' + accFmt(a) + '</div>';
+  } else if (e === null && a !== null && l !== null) {
+    e = a - l;
+    steps.push('E = A − L = ' + accFmt(a) + ' − ' + accFmt(l) + ' = ' + accFmt(e));
+    html = '<div class="acc-answer">Equity = R' + accFmt(e) + '</div>';
+  } else if (l === null && a !== null && e !== null) {
+    l = a - e;
+    steps.push('L = A − E = ' + accFmt(a) + ' − ' + accFmt(e) + ' = ' + accFmt(l));
+    html = '<div class="acc-answer">Liabilities = R' + accFmt(l) + '</div>';
+  } else {
+    accResult('eq_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave exactly one field blank.</div>');
+    return;
+  }
+  accResult('eq_result', html);
+  accShowSteps('eq_steps', 'eq_steps_card', steps);
+}
+
+function accWages() {
+  const norm = parseFloat(document.getElementById('wg_norm').value) || 0;
+  const ot = parseFloat(document.getElementById('wg_ot').value) || 0;
+  const rate = parseFloat(document.getElementById('wg_rate').value) || 0;
+  const ded = parseFloat(document.getElementById('wg_ded').value) || 0;
+  const basic = norm * rate;
+  const otPay = ot * rate * 1.5;
+  const gross = basic + otPay;
+  const net = gross - ded;
+  const steps = [];
+  steps.push('Basic wage = ' + norm + ' × R' + rate + ' = R' + accFmt(basic));
+  steps.push('Overtime = ' + ot + ' × R' + rate + ' × 1.5 = R' + accFmt(otPay));
+  steps.push('Gross wage = R' + accFmt(basic) + ' + R' + accFmt(otPay) + ' = R' + accFmt(gross));
+  steps.push('Net wage = R' + accFmt(gross) + ' − R' + accFmt(ded) + ' = R' + accFmt(net));
+  accResult('wg_result',
+    '<div class="acc-answer">Net wage = R' + accFmt(net) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Basic</span><span class="result-cell-value">R' + accFmt(basic) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Overtime</span><span class="result-cell-value">R' + accFmt(otPay) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Gross</span><span class="result-cell-value">R' + accFmt(gross) + '</span></div>' +
+    '</div>');
+  accShowSteps('wg_steps', 'wg_steps_card', steps);
+}
+
+function accSalaryScale() {
+  const start = parseFloat(document.getElementById('ss_start').value) || 0;
+  const inc1 = parseFloat(document.getElementById('ss_inc1').value) || 0;
+  const notch = parseFloat(document.getElementById('ss_notch').value) || 0;
+  const inc2 = parseFloat(document.getElementById('ss_inc2').value) || 0;
+  const max = parseFloat(document.getElementById('ss_max').value) || 0;
+  const year = parseInt(document.getElementById('ss_year').value) || 1;
+  const steps = [];
+  let annual = start;
+  for (let y = 2; y <= year; y++) {
+    if (annual < notch) annual += inc1;
+    else if (annual < max) annual += inc2;
+    if (annual > max) annual = max;
+  }
+  steps.push('Year 1: R' + accFmt(start) + ' (start)');
+  steps.push('Annual increases of R' + accFmt(inc1) + ' until notch R' + accFmt(notch));
+  steps.push('Then annual increases of R' + accFmt(inc2) + ' until max R' + accFmt(max));
+  steps.push('Year ' + year + ': R' + accFmt(annual) + ' per year');
+  steps.push('Monthly: R' + accFmt(annual / 12));
+  accResult('ss_result',
+    '<div class="acc-answer">R' + accFmt(annual) + ' / year</div>' +
+    '<div class="acc-answer multi" style="color:var(--text);">R' + accFmt(annual / 12) + ' / month</div>');
+  accShowSteps('ss_steps', 'ss_steps_card', steps);
+}
+
+function accTrading() {
+  const open = parseFloat(document.getElementById('tr_open').value) || 0;
+  const pur = parseFloat(document.getElementById('tr_purch').value) || 0;
+  const car = parseFloat(document.getElementById('tr_carr').value) || 0;
+  const ret = parseFloat(document.getElementById('tr_ret').value) || 0;
+  const clo = parseFloat(document.getElementById('tr_close').value) || 0;
+  const sales = parseFloat(document.getElementById('tr_sales').value) || 0;
+  const cos = open + pur + car - ret - clo;
+  const gp = sales - cos;
+  const steps = [];
+  steps.push('Cost of sales = Opening + Purchases + Carriage − Returns − Closing');
+  steps.push('= ' + accFmt(open) + ' + ' + accFmt(pur) + ' + ' + accFmt(car) + ' − ' + accFmt(ret) + ' − ' + accFmt(clo));
+  steps.push('Cost of sales = R' + accFmt(cos));
+  steps.push('Gross profit = Sales − Cost of sales = ' + accFmt(sales) + ' − ' + accFmt(cos) + ' = R' + accFmt(gp));
+  const gpPct = sales > 0 ? (gp / sales * 100) : 0;
+  steps.push('GP % on sales = ' + accFmt(gpPct) + '%');
+  accResult('tr_result',
+    '<div class="acc-answer">Gross profit = R' + accFmt(gp) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Cost of sales</span><span class="result-cell-value">R' + accFmt(cos) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">GP % on sales</span><span class="result-cell-value">' + accFmt(gpPct) + '%</span></div>' +
+    '</div>');
+  accShowSteps('tr_steps', 'tr_steps_card', steps);
+}
+
+function accPL() {
+  const gp = parseFloat(document.getElementById('pl_gp').value) || 0;
+  const oi = parseFloat(document.getElementById('pl_oi').value) || 0;
+  const oe = parseFloat(document.getElementById('pl_oe').value) || 0;
+  const int = parseFloat(document.getElementById('pl_int').value) || 0;
+  const op = gp + oi - oe;
+  const np = op - int;
+  const steps = [];
+  steps.push('Operating profit = GP + Other income − Operating expenses');
+  steps.push('= ' + accFmt(gp) + ' + ' + accFmt(oi) + ' − ' + accFmt(oe) + ' = R' + accFmt(op));
+  steps.push('Net profit = Operating profit − Interest expense');
+  steps.push('= ' + accFmt(op) + ' − ' + accFmt(int) + ' = R' + accFmt(np));
+  accResult('pl_result',
+    '<div class="acc-answer">Net profit = R' + accFmt(np) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Operating profit</span><span class="result-cell-value">R' + accFmt(op) + '</span></div>' +
+    '</div>');
+  accShowSteps('pl_steps', 'pl_steps_card', steps);
+}
+
+function accSCI() {
+  const sales = parseFloat(document.getElementById('sci_sales').value) || 0;
+  const cos = parseFloat(document.getElementById('sci_cos').value) || 0;
+  const oi = parseFloat(document.getElementById('sci_oi').value) || 0;
+  const oe = parseFloat(document.getElementById('sci_oe').value) || 0;
+  const ii = parseFloat(document.getElementById('sci_ii').value) || 0;
+  const int = parseFloat(document.getElementById('sci_int').value) || 0;
+  const taxRate = parseFloat(document.getElementById('sci_tax').value) || 0;
+
+  const gp = sales - cos;
+  const goi = gp + oi;
+  const op = goi - oe;
+  const pbt = op + ii - int;
+  const tax = pbt * taxRate / 100;
+  const pat = pbt - tax;
+
+  const steps = [];
+  steps.push('Gross profit = Sales − Cost of sales = ' + accFmt(sales) + ' − ' + accFmt(cos) + ' = R' + accFmt(gp));
+  steps.push('Gross operating income = GP + Other income = ' + accFmt(gp) + ' + ' + accFmt(oi) + ' = R' + accFmt(goi));
+  steps.push('Operating profit = GOI − Operating expenses = ' + accFmt(goi) + ' − ' + accFmt(oe) + ' = R' + accFmt(op));
+  steps.push('Profit before tax = OP + Interest income − Interest expense = R' + accFmt(pbt));
+  steps.push('Income tax = ' + taxRate + '% × R' + accFmt(pbt) + ' = R' + accFmt(tax));
+  steps.push('Net profit after tax = R' + accFmt(pat));
+
+  accResult('sci_result',
+    '<div class="acc-answer">Net profit after tax = R' + accFmt(pat) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Gross profit</span><span class="result-cell-value">R' + accFmt(gp) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Operating profit</span><span class="result-cell-value">R' + accFmt(op) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">PBT</span><span class="result-cell-value">R' + accFmt(pbt) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Tax</span><span class="result-cell-value">R' + accFmt(tax) + '</span></div>' +
+    '</div>');
+  accShowSteps('sci_steps', 'sci_steps_card', steps);
+}
+
+function accSFP() {
+  const nca = parseFloat(document.getElementById('sfp_nca').value) || 0;
+  const ca = parseFloat(document.getElementById('sfp_ca').value) || 0;
+  const eq = parseFloat(document.getElementById('sfp_eq').value) || 0;
+  const ncl = parseFloat(document.getElementById('sfp_ncl').value) || 0;
+  const cl = parseFloat(document.getElementById('sfp_cl').value) || 0;
+  const assets = nca + ca;
+  const eL = eq + ncl + cl;
+  const diff = assets - eL;
+  const steps = [];
+  steps.push('Total assets = NCA + CA = ' + accFmt(nca) + ' + ' + accFmt(ca) + ' = R' + accFmt(assets));
+  steps.push('Total equity + liabilities = E + NCL + CL = ' + accFmt(eq) + ' + ' + accFmt(ncl) + ' + ' + accFmt(cl) + ' = R' + accFmt(eL));
+  steps.push(diff === 0 ? 'Balanced ✓' : 'Out of balance by R' + accFmt(Math.abs(diff)));
+  let html = '';
+  if (diff === 0) {
+    html = '<div class="acc-answer">Balanced ✓</div><div class="result-sub">Total = R' + accFmt(assets) + '</div>';
+  } else {
+    html = '<div class="acc-answer" style="color:var(--danger);">Out of balance by R' + accFmt(Math.abs(diff)) + '</div>' +
+      '<div class="result-sub">Assets R' + accFmt(assets) + ' vs E+L R' + accFmt(eL) + '</div>';
+  }
+  accResult('sfp_result', html);
+  accShowSteps('sfp_steps', 'sfp_steps_card', steps);
+}
+
+function accDepreciation() {
+  const cost = parseFloat(document.getElementById('dp_cost').value) || 0;
+  const rate = parseFloat(document.getElementById('dp_rate').value) || 0;
+  const years = parseFloat(document.getElementById('dp_years').value) || 0;
+  const method = document.getElementById('dp_method').value;
+  const steps = [];
+  let cv = cost;
+  let totalDep = 0;
+  for (let y = 1; y <= years; y++) {
+    const dep = method === 'straight' ? cost * rate / 100 : cv * rate / 100;
+    totalDep += dep;
+    cv -= dep;
+    steps.push('Year ' + y + ': Depreciation = R' + accFmt(dep) + ' | Carrying value = R' + accFmt(cv));
+  }
+  accResult('dp_result',
+    '<div class="acc-answer">CV after ' + years + ' yrs = R' + accFmt(cv) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Total dep</span><span class="result-cell-value">R' + accFmt(totalDep) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Method</span><span class="result-cell-value">' + (method === 'straight' ? 'Straight-line' : 'Diminishing') + '</span></div>' +
+    '</div>');
+  accShowSteps('dp_steps', 'dp_steps_card', steps);
+}
+
+function accCost() {
+  const dm = parseFloat(document.getElementById('cs_dm').value) || 0;
+  const dl = parseFloat(document.getElementById('cs_dl').value) || 0;
+  const fo = parseFloat(document.getElementById('cs_fo').value) || 0;
+  const units = parseFloat(document.getElementById('cs_units').value) || 1;
+  const prime = dm + dl;
+  const total = prime + fo;
+  const unit = total / units;
+  const steps = [];
+  steps.push('Prime cost = DM + DL = ' + accFmt(dm) + ' + ' + accFmt(dl) + ' = R' + accFmt(prime));
+  steps.push('Total cost = Prime cost + Factory overheads = ' + accFmt(prime) + ' + ' + accFmt(fo) + ' = R' + accFmt(total));
+  steps.push('Unit cost = Total cost ÷ Units = ' + accFmt(total) + ' ÷ ' + units + ' = R' + accFmt(unit));
+  accResult('cs_result',
+    '<div class="acc-answer">Unit cost = R' + accFmt(unit) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Prime cost</span><span class="result-cell-value">R' + accFmt(prime) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Total cost</span><span class="result-cell-value">R' + accFmt(total) + '</span></div>' +
+    '</div>');
+  accShowSteps('cs_steps', 'cs_steps_card', steps);
+}
+
+function accBudget() {
+  const open = parseFloat(document.getElementById('bd_open').value) || 0;
+  const rec = parseFloat(document.getElementById('bd_rec').value) || 0;
+  const pay = parseFloat(document.getElementById('bd_pay').value) || 0;
+  const closing = open + rec - pay;
+  const surplus = rec - pay;
+  const steps = [];
+  steps.push('Surplus/(Deficit) = Receipts − Payments = ' + accFmt(rec) + ' − ' + accFmt(pay) + ' = R' + accFmt(surplus));
+  steps.push('Closing bank = Opening + Surplus = ' + accFmt(open) + ' + ' + accFmt(surplus) + ' = R' + accFmt(closing));
+  accResult('bd_result',
+    '<div class="acc-answer">Closing bank = R' + accFmt(closing) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Surplus/(Deficit)</span><span class="result-cell-value">R' + accFmt(surplus) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Opening</span><span class="result-cell-value">R' + accFmt(open) + '</span></div>' +
+    '</div>');
+  accShowSteps('bd_steps', 'bd_steps_card', steps);
+}
+
+/* ========== GRADE 11 TOOLS ========== */
+
+function accBankRec() {
+  const bal = parseFloat(document.getElementById('br_bal').value) || 0;
+  const chg = parseFloat(document.getElementById('br_charges').value) || 0;
+  const int = parseFloat(document.getElementById('br_int').value) || 0;
+  const do_ = parseFloat(document.getElementById('br_do').value) || 0;
+  const dd = parseFloat(document.getElementById('br_dd').value) || 0;
+  const od = parseFloat(document.getElementById('br_od').value) || 0;
+  const oeft = parseFloat(document.getElementById('br_oeft').value) || 0;
+  const adjusted = bal - chg + int - do_ + dd;
+  const statement = adjusted + od - oeft;
+  const steps = [];
+  steps.push('Adjusted bank balance = ' + accFmt(bal) + ' − ' + accFmt(chg) + ' + ' + accFmt(int) + ' − ' + accFmt(do_) + ' + ' + accFmt(dd));
+  steps.push('= R' + accFmt(adjusted));
+  steps.push('Statement balance = adjusted + outstanding deposits − outstanding EFTs');
+  steps.push('= ' + accFmt(adjusted) + ' + ' + accFmt(od) + ' − ' + accFmt(oeft) + ' = R' + accFmt(statement));
+  accResult('br_result',
+    '<div class="acc-answer">Adjusted bank = R' + accFmt(adjusted) + '</div>' +
+    '<div class="acc-answer multi" style="color:var(--text);">Statement balance = R' + accFmt(statement) + '</div>');
+  accShowSteps('br_steps', 'br_steps_card', steps);
+}
+
+function accDebtorsRec() {
+  const ctrl = parseFloat(document.getElementById('dr_control').value) || 0;
+  const list = parseFloat(document.getElementById('dr_list').value) || 0;
+  const cc = parseFloat(document.getElementById('dr_cc').value) || 0;
+  const cl = parseFloat(document.getElementById('dr_cl').value) || 0;
+  const adjCtrl = ctrl + cc;
+  const adjList = list + cl;
+  const diff = adjCtrl - adjList;
+  const steps = [];
+  steps.push('Adjusted Control = ' + accFmt(ctrl) + ' + ' + accFmt(cc) + ' = R' + accFmt(adjCtrl));
+  steps.push('Adjusted List = ' + accFmt(list) + ' + ' + accFmt(cl) + ' = R' + accFmt(adjList));
+  steps.push(diff === 0 ? 'Reconciled ✓' : 'Still out of balance by R' + accFmt(Math.abs(diff)));
+  let html = diff === 0
+    ? '<div class="acc-answer">Reconciled ✓</div><div class="result-sub">Both = R' + accFmt(adjCtrl) + '</div>'
+    : '<div class="acc-answer" style="color:var(--danger);">Still differs by R' + accFmt(Math.abs(diff)) + '</div>';
+  accResult('dr_result', html);
+  accShowSteps('dr_steps', 'dr_steps_card', steps);
+}
+
+function accCreditorsRec() {
+  const ctrl = parseFloat(document.getElementById('cr_control').value) || 0;
+  const list = parseFloat(document.getElementById('cr_list').value) || 0;
+  const cc = parseFloat(document.getElementById('cr_cc').value) || 0;
+  const cl = parseFloat(document.getElementById('cr_cl').value) || 0;
+  const adjCtrl = ctrl + cc;
+  const adjList = list + cl;
+  const diff = adjCtrl - adjList;
+  const steps = [];
+  steps.push('Adjusted Control = ' + accFmt(ctrl) + ' + ' + accFmt(cc) + ' = R' + accFmt(adjCtrl));
+  steps.push('Adjusted List = ' + accFmt(list) + ' + ' + accFmt(cl) + ' = R' + accFmt(adjList));
+  steps.push(diff === 0 ? 'Reconciled ✓' : 'Still out of balance by R' + accFmt(Math.abs(diff)));
+  let html = diff === 0
+    ? '<div class="acc-answer">Reconciled ✓</div><div class="result-sub">Both = R' + accFmt(adjCtrl) + '</div>'
+    : '<div class="acc-answer" style="color:var(--danger);">Still differs by R' + accFmt(Math.abs(diff)) + '</div>';
+  accResult('cr_result', html);
+  accShowSteps('cr_steps', 'cr_steps_card', steps);
+}
+
+function accFixedAssetNote() {
+  const beg = parseFloat(document.getElementById('fa_begin').value) || 0;
+  const add = parseFloat(document.getElementById('fa_add').value) || 0;
+  const dis = parseFloat(document.getElementById('fa_disp').value) || 0;
+  const dep = parseFloat(document.getElementById('fa_dep').value) || 0;
+  const end = beg + add - dis - dep;
+  const steps = [];
+  steps.push('CV end = CV begin + Additions − Disposals − Depreciation');
+  steps.push('= ' + accFmt(beg) + ' + ' + accFmt(add) + ' − ' + accFmt(dis) + ' − ' + accFmt(dep) + ' = R' + accFmt(end));
+  accResult('fa_result', '<div class="acc-answer">CV end = R' + accFmt(end) + '</div>');
+  accShowSteps('fa_steps', 'fa_steps_card', steps);
+}
+
+function accAssetDisposal() {
+  const cost = parseFloat(document.getElementById('ad_cost').value) || 0;
+  const acc = parseFloat(document.getElementById('ad_acc').value) || 0;
+  const sell = parseFloat(document.getElementById('ad_sell').value) || 0;
+  const cv = cost - acc;
+  const pnl = sell - cv;
+  const steps = [];
+  steps.push('Carrying value = Cost − Accumulated depreciation = ' + accFmt(cost) + ' − ' + accFmt(acc) + ' = R' + accFmt(cv));
+  steps.push('Profit/(Loss) = Selling price − Carrying value = ' + accFmt(sell) + ' − ' + accFmt(cv) + ' = R' + accFmt(pnl));
+  accResult('ad_result',
+    '<div class="acc-answer" style="color:' + (pnl >= 0 ? 'var(--success)' : 'var(--danger)') + ';">' + (pnl >= 0 ? 'Profit' : 'Loss') + ' = R' + accFmt(Math.abs(pnl)) + '</div>' +
+    '<div class="result-sub">Carrying value: R' + accFmt(cv) + '</div>');
+  accShowSteps('ad_steps', 'ad_steps_card', steps);
+}
+
+function accSCI11() {
+  const sales = parseFloat(document.getElementById('sc_sales').value) || 0;
+  const cos = parseFloat(document.getElementById('sc_cos').value) || 0;
+  const oi = parseFloat(document.getElementById('sc_oi').value) || 0;
+  const oe = parseFloat(document.getElementById('sc_oe').value) || 0;
+  const ii = parseFloat(document.getElementById('sc_ii').value) || 0;
+  const int = parseFloat(document.getElementById('sc_int').value) || 0;
+  const gp = sales - cos;
+  const goi = gp + oi;
+  const op = goi - oe;
+  const np = op + ii - int;
+  const steps = [];
+  steps.push('Gross profit = ' + accFmt(gp));
+  steps.push('Gross operating income = ' + accFmt(goi));
+  steps.push('Operating profit = ' + accFmt(op));
+  steps.push('Net profit = OP + Interest income − Interest expense = R' + accFmt(np));
+  accResult('sc_result',
+    '<div class="acc-answer">Net profit = R' + accFmt(np) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">GP</span><span class="result-cell-value">R' + accFmt(gp) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">OP</span><span class="result-cell-value">R' + accFmt(op) + '</span></div>' +
+    '</div>');
+  accShowSteps('sc_steps', 'sc_steps_card', steps);
+}
+
+function accSFP11() {
+  const nca = parseFloat(document.getElementById('sp_nca').value) || 0;
+  const ca = parseFloat(document.getElementById('sp_ca').value) || 0;
+  const cap1 = parseFloat(document.getElementById('sp_cap1').value) || 0;
+  const cap2 = parseFloat(document.getElementById('sp_cap2').value) || 0;
+  const cur = parseFloat(document.getElementById('sp_cur').value) || 0;
+  const ncl = parseFloat(document.getElementById('sp_ncl').value) || 0;
+  const cl = parseFloat(document.getElementById('sp_cl').value) || 0;
+  const assets = nca + ca;
+  const eL = cap1 + cap2 + cur + ncl + cl;
+  const diff = assets - eL;
+  const steps = [];
+  steps.push('Total assets = R' + accFmt(assets));
+  steps.push('Total equity & liabilities = ' + accFmt(cap1) + ' + ' + accFmt(cap2) + ' + ' + accFmt(cur) + ' + ' + accFmt(ncl) + ' + ' + accFmt(cl) + ' = R' + accFmt(eL));
+  steps.push(diff === 0 ? 'Balanced ✓' : 'Out of balance by R' + accFmt(Math.abs(diff)));
+  let html = diff === 0
+    ? '<div class="acc-answer">Balanced ✓</div><div class="result-sub">Total = R' + accFmt(assets) + '</div>'
+    : '<div class="acc-answer" style="color:var(--danger);">Out of balance by R' + accFmt(Math.abs(diff)) + '</div>';
+  accResult('sp_result', html);
+  accShowSteps('sp_steps', 'sp_steps_card', steps);
+}
+
+function accBreakEven() {
+  const fc = parseFloat(document.getElementById('be_fc').value) || 0;
+  const sp = parseFloat(document.getElementById('be_sp').value) || 0;
+  const vc = parseFloat(document.getElementById('be_vc').value) || 0;
+  const units = parseFloat(document.getElementById('be_units').value) || 0;
+  const contrib = sp - vc;
+  if (contrib <= 0) {
+    accResult('be_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Selling price must exceed variable cost.</div>');
+    return;
+  }
+  const bep = fc / contrib;
+  const profit = (sp - vc) * units - fc;
+  const steps = [];
+  steps.push('Contribution per unit = SP − VC = ' + accFmt(sp) + ' − ' + accFmt(vc) + ' = R' + accFmt(contrib));
+  steps.push('BEP = FC ÷ Contribution = ' + accFmt(fc) + ' ÷ ' + accFmt(contrib) + ' = ' + accFmt(bep) + ' units');
+  steps.push('Profit at ' + units + ' units = (' + accFmt(contrib) + ' × ' + units + ') − ' + accFmt(fc) + ' = R' + accFmt(profit));
+  accResult('be_result',
+    '<div class="acc-answer">BEP = ' + accFmt(bep) + ' units</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Contribution/unit</span><span class="result-cell-value">R' + accFmt(contrib) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Profit</span><span class="result-cell-value">R' + accFmt(profit) + '</span></div>' +
+    '</div>');
+  accShowSteps('be_steps', 'be_steps_card', steps);
+}
+
+function accInventory() {
+  const open = parseFloat(document.getElementById('in_open').value) || 0;
+  const pur = parseFloat(document.getElementById('in_pur').value) || 0;
+  const car = parseFloat(document.getElementById('in_car').value) || 0;
+  const ret = parseFloat(document.getElementById('in_ret').value) || 0;
+  const clo = parseFloat(document.getElementById('in_clo').value) || 0;
+  const sales = parseFloat(document.getElementById('in_sales').value) || 0;
+  const cos = open + pur + car - ret - clo;
+  const gp = sales - cos;
+  const steps = [];
+  steps.push('Cost of sales = ' + accFmt(open) + ' + ' + accFmt(pur) + ' + ' + accFmt(car) + ' − ' + accFmt(ret) + ' − ' + accFmt(clo) + ' = R' + accFmt(cos));
+  steps.push('Gross profit = ' + accFmt(sales) + ' − ' + accFmt(cos) + ' = R' + accFmt(gp));
+  accResult('in_result',
+    '<div class="acc-answer">Cost of sales = R' + accFmt(cos) + '</div>' +
+    '<div class="acc-answer multi" style="color:var(--text);">Gross profit = R' + accFmt(gp) + '</div>');
+  accShowSteps('in_steps', 'in_steps_card', steps);
+}
+
+function accVAT() {
+  const ex = parseFloat(document.getElementById('vt_ex').value) || 0;
+  const inc = parseFloat(document.getElementById('vt_inc').value) || 0;
+  const in_ = parseFloat(document.getElementById('vt_in').value) || 0;
+  const out = parseFloat(document.getElementById('vt_out').value) || 0;
+  const vatEx = ex * 0.15;
+  const exFromInc = inc / 1.15;
+  const vatFromInc = inc - exFromInc;
+  const payable = out - in_;
+  const steps = [];
+  steps.push('VAT on R' + accFmt(ex) + ' excl = ' + accFmt(ex) + ' × 15% = R' + accFmt(vatEx));
+  steps.push('Excl from R' + accFmt(inc) + ' incl = ' + accFmt(inc) + ' ÷ 1.15 = R' + accFmt(exFromInc) + ' (VAT = R' + accFmt(vatFromInc) + ')');
+  steps.push('VAT payable to SARS = Output − Input = ' + accFmt(out) + ' − ' + accFmt(in_) + ' = R' + accFmt(payable));
+  accResult('vt_result',
+    '<div class="acc-answer">VAT payable = R' + accFmt(payable) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">VAT on excl</span><span class="result-cell-value">R' + accFmt(vatEx) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Excl from incl</span><span class="result-cell-value">R' + accFmt(exFromInc) + '</span></div>' +
+    '</div>');
+  accShowSteps('vt_steps', 'vt_steps_card', steps);
+}
+
+/* ========== GRADE 12 TOOLS ========== */
+
+function accCompanyIS() {
+  const sales = parseFloat(document.getElementById('cis_sales').value) || 0;
+  const cos = parseFloat(document.getElementById('cis_cos').value) || 0;
+  const oi = parseFloat(document.getElementById('cis_oi').value) || 0;
+  const oe = parseFloat(document.getElementById('cis_oe').value) || 0;
+  const ii = parseFloat(document.getElementById('cis_ii').value) || 0;
+  const int = parseFloat(document.getElementById('cis_int').value) || 0;
+  const taxRate = parseFloat(document.getElementById('cis_tax').value) || 0;
+  const gp = sales - cos;
+  const goi = gp + oi;
+  const op = goi - oe;
+  const pbt = op + ii - int;
+  const tax = pbt * taxRate / 100;
+  const pat = pbt - tax;
+  const steps = [];
+  steps.push('GP = ' + accFmt(gp));
+  steps.push('GOI = ' + accFmt(goi));
+  steps.push('OP = ' + accFmt(op));
+  steps.push('PBT = ' + accFmt(pbt));
+  steps.push('Tax = ' + accFmt(tax));
+  steps.push('PAT = R' + accFmt(pat));
+  accResult('cis_result',
+    '<div class="acc-answer">Net profit after tax = R' + accFmt(pat) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">GP</span><span class="result-cell-value">R' + accFmt(gp) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">OP</span><span class="result-cell-value">R' + accFmt(op) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">PBT</span><span class="result-cell-value">R' + accFmt(pbt) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Tax</span><span class="result-cell-value">R' + accFmt(tax) + '</span></div>' +
+    '</div>');
+  accShowSteps('cis_steps', 'cis_steps_card', steps);
+}
+
+function accNetProfit() {
+  const base = parseFloat(document.getElementById('np_base').value) || 0;
+  const adj = [1,2,3,4,5].map(i => parseFloat(document.getElementById('np_a' + i).value) || 0);
+  const total = adj.reduce((s, v) => s + v, 0);
+  const corrected = base + total;
+  const steps = [];
+  steps.push('Incorrect net profit = R' + accFmt(base));
+  adj.forEach((v, i) => { if (v !== 0) steps.push('Adj ' + (i+1) + ': ' + (v > 0 ? '+' : '') + accFmt(v)); });
+  steps.push('Total adjustments = ' + (total >= 0 ? '+' : '') + accFmt(total));
+  steps.push('Corrected net profit = R' + accFmt(corrected));
+  accResult('np_result',
+    '<div class="acc-answer">Corrected = R' + accFmt(corrected) + '</div>' +
+    '<div class="result-sub">Total adjustments: ' + (total >= 0 ? '+' : '') + accFmt(total) + '</div>');
+  accShowSteps('np_steps', 'np_steps_card', steps);
+}
+
+function accCashFlow() {
+  const op = parseFloat(document.getElementById('cf_op').value) || 0;
+  const int = parseFloat(document.getElementById('cf_int').value) || 0;
+  const tax = parseFloat(document.getElementById('cf_tax').value) || 0;
+  const div = parseFloat(document.getElementById('cf_div').value) || 0;
+  const inv = parseFloat(document.getElementById('cf_inv').value) || 0;
+  const fin = parseFloat(document.getElementById('cf_fin').value) || 0;
+  const open = parseFloat(document.getElementById('cf_open').value) || 0;
+  const opTotal = op - int - tax - div;
+  const net = opTotal + inv + fin;
+  const closing = open + net;
+  const steps = [];
+  steps.push('Cash from operating = OP − interest − tax − dividends = ' + accFmt(op) + ' − ' + accFmt(int) + ' − ' + accFmt(tax) + ' − ' + accFmt(div) + ' = R' + accFmt(opTotal));
+  steps.push('Net change = Operating + Investing + Financing = ' + accFmt(opTotal) + ' + ' + accFmt(inv) + ' + ' + accFmt(fin) + ' = R' + accFmt(net));
+  steps.push('Closing cash = Opening + Net change = ' + accFmt(open) + ' + ' + accFmt(net) + ' = R' + accFmt(closing));
+  accResult('cf_result',
+    '<div class="acc-answer">Net change = R' + accFmt(net) + '</div>' +
+    '<div class="acc-answer multi" style="color:var(--text);">Closing cash = R' + accFmt(closing) + '</div>');
+  accShowSteps('cf_steps', 'cf_steps_card', steps);
+}
+
+function accRatios() {
+  const g = id => parseFloat(document.getElementById(id).value) || 0;
+  const sales2 = g('r_sales2'), sales1 = g('r_sales1');
+  const cos2 = g('r_cos2'), cos1 = g('r_cos1');
+  const oe2 = g('r_oe2'), oe1 = g('r_oe1');
+  const op2 = g('r_op2'), op1 = g('r_op1');
+  const np2 = g('r_np2'), np1 = g('r_np1');
+  const ca2 = g('r_ca2'), ca1 = g('r_ca1');
+  const inv2 = g('r_inv2'), inv1 = g('r_inv1');
+  const cl2 = g('r_cl2'), cl1 = g('r_cl1');
+  const ta2 = g('r_ta2'), ta1 = g('r_ta1');
+  const tl2 = g('r_tl2'), tl1 = g('r_tl1');
+  const eq2 = g('r_eq2'), eq1 = g('r_eq1');
+  const ncl2 = g('r_ncl2'), ncl1 = g('r_ncl1');
+
+  const rows = [];
+  function row(name, v1, v2, fmt) {
+    const f = fmt || (x => parseFloat(x.toFixed(2)));
+    const t1 = v1 === 0 || !isFinite(v1) ? '—' : f(v1);
+    const t2 = v2 === 0 || !isFinite(v2) ? '—' : f(v2);
+    let trend = '';
+    if (typeof v1 === 'number' && typeof v2 === 'number' && isFinite(v1) && isFinite(v2) && v1 !== 0) {
+      const change = ((v2 - v1) / Math.abs(v1)) * 100;
+      const dir = v2 > v1 ? '↑' : v2 < v1 ? '↓' : '=';
+      trend = dir + ' ' + accFmt(Math.abs(change)) + '%';
+    }
+    rows.push('<tr><td>' + name + '</td><td class="num">' + t1 + '</td><td class="num">' + t2 + '</td><td class="num">' + trend + '</td></tr>');
+  }
+  function pct(x) { return parseFloat((x * 100).toFixed(1)) + '%'; }
+
+  row('Current ratio', ca1 / cl1, ca2 / cl2, x => parseFloat(x.toFixed(2)) + ':1');
+  row('Acid-test ratio', (ca1 - inv1) / cl1, (ca2 - inv2) / cl2, x => parseFloat(x.toFixed(2)) + ':1');
+  row('Solvency ratio', ta1 / tl1, ta2 / tl2, x => parseFloat(x.toFixed(2)) + ':1');
+  row('Debt-equity ratio', ncl1 / eq1, ncl2 / eq2, x => parseFloat(x.toFixed(2)) + ':1');
+  row('GP on sales', (sales1 - cos1) / sales1, (sales2 - cos2) / sales2, pct);
+  row('GP on cost of sales', (sales1 - cos1) / cos1, (sales2 - cos2) / cos2, pct);
+  row('Operating expenses on sales', oe1 / sales1, oe2 / sales2, pct);
+  row('Operating profit on sales', op1 / sales1, op2 / sales2, pct);
+  row('Net profit on sales', np1 / sales1, np2 / sales2, pct);
+  row('Return on equity', np1 / eq1, np2 / eq2, pct);
+
+  const html = '<table class="acc-table"><thead><tr><th>Indicator</th><th>2025</th><th>2026</th><th>Trend</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>';
+  accResult('r_result', html);
+}
+
+function accAnalysisChange() { /* no-op — kept for future dynamic hints */ }
+
+function accAnalysis() {
+  const ind = document.getElementById('an_ind').value;
+  const v1 = parseFloat(document.getElementById('an_v1').value) || 0;
+  const v2 = parseFloat(document.getElementById('an_v2').value) || 0;
+  const map = {
+    current: { name: 'Current ratio', goal: 'higher', unit: ':1', meaning: 'Liquidity — can the business pay short-term debts?' },
+    acid: { name: 'Acid-test ratio', goal: 'higher', unit: ':1', meaning: 'Liquidity — can the business pay short-term debts without selling stock?' },
+    debt: { name: 'Debt-equity ratio', goal: 'lower', unit: ':1', meaning: 'Risk & gearing — how much is financed by loans vs own capital?' },
+    solvency: { name: 'Solvency ratio', goal: 'higher', unit: ':1', meaning: 'Can the business pay all its debts using its assets?' },
+    gpmargin: { name: 'Gross profit on sales', goal: 'higher', unit: '%', meaning: 'Profitability — is the mark-up being maintained?' },
+    npmargin: { name: 'Net profit on sales', goal: 'higher', unit: '%', meaning: 'Profitability — after all expenses, how much profit remains?' },
+    opmargin: { name: 'Operating profit on sales', goal: 'higher', unit: '%', meaning: 'Efficiency — how well does the business convert sales into operating profit?' },
+    opexp: { name: 'Operating expenses on sales', goal: 'lower', unit: '%', meaning: 'Efficiency — is the business controlling its expenses?' },
+    roshe: { name: "Return on shareholders' equity", goal: 'higher', unit: '%', meaning: 'Return — are shareholders getting a good return on their investment?' },
+    roce: { name: 'Return on capital employed', goal: 'higher', unit: '%', meaning: 'Return — how efficiently is all capital (equity + loans) being used?' },
+    stockholding: { name: 'Stock holding period', goal: 'lower', unit: ' days', meaning: 'Efficiency — how long does stock sit before it is sold?' },
+    debtors: { name: 'Debtors collection period', goal: 'lower', unit: ' days', meaning: 'Efficiency — how quickly are debtors paying?' },
+    creditors: { name: 'Creditors payment period', goal: 'optimal', unit: ' days', meaning: 'Efficiency — are creditors being paid at the right time?' },
+    eps: { name: 'Earnings per share', goal: 'higher', unit: 'c', meaning: 'Return — how much profit per share?' },
+    dps: { name: 'Dividends per share', goal: 'higher', unit: 'c', meaning: 'Return — how much dividend per share?' },
+    nav: { name: 'Net asset value per share', goal: 'higher', unit: 'c', meaning: 'Value — what is each share worth on the books?' }
+  };
+  const info = map[ind];
+  let comment = '';
+  if (v2 > v1 && info.goal === 'higher') comment = 'Improved — this is positive. The business is doing better on this measure.';
+  else if (v2 < v1 && info.goal === 'higher') comment = 'Declined — this is a concern. Investigate the cause and suggest corrective action.';
+  else if (v2 > v1 && info.goal === 'lower') comment = 'Increased — this may be a concern (e.g. stock sitting longer, debtors paying slower). Explain the cause.';
+  else if (v2 < v1 && info.goal === 'lower') comment = 'Decreased — this is positive (e.g. faster collection, less stock on hand).';
+  else if (v2 === v1) comment = 'Unchanged — the business maintained the same level. Comment on whether the level itself is acceptable.';
+  else comment = 'Comment on whether the change is positive or negative for the business, and what action should follow.';
+
+  const html =
+    '<div class="acc-answer multi">' + info.name + '</div>' +
+    '<div class="result-sub">' + info.meaning + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Year 1</span><span class="result-cell-value">' + accFmt(v1) + info.unit + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Year 2</span><span class="result-cell-value">' + accFmt(v2) + info.unit + '</span></div>' +
+    '</div>' +
+    '<div class="acc-formula-note" style="margin-top:12px;"><strong>Comment:</strong> ' + comment + '</div>';
+  accResult('an_result', html);
+}
+
+function accFixedAsset12() {
+  const beg = parseFloat(document.getElementById('fa12_beg').value) || 0;
+  const add = parseFloat(document.getElementById('fa12_add').value) || 0;
+  const dis = parseFloat(document.getElementById('fa12_dis').value) || 0;
+  const dep = parseFloat(document.getElementById('fa12_dep').value) || 0;
+  const end = beg + add - dis - dep;
+  const steps = [];
+  steps.push('CV end = ' + accFmt(beg) + ' + ' + accFmt(add) + ' − ' + accFmt(dis) + ' − ' + accFmt(dep));
+  steps.push('= R' + accFmt(end));
+  accResult('fa12_result', '<div class="acc-answer">CV end = R' + accFmt(end) + '</div>');
+  accShowSteps('fa12_steps', 'fa12_steps_card', steps);
+}
+
+function accInvChange() { /* no-op */ }
+
+function accInventory12() {
+  const method = document.getElementById('iv_method').value;
+  const ou = parseFloat(document.getElementById('iv_ou').value) || 0;
+  const oc = parseFloat(document.getElementById('iv_oc').value) || 0;
+  const pu = parseFloat(document.getElementById('iv_pu').value) || 0;
+  const pc = parseFloat(document.getElementById('iv_pc').value) || 0;
+  const sold = parseFloat(document.getElementById('iv_sold').value) || 0;
+  const steps = [];
+  let closingValue = 0;
+  let methodName = '';
+  if (method === 'wavg') {
+    const totalUnits = ou + pu;
+    const totalCost = ou * oc + pu * pc;
+    const avg = totalUnits > 0 ? totalCost / totalUnits : 0;
+    const closingUnits = totalUnits - sold;
+    closingValue = closingUnits * avg;
+    methodName = 'Weighted average';
+    steps.push('Total units = ' + ou + ' + ' + pu + ' = ' + totalUnits);
+    steps.push('Total cost = R' + accFmt(totalCost));
+    steps.push('Weighted average cost per unit = R' + accFmt(avg));
+    steps.push('Closing units = ' + totalUnits + ' − ' + sold + ' = ' + closingUnits);
+    steps.push('Closing stock value = ' + closingUnits + ' × R' + accFmt(avg) + ' = R' + accFmt(closingValue));
+  } else {
+    methodName = 'FIFO';
+    let remaining = sold;
+    let fromOpening = Math.min(remaining, ou);
+    remaining -= fromOpening;
+    let fromPurchase = Math.min(remaining, pu);
+    const costOfSales = fromOpening * oc + fromPurchase * pc;
+    const closingUnits = ou + pu - sold;
+    const closeFromOpening = ou - fromOpening;
+    const closeFromPurchase = pu - fromPurchase;
+    closingValue = closeFromOpening * oc + closeFromPurchase * pc;
+    steps.push('Sell ' + fromOpening + ' units from opening @ R' + accFmt(oc) + ' = R' + accFmt(fromOpening * oc));
+    steps.push('Sell ' + fromPurchase + ' units from purchases @ R' + accFmt(pc) + ' = R' + accFmt(fromPurchase * pc));
+    steps.push('Cost of sales = R' + accFmt(costOfSales));
+    steps.push('Closing units = ' + closingUnits);
+    steps.push('Closing value = ' + closeFromOpening + ' × R' + accFmt(oc) + ' + ' + closeFromPurchase + ' × R' + accFmt(pc) + ' = R' + accFmt(closingValue));
+  }
+  accResult('iv_result',
+    '<div class="acc-answer">Closing stock = R' + accFmt(closingValue) + '</div>' +
+    '<div class="result-sub">' + methodName + ' method</div>');
+  accShowSteps('iv_steps', 'iv_steps_card', steps);
+}
+
+function accBreakEven12() {
+  const fc = parseFloat(document.getElementById('be12_fc').value) || 0;
+  const sp = parseFloat(document.getElementById('be12_sp').value) || 0;
+  const vc = parseFloat(document.getElementById('be12_vc').value) || 0;
+  const units = parseFloat(document.getElementById('be12_units').value) || 0;
+  const contrib = sp - vc;
+  if (contrib <= 0) {
+    accResult('be12_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">SP must exceed VC.</div>');
+    return;
+  }
+  const bep = fc / contrib;
+  const marginOfSafety = units - bep;
+  const profit = contrib * units - fc;
+  const steps = [];
+  steps.push('Contribution = ' + accFmt(sp) + ' − ' + accFmt(vc) + ' = R' + accFmt(contrib) + '/unit');
+  steps.push('BEP = ' + accFmt(fc) + ' ÷ ' + accFmt(contrib) + ' = ' + accFmt(bep) + ' units');
+  steps.push('Margin of safety = ' + units + ' − ' + accFmt(bep) + ' = ' + accFmt(marginOfSafety) + ' units');
+  steps.push('Profit = (' + accFmt(contrib) + ' × ' + units + ') − ' + accFmt(fc) + ' = R' + accFmt(profit));
+  accResult('be12_result',
+    '<div class="acc-answer">BEP = ' + accFmt(bep) + ' units</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Contribution</span><span class="result-cell-value">R' + accFmt(contrib) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Margin of safety</span><span class="result-cell-value">' + accFmt(marginOfSafety) + ' units</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Profit</span><span class="result-cell-value">R' + accFmt(profit) + '</span></div>' +
+    '</div>');
+  accShowSteps('be12_steps', 'be12_steps_card', steps);
+}
+
+function accRec12() {
+  const type = document.getElementById('rc_type').value;
+  const bal = parseFloat(document.getElementById('rc_bal').value) || 0;
+  const book = parseFloat(document.getElementById('rc_book').value) || 0;
+  const ext = parseFloat(document.getElementById('rc_ext').value) || 0;
+  const out = parseFloat(document.getElementById('rc_out').value) || 0;
+  const steps = [];
+  let typeName = '';
+  if (type === 'bank') { typeName = 'Bank'; }
+  else if (type === 'debtors') { typeName = 'Debtors'; }
+  else { typeName = 'Creditors'; }
+  const adjMain = bal + book;
+  const adjExt = bal + ext;
+  const final = adjMain + out;
+  steps.push(typeName + ' main balance adjusted = ' + accFmt(bal) + ' + ' + accFmt(book) + ' = R' + accFmt(adjMain));
+  steps.push('External record adjusted = ' + accFmt(bal) + ' + ' + accFmt(ext) + ' = R' + accFmt(adjExt));
+  steps.push('Reconciled balance = adjusted + outstanding items = ' + accFmt(adjMain) + ' + ' + accFmt(out) + ' = R' + accFmt(final));
+  accResult('rc_result',
+    '<div class="acc-answer">' + typeName + ' reconciled = R' + accFmt(final) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Books adj</span><span class="result-cell-value">R' + accFmt(adjMain) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">External adj</span><span class="result-cell-value">R' + accFmt(adjExt) + '</span></div>' +
+    '</div>');
+  accShowSteps('rc_steps', 'rc_steps_card', steps);
+}
+
+function accVAT12() {
+  const out = parseFloat(document.getElementById('vt12_out').value) || 0;
+  const in_ = parseFloat(document.getElementById('vt12_in').value) || 0;
+  const pbt = parseFloat(document.getElementById('vt12_pbt').value) || 0;
+  const rate = parseFloat(document.getElementById('vt12_rate').value) || 0;
+  const payable = out - in_;
+  const tax = pbt * rate / 100;
+  const pat = pbt - tax;
+  const steps = [];
+  steps.push('VAT payable = ' + accFmt(out) + ' − ' + accFmt(in_) + ' = R' + accFmt(payable));
+  steps.push('Income tax = ' + rate + '% × R' + accFmt(pbt) + ' = R' + accFmt(tax));
+  steps.push('Net profit after tax = ' + accFmt(pbt) + ' − ' + accFmt(tax) + ' = R' + accFmt(pat));
+  accResult('vt12_result',
+    '<div class="acc-answer">VAT payable = R' + accFmt(payable) + '</div>' +
+    '<div class="acc-result-grid">' +
+      '<div class="result-cell"><span class="result-cell-label">Income tax</span><span class="result-cell-value">R' + accFmt(tax) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">PAT</span><span class="result-cell-value">R' + accFmt(pat) + '</span></div>' +
+    '</div>');
+  accShowSteps('vt12_steps', 'vt12_steps_card', steps);
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', function () {
+  accSetGrade(10);
+});
+</script>
+</body>
+</html>
