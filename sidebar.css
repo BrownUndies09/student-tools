@@ -1,6 +1,8 @@
-/* ===== Sidebar Navigation ===== */
+/* ===== Sidebar Navigation — v2 (Indigo / Slate) ===== */
 
-/* Hamburger button */
+/* ------------------------------------------------------------
+   HAMBURGER BUTTON
+   ------------------------------------------------------------ */
 .hamburger-btn {
   width: 40px;
   height: 40px;
@@ -11,8 +13,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   margin-right: 4px;
   flex-shrink: 0;
   padding: 0;
@@ -21,6 +24,7 @@
 .hamburger-btn:hover {
   border-color: var(--accent);
   transform: scale(1.05);
+  box-shadow: var(--shadow-accent);
 }
 .hamburger-btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -34,25 +38,38 @@
   background: var(--text);
   border-radius: 2px;
   box-shadow: 0 -6px 0 var(--text), 0 6px 0 var(--text);
+  transition: background 0.2s;
+}
+.hamburger-btn:hover::after {
+  background: var(--accent);
+  box-shadow: 0 -6px 0 var(--accent), 0 6px 0 var(--accent);
 }
 
-/* Overlay */
+/* ------------------------------------------------------------
+   OVERLAY
+   ------------------------------------------------------------ */
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(15, 23, 42, 0.5); /* slate-900 @ 50% */
   z-index: 90;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 .sidebar-overlay.open {
   opacity: 1;
   pointer-events: auto;
 }
+html.dark .sidebar-overlay {
+  background: rgba(0, 0, 0, 0.65);
+}
 
-/* Sidebar panel */
+/* ------------------------------------------------------------
+   SIDEBAR PANEL
+   ------------------------------------------------------------ */
 .sidebar {
   position: fixed;
   top: 0;
@@ -66,17 +83,33 @@
   border-right: 1px solid var(--glass-border);
   z-index: 100;
   transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
   overflow-y: auto;
-  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 8px 0 40px rgba(15, 23, 42, 0.15);
   display: flex;
   flex-direction: column;
+}
+html.dark .sidebar {
+  box-shadow: 8px 0 40px rgba(0, 0, 0, 0.55);
 }
 .sidebar.open {
   transform: translateX(0);
 }
 
-/* Sidebar header */
+/* Custom scrollbar inside sidebar */
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 100px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-soft-strong);
+}
+
+/* ------------------------------------------------------------
+   SIDEBAR HEADER
+   ------------------------------------------------------------ */
 .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid var(--glass-border);
@@ -86,8 +119,8 @@
   position: sticky;
   top: 0;
   background: var(--glass-strong);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   z-index: 1;
   flex-shrink: 0;
 }
@@ -97,9 +130,10 @@
   gap: 10px;
   text-decoration: none;
   color: var(--text);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 16px;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.02em;
 }
 .sidebar-brand .nav-logo {
   width: 28px;
@@ -118,27 +152,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
   padding: 0;
   line-height: 1;
   font-family: var(--font-sans);
 }
 .sidebar-close:hover {
-  background: var(--glass);
-  color: var(--text);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .sidebar-close:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-/* Sidebar body */
+/* ------------------------------------------------------------
+   SIDEBAR BODY
+   ------------------------------------------------------------ */
 .sidebar-body {
   padding: 12px;
   flex: 1;
 }
 
-/* Group */
+/* ------------------------------------------------------------
+   GROUP
+   ------------------------------------------------------------ */
 .sidebar-group {
   margin-bottom: 4px;
   border-radius: 10px;
@@ -157,10 +195,10 @@
   cursor: pointer;
   font-family: var(--font-sans);
   text-align: left;
-  transition: background 0.15s;
+  transition: background 0.15s ease;
 }
 .sidebar-group-toggle:hover {
-  background: var(--glass);
+  background: var(--accent-soft);
 }
 .sidebar-group-toggle:focus-visible {
   outline: 2px solid var(--accent);
@@ -170,18 +208,26 @@
   font-family: var(--font-mono);
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
   color: var(--text-dim);
   font-weight: 600;
+  transition: color 0.15s;
+}
+.sidebar-group-toggle:hover .sidebar-group-title {
+  color: var(--accent);
 }
 .sidebar-group.contains-active .sidebar-group-title {
-  color: var(--text);
+  color: var(--accent);
+  font-weight: 700;
 }
 .sidebar-chevron {
   font-size: 9px;
   color: var(--text-dim);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), color 0.15s;
   flex-shrink: 0;
+}
+.sidebar-group-toggle:hover .sidebar-chevron {
+  color: var(--accent);
 }
 .sidebar-group.open .sidebar-chevron {
   transform: rotate(180deg);
@@ -191,7 +237,7 @@
 .sidebar-group-body {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: max-height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .sidebar-group.open .sidebar-group-body {
   max-height: 800px;
@@ -200,7 +246,9 @@
   padding: 4px 0 8px;
 }
 
-/* Tool link */
+/* ------------------------------------------------------------
+   TOOL LINK
+   ------------------------------------------------------------ */
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -211,13 +259,15 @@
   color: var(--text);
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
   margin-bottom: 2px;
   border: 1px solid transparent;
+  position: relative;
 }
 .sidebar-link:hover {
-  background: var(--glass);
-  border-color: var(--glass-border);
+  background: var(--accent-soft);
+  border-color: var(--accent-soft-strong);
+  color: var(--accent);
 }
 .sidebar-link:focus-visible {
   outline: 2px solid var(--accent);
@@ -226,7 +276,19 @@
 .sidebar-link.active {
   background: var(--accent);
   color: var(--accent-text);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: var(--shadow-accent);
+}
+.sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
 }
 .sidebar-link .sidebar-icon {
   font-size: 18px;
@@ -234,6 +296,10 @@
   text-align: center;
   flex-shrink: 0;
   line-height: 1;
+  transition: transform 0.15s;
+}
+.sidebar-link:hover .sidebar-icon {
+  transform: scale(1.1);
 }
 .sidebar-link .sidebar-label {
   flex: 1;
@@ -243,19 +309,24 @@
   white-space: nowrap;
 }
 
-/* Sidebar footer */
+/* ------------------------------------------------------------
+   SIDEBAR FOOTER
+   ------------------------------------------------------------ */
 .sidebar-footer {
   padding: 16px 20px;
   border-top: 1px solid var(--glass-border);
   font-size: 11px;
   color: var(--text-dim);
   text-align: center;
-  font-family: var(--font-sans);
-  letter-spacing: 0.3px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
   flex-shrink: 0;
+  text-transform: uppercase;
 }
 
-/* Body scroll lock when sidebar open */
+/* ------------------------------------------------------------
+   BODY SCROLL LOCK WHEN SIDEBAR OPEN
+   ------------------------------------------------------------ */
 body.sidebar-open {
   overflow: hidden;
 }
@@ -266,8 +337,15 @@ body.sidebar-open .hamburger-btn {
   pointer-events: none;
 }
 
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
 @media (max-width: 600px) {
   .sidebar {
     width: 280px;
+  }
+  .sidebar-link {
+    padding: 11px 12px;
+    font-size: 14px;
   }
 }
