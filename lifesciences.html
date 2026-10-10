@@ -49,6 +49,13 @@
     color: var(--text-muted); line-height: 1.7; margin-bottom: 12px;
   }
   .ls-formula-note strong { color: var(--text); }
+  .ls-formula-note sub,
+  .ls-formula-note sup,
+  .ls-formula sub,
+  .ls-formula sup {
+    font-size: 0.75em;
+    line-height: 0;
+  }
   .ls-result-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
@@ -698,9 +705,9 @@
   <div id="tool-bloodtype" class="ls-tool-panel ls-hidden">
     <div class="card">
       <div class="ls-formula-note">
-        <strong>ABO blood groups:</strong> 3 alleles — I^A, I^B, i.<br>
-        I^A and I^B are codominant; i is recessive.<br>
-        Phenotypes: A (I^A I^A or I^A i), B (I^B I^B or I^B i), AB (I^A I^B), O (ii).
+        <strong>ABO blood groups:</strong> 3 alleles — I<sup>A</sup>, I<sup>B</sup>, i.<br>
+        I<sup>A</sup> and I<sup>B</sup> are codominant; i is recessive.<br>
+        Phenotypes: A (I<sup>A</sup> I<sup>A</sup> or I<sup>A</sup> i), B (I<sup>B</sup> I<sup>B</sup> or I<sup>B</sup> i), AB (I<sup>A</sup> I<sup>B</sup>), O (ii).
       </div>
       <div class="ls-input-grid">
         <div>
@@ -934,7 +941,7 @@ function lsSetGrade(g) {
   lsShowPanel(tool);
 }
 
-/* New unified selector — fixes the pill bug */
+/* Unified selector — fixes the pill bug */
 function lsSelect(grade, tool) {
   if (grade === 10) lsTool10 = tool;
   else if (grade === 11) lsTool11 = tool;
