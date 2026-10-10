@@ -52,6 +52,13 @@
     color: var(--text-muted); line-height: 1.7; margin-bottom: 12px;
   }
   .acc-formula-note strong { color: var(--text); }
+  .acc-formula-note sub,
+  .acc-formula-note sup,
+  .acc-formula sub,
+  .acc-formula sup {
+    font-size: 0.75em;
+    line-height: 0;
+  }
   .acc-result-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
@@ -984,7 +991,7 @@ function accShowSteps(stepsId, cardId, steps) {
 }
 function accResult(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
-/* Grade switching */
+/* Grade state */
 let accGrade = 10;
 let accTool10 = 'equation';
 let accTool11 = 'bankrec';
@@ -1002,10 +1009,18 @@ function accSetGrade(g) {
   document.querySelectorAll('[id^="tool-"]').forEach(p => {
     p.classList.toggle('acc-hidden', p.id !== 'tool-' + current);
   });
+  accApplyPillHighlight(g, current);
 }
-function accSelect10(t) { accTool10 = t; accSetGrade(10); window.scrollTo({top:0,behavior:'smooth'}); }
-function accSelect11(t) { accTool11 = t; accSetGrade(11); window.scrollTo({top:0,behavior:'smooth'}); }
-function accSelect12(t) { accTool12 = t; accSetGrade(12); window.scrollTo({top:0,behavior:'smooth'}); }
+function accSelect10(t) { accTool10 = t; accSetGrade(10); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function accSelect11(t) { accTool11 = t; accSetGrade(11); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function accSelect12(t) { accTool12 = t; accSetGrade(12); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function accApplyPillHighlight(grade, tool) {
+  document.querySelectorAll('.acc-tool-pill').forEach(p => {
+    const attr = 'data-g' + grade;
+    p.classList.toggle('active', p.getAttribute(attr) === tool);
+  });
+}
 
 /* ========== GRADE 10 TOOLS ========== */
 
@@ -1487,12 +1502,12 @@ function accCompanyIS() {
 
 function accNetProfit() {
   const base = parseFloat(document.getElementById('np_base').value) || 0;
-  const adj = [1,2,3,4,5].map(i => parseFloat(document.getElementById('np_a' + i).value) || 0);
+  const adj = [1, 2, 3, 4, 5].map(i => parseFloat(document.getElementById('np_a' + i).value) || 0);
   const total = adj.reduce((s, v) => s + v, 0);
   const corrected = base + total;
   const steps = [];
   steps.push('Incorrect net profit = R' + accFmt(base));
-  adj.forEach((v, i) => { if (v !== 0) steps.push('Adj ' + (i+1) + ': ' + (v > 0 ? '+' : '') + accFmt(v)); });
+  adj.forEach((v, i) => { if (v !== 0) steps.push('Adj ' + (i + 1) + ': ' + (v > 0 ? '+' : '') + accFmt(v)); });
   steps.push('Total adjustments = ' + (total >= 0 ? '+' : '') + accFmt(total));
   steps.push('Corrected net profit = R' + accFmt(corrected));
   accResult('np_result',
