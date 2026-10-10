@@ -110,6 +110,13 @@
     margin-bottom: 12px;
   }
   .phys-formula-note strong { color: var(--text); }
+  .phys-formula-note sub,
+  .phys-formula-note sup,
+  .phys-formula sub,
+  .phys-formula sup {
+    font-size: 0.75em;
+    line-height: 0;
+  }
   .phys-result-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -216,19 +223,19 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Equations of motion (uniform acceleration):</strong><br>
-        <span class="phys-formula">v_f = v_i + aΔt</span>
-        <span class="phys-formula">Δx = v_iΔt + ½aΔt²</span>
-        <span class="phys-formula">v_f² = v_i² + 2aΔx</span><br>
+        <span class="phys-formula">v<sub>f</sub> = v<sub>i</sub> + aΔt</span>
+        <span class="phys-formula">Δx = v<sub>i</sub>Δt + ½aΔt<sup>2</sup></span>
+        <span class="phys-formula">v<sub>f</sub><sup>2</sup> = v<sub>i</sub><sup>2</sup> + 2aΔx</span><br>
         Leave the unknown field blank. Fill in the other four (or three if using equation 3).
       </div>
 
       <div class="phys-input-grid">
         <div>
-          <label>Initial velocity v_i (m/s)</label>
+          <label>Initial velocity v<sub>i</sub> (m/s)</label>
           <input type="number" id="m1_vi" class="phys-input" step="any" placeholder="leave blank if unknown">
         </div>
         <div>
-          <label>Final velocity v_f (m/s)</label>
+          <label>Final velocity v<sub>f</sub> (m/s)</label>
           <input type="number" id="m1_vf" class="phys-input" step="any" placeholder="leave blank if unknown">
         </div>
         <div>
@@ -276,19 +283,19 @@
 
       <div class="phys-input-grid">
         <div>
-          <label>Point 1 — t₁ (s)</label>
+          <label>Point 1 — t<sub>1</sub> (s)</label>
           <input type="number" id="g_t1" class="phys-input" step="any" value="0">
         </div>
         <div>
-          <label>Point 1 — y₁ (m or m/s)</label>
+          <label>Point 1 — y<sub>1</sub> (m or m/s)</label>
           <input type="number" id="g_y1" class="phys-input" step="any" value="0">
         </div>
         <div>
-          <label>Point 2 — t₂ (s)</label>
+          <label>Point 2 — t<sub>2</sub> (s)</label>
           <input type="number" id="g_t2" class="phys-input" step="any" value="4">
         </div>
         <div>
-          <label>Point 2 — y₂ (m or m/s)</label>
+          <label>Point 2 — y<sub>2</sub> (m or m/s)</label>
           <input type="number" id="g_y2" class="phys-input" step="any" value="12">
         </div>
       </div>
@@ -317,10 +324,10 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Vector components and resultant:</strong><br>
-        <span class="phys-formula">R_x = ΣF_x</span>
-        <span class="phys-formula">R_y = ΣF_y</span>
-        <span class="phys-formula">|R| = √(R_x² + R_y²)</span>
-        <span class="phys-formula">θ = tan⁻¹(R_y / R_x)</span><br>
+        <span class="phys-formula">R<sub>x</sub> = ΣF<sub>x</sub></span>
+        <span class="phys-formula">R<sub>y</sub> = ΣF<sub>y</sub></span>
+        <span class="phys-formula">|R| = √(R<sub>x</sub><sup>2</sup> + R<sub>y</sub><sup>2</sup>)</span>
+        <span class="phys-formula">θ = tan<sup>−1</sup>(R<sub>y</sub> / R<sub>x</sub>)</span><br>
         Add up to 4 vectors. Each is given as magnitude + direction in degrees (0° = east, 90° = north).
       </div>
 
@@ -430,7 +437,7 @@
         <span class="phys-formula">E = hf</span>
         <span class="phys-formula">E = hc / λ</span>
         <span class="phys-formula">c = fλ</span><br>
-        Constants: h = 6,63 × 10⁻³⁴ J·s, c = 3,00 × 10⁸ m/s.
+        Constants: h = 6,63 × 10<sup>−34</sup> J·s, c = 3,00 × 10<sup>8</sup> m/s.
       </div>
 
       <div style="margin-bottom:10px;">
@@ -468,10 +475,10 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Mechanical energy:</strong>
-        <span class="phys-formula">E_p = mgh</span>
-        <span class="phys-formula">E_k = ½mv²</span>
-        <span class="phys-formula">E_m = E_p + E_k</span><br>
-        Conservation (no friction): E_m at top = E_m at bottom. Take g = 9,8 m/s².
+        <span class="phys-formula">E<sub>p</sub> = mgh</span>
+        <span class="phys-formula">E<sub>k</sub> = ½mv<sup>2</sup></span>
+        <span class="phys-formula">E<sub>m</sub> = E<sub>p</sub> + E<sub>k</sub></span><br>
+        Conservation (no friction): E<sub>m</sub> at top = E<sub>m</sub> at bottom. Take g = 9,8 m/s².
       </div>
 
       <div class="phys-input-grid">
@@ -514,10 +521,10 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Charge quantisation:</strong>
-        <span class="phys-formula">Q = n · q_e</span>
-        <span class="phys-formula">q_e = 1,6 × 10⁻¹⁹ C</span><br>
+        <span class="phys-formula">Q = n · q<sub>e</sub></span>
+        <span class="phys-formula">q<sub>e</sub> = 1,6 × 10<sup>−19</sup> C</span><br>
         Also supports contact of identical spheres:
-        <span class="phys-formula">Q_new = (Q₁ + Q₂) / 2</span>
+        <span class="phys-formula">Q<sub>new</sub> = (Q<sub>1</sub> + Q<sub>2</sub>) / 2</span>
       </div>
 
       <div style="margin-bottom:10px;">
@@ -536,11 +543,11 @@
       <div id="q_spheres_inputs" class="phys-hidden">
         <div class="phys-input-grid">
           <div>
-            <label>Charge Q₁ (C)</label>
+            <label>Charge Q<sub>1</sub> (C)</label>
             <input type="number" id="q_q1" class="phys-input" step="any" value="4e-6">
           </div>
           <div>
-            <label>Charge Q₂ (C)</label>
+            <label>Charge Q<sub>2</sub> (C)</label>
             <input type="number" id="q_q2" class="phys-input" step="any" value="-2e-6">
           </div>
         </div>
@@ -569,7 +576,7 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Newton's Second Law:</strong>
-        <span class="phys-formula">F_net = ma</span><br>
+        <span class="phys-formula">F<sub>net</sub> = ma</span><br>
         <strong>Friction:</strong>
         <span class="phys-formula">f = μN</span>
         <span class="phys-formula">N = mg (horizontal)</span>
@@ -579,7 +586,7 @@
 
       <div class="phys-input-grid">
         <div>
-          <label>Net force F_net (N)</label>
+          <label>Net force F<sub>net</sub> (N)</label>
           <input type="number" id="n_f" class="phys-input" step="any" placeholder="leave blank if unknown">
         </div>
         <div>
@@ -633,7 +640,7 @@
         <strong>Work:</strong>
         <span class="phys-formula">W = F·Δx·cosθ</span><br>
         <strong>Work-Energy Theorem:</strong>
-        <span class="phys-formula">W_net = ΔE_k = ½mv_f² − ½mv_i²</span>
+        <span class="phys-formula">W<sub>net</sub> = ΔE<sub>k</sub> = ½mv<sub>f</sub><sup>2</sup> − ½mv<sub>i</sub><sup>2</sup></span>
       </div>
 
       <div style="margin-bottom:10px;">
@@ -668,11 +675,11 @@
             <input type="number" id="we_m" class="phys-input" step="any" value="2">
           </div>
           <div>
-            <label>Initial velocity v_i (m/s)</label>
+            <label>Initial velocity v<sub>i</sub> (m/s)</label>
             <input type="number" id="we_vi" class="phys-input" step="any" value="0">
           </div>
           <div>
-            <label>Final velocity v_f (m/s)</label>
+            <label>Final velocity v<sub>f</sub> (m/s)</label>
             <input type="number" id="we_vf" class="phys-input" step="any" value="6">
           </div>
         </div>
@@ -740,18 +747,18 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Coulomb's Law:</strong>
-        <span class="phys-formula">F = k·|Q₁·Q₂| / r²</span><br>
-        k = 9,0 × 10⁹ N·m²·C⁻²<br>
+        <span class="phys-formula">F = k·|Q<sub>1</sub>·Q<sub>2</sub>| / r<sup>2</sup></span><br>
+        k = 9,0 × 10<sup>9</sup> N·m<sup>2</sup>·C<sup>−2</sup><br>
         Result: magnitude of force. Direction: like charges repel, opposite charges attract.
       </div>
 
       <div class="phys-input-grid">
         <div>
-          <label>Charge Q₁ (C)</label>
+          <label>Charge Q<sub>1</sub> (C)</label>
           <input type="number" id="c_q1" class="phys-input" step="any" value="2e-6">
         </div>
         <div>
-          <label>Charge Q₂ (C)</label>
+          <label>Charge Q<sub>2</sub> (C)</label>
           <input type="number" id="c_q2" class="phys-input" step="any" value="3e-6">
         </div>
         <div>
@@ -782,7 +789,7 @@
       <div class="phys-formula-note">
         <strong>Electric field:</strong>
         <span class="phys-formula">E = F / q</span>
-        <span class="phys-formula">E = k·Q / r²</span><br>
+        <span class="phys-formula">E = k·Q / r<sup>2</sup></span><br>
         Leave the unknown blank.
       </div>
 
@@ -842,7 +849,7 @@
       <div class="phys-formula-note">
         <strong>Emf and internal resistance:</strong>
         <span class="phys-formula">ε = I(R + r)</span>
-        <span class="phys-formula">ε = V_terminal + I·r</span><br>
+        <span class="phys-formula">ε = V<sub>terminal</sub> + I·r</span><br>
         Leave the unknown blank. Fill the other three.
       </div>
 
@@ -886,27 +893,27 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Snell's Law and refraction:</strong>
-        <span class="phys-formula">n₁·sinθ₁ = n₂·sinθ₂</span>
+        <span class="phys-formula">n<sub>1</sub>·sinθ<sub>1</sub> = n<sub>2</sub>·sinθ<sub>2</sub></span>
         <span class="phys-formula">n = c / v</span>
-        <span class="phys-formula">sinθ_c = n₂ / n₁ (n₁ > n₂)</span><br>
+        <span class="phys-formula">sinθ<sub>c</sub> = n<sub>2</sub> / n<sub>1</sub> (n<sub>1</sub> &gt; n<sub>2</sub>)</span><br>
         Leave the unknown blank. Angles in degrees.
       </div>
 
       <div class="phys-input-grid">
         <div>
-          <label>Refractive index n₁</label>
+          <label>Refractive index n<sub>1</sub></label>
           <input type="number" id="s_n1" class="phys-input" step="any" value="1">
         </div>
         <div>
-          <label>Angle of incidence θ₁ (°)</label>
+          <label>Angle of incidence θ<sub>1</sub> (°)</label>
           <input type="number" id="s_t1" class="phys-input" step="any" value="45">
         </div>
         <div>
-          <label>Refractive index n₂</label>
+          <label>Refractive index n<sub>2</sub></label>
           <input type="number" id="s_n2" class="phys-input" step="any" value="1.5">
         </div>
         <div>
-          <label>Angle of refraction θ₂ (°)</label>
+          <label>Angle of refraction θ<sub>2</sub> (°)</label>
           <input type="number" id="s_t2" class="phys-input" step="any" placeholder="leave blank if unknown">
         </div>
       </div>
@@ -1052,10 +1059,10 @@
       <div class="phys-formula-note">
         <strong>Momentum and impulse:</strong>
         <span class="phys-formula">p = mv</span>
-        <span class="phys-formula">Δp = m·v_f − m·v_i</span>
-        <span class="phys-formula">F_net·Δt = Δp</span><br>
+        <span class="phys-formula">Δp = m·v<sub>f</sub> − m·v<sub>i</sub></span>
+        <span class="phys-formula">F<sub>net</sub>·Δt = Δp</span><br>
         <strong>Conservation of momentum (isolated system):</strong>
-        <span class="phys-formula">Σp_before = Σp_after</span>
+        <span class="phys-formula">Σp<sub>before</sub> = Σp<sub>after</sub></span>
       </div>
 
       <div style="margin-bottom:10px;">
@@ -1073,11 +1080,11 @@
             <input type="number" id="mom_m" class="phys-input" step="any" value="2">
           </div>
           <div>
-            <label>Initial velocity v_i (m/s)</label>
+            <label>Initial velocity v<sub>i</sub> (m/s)</label>
             <input type="number" id="mom_vi" class="phys-input" step="any" value="5">
           </div>
           <div>
-            <label>Final velocity v_f (m/s)</label>
+            <label>Final velocity v<sub>f</sub> (m/s)</label>
             <input type="number" id="mom_vf" class="phys-input" step="any" value="-3">
           </div>
           <div>
@@ -1090,27 +1097,27 @@
       <div id="mom_collision_inputs" class="phys-hidden">
         <div class="phys-input-grid">
           <div>
-            <label>Mass m₁ (kg)</label>
+            <label>Mass m<sub>1</sub> (kg)</label>
             <input type="number" id="col_m1" class="phys-input" step="any" value="2">
           </div>
           <div>
-            <label>Initial velocity u₁ (m/s)</label>
+            <label>Initial velocity u<sub>1</sub> (m/s)</label>
             <input type="number" id="col_u1" class="phys-input" step="any" value="4">
           </div>
           <div>
-            <label>Mass m₂ (kg)</label>
+            <label>Mass m<sub>2</sub> (kg)</label>
             <input type="number" id="col_m2" class="phys-input" step="any" value="3">
           </div>
           <div>
-            <label>Initial velocity u₂ (m/s)</label>
+            <label>Initial velocity u<sub>2</sub> (m/s)</label>
             <input type="number" id="col_u2" class="phys-input" step="any" value="-2">
           </div>
           <div>
-            <label>Final velocity v₁ (m/s) — leave blank if unknown</label>
+            <label>Final velocity v<sub>1</sub> (m/s) — leave blank if unknown</label>
             <input type="number" id="col_v1" class="phys-input" step="any" placeholder="leave blank">
           </div>
           <div>
-            <label>Final velocity v₂ (m/s) — leave blank if unknown</label>
+            <label>Final velocity v<sub>2</sub> (m/s) — leave blank if unknown</label>
             <input type="number" id="col_v2" class="phys-input" step="any" value="-0.4">
           </div>
         </div>
@@ -1137,9 +1144,9 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Vertical projectile motion:</strong>
-        <span class="phys-formula">v_f = v_i + aΔt</span>
-        <span class="phys-formula">Δy = v_iΔt + ½aΔt²</span>
-        <span class="phys-formula">v_f² = v_i² + 2aΔy</span><br>
+        <span class="phys-formula">v<sub>f</sub> = v<sub>i</sub> + aΔt</span>
+        <span class="phys-formula">Δy = v<sub>i</sub>Δt + ½aΔt<sup>2</sup></span>
+        <span class="phys-formula">v<sub>f</sub><sup>2</sup> = v<sub>i</sub><sup>2</sup> + 2aΔy</span><br>
         a = g = −9,8 m/s² (up positive, down negative). At max height, v = 0.
       </div>
 
@@ -1155,7 +1162,7 @@
       <div id="proj_up_inputs">
         <div class="phys-input-grid">
           <div>
-            <label>Initial velocity v_i (m/s, upward)</label>
+            <label>Initial velocity v<sub>i</sub> (m/s, upward)</label>
             <input type="number" id="proj_vi" class="phys-input" step="any" value="20">
           </div>
           <div>
@@ -1172,7 +1179,7 @@
             <input type="number" id="proj_h" class="phys-input" step="any" value="45">
           </div>
           <div>
-            <label>Initial downward velocity v_i (m/s)</label>
+            <label>Initial downward velocity v<sub>i</sub> (m/s)</label>
             <input type="number" id="proj_vi2" class="phys-input" step="any" value="0">
           </div>
           <div>
@@ -1185,7 +1192,7 @@
       <div id="proj_cliff_inputs" class="phys-hidden">
         <div class="phys-input-grid">
           <div>
-            <label>Horizontal velocity v_x (m/s)</label>
+            <label>Horizontal velocity v<sub>x</sub> (m/s)</label>
             <input type="number" id="proj_vx" class="phys-input" step="any" value="15">
           </div>
           <div>
@@ -1220,9 +1227,9 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Newton's Law of Universal Gravitation:</strong>
-        <span class="phys-formula">F = G·m₁·m₂ / r²</span>
-        <span class="phys-formula">g = G·M / r²</span><br>
-        G = 6,67 × 10⁻¹¹ N·m²·kg⁻². r is the distance between centres.
+        <span class="phys-formula">F = G·m<sub>1</sub>·m<sub>2</sub> / r<sup>2</sup></span>
+        <span class="phys-formula">g = G·M / r<sup>2</sup></span><br>
+        G = 6,67 × 10<sup>−11</sup> N·m<sup>2</sup>·kg<sup>−2</sup>. r is the distance between centres.
       </div>
 
       <div style="margin-bottom:10px;">
@@ -1236,11 +1243,11 @@
       <div id="grav_force_inputs">
         <div class="phys-input-grid">
           <div>
-            <label>Mass m₁ (kg)</label>
+            <label>Mass m<sub>1</sub> (kg)</label>
             <input type="number" id="gr_m1" class="phys-input" step="any" value="5.97e24">
           </div>
           <div>
-            <label>Mass m₂ (kg)</label>
+            <label>Mass m<sub>2</sub> (kg)</label>
             <input type="number" id="gr_m2" class="phys-input" step="any" value="7.35e22">
           </div>
           <div>
@@ -1285,8 +1292,8 @@
       <div class="phys-formula-note">
         <strong>Circular motion:</strong>
         <span class="phys-formula">v = 2πr / T</span>
-        <span class="phys-formula">a_c = v² / r</span>
-        <span class="phys-formula">F_c = m·v² / r</span><br>
+        <span class="phys-formula">a<sub>c</sub> = v<sup>2</sup> / r</span>
+        <span class="phys-formula">F<sub>c</sub> = m·v<sup>2</sup> / r</span><br>
         T = period (time for one revolution). v is the tangential speed.
       </div>
 
@@ -1326,15 +1333,15 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Doppler Effect:</strong>
-        <span class="phys-formula">f_L = (v ± v_L) / (v ± v_s) · f_s</span><br>
+        <span class="phys-formula">f<sub>L</sub> = (v ± v<sub>L</sub>) / (v ± v<sub>s</sub>) · f<sub>s</sub></span><br>
         v = speed of sound (≈ 340 m/s in air). Sign rules:<br>
-        • v_L is + if listener moves toward source, − if away.<br>
-        • v_s is − if source moves toward listener, + if away.
+        • v<sub>L</sub> is + if listener moves toward source, − if away.<br>
+        • v<sub>s</sub> is − if source moves toward listener, + if away.
       </div>
 
       <div class="phys-input-grid">
         <div>
-          <label>Source frequency f_s (Hz)</label>
+          <label>Source frequency f<sub>s</sub> (Hz)</label>
           <input type="number" id="d_fs" class="phys-input" step="any" value="500">
         </div>
         <div>
@@ -1342,11 +1349,11 @@
           <input type="number" id="d_v" class="phys-input" step="any" value="340">
         </div>
         <div>
-          <label>Listener speed v_L (m/s, 0 if still)</label>
+          <label>Listener speed v<sub>L</sub> (m/s, 0 if still)</label>
           <input type="number" id="d_vl" class="phys-input" step="any" value="0">
         </div>
         <div>
-          <label>Source speed v_s (m/s, 0 if still)</label>
+          <label>Source speed v<sub>s</sub> (m/s, 0 if still)</label>
           <input type="number" id="d_vs" class="phys-input" step="any" value="30">
         </div>
       </div>
@@ -1382,10 +1389,10 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Photoelectric effect:</strong>
-        <span class="phys-formula">E = hf = W₀ + E_k(max)</span>
-        <span class="phys-formula">W₀ = h·f₀</span>
-        <span class="phys-formula">E_k(max) = hf − W₀</span><br>
-        h = 6,63 × 10⁻³⁴ J·s. W₀ = work function. f₀ = threshold frequency.<br>
+        <span class="phys-formula">E = hf = W<sub>0</sub> + E<sub>k(max)</sub></span>
+        <span class="phys-formula">W<sub>0</sub> = h·f<sub>0</sub></span>
+        <span class="phys-formula">E<sub>k(max)</sub> = hf − W<sub>0</sub></span><br>
+        h = 6,63 × 10<sup>−34</sup> J·s. W<sub>0</sub> = work function. f<sub>0</sub> = threshold frequency.<br>
         Leave the unknown blank. Fill the other two.
       </div>
 
@@ -1395,11 +1402,11 @@
           <input type="number" id="pe_f" class="phys-input" step="any" value="8e14">
         </div>
         <div>
-          <label>Work function W₀ (J)</label>
+          <label>Work function W<sub>0</sub> (J)</label>
           <input type="number" id="pe_W" class="phys-input" step="any" value="3.5e-19">
         </div>
         <div>
-          <label>Max kinetic energy E_k (J) — leave blank to solve</label>
+          <label>Max kinetic energy E<sub>k</sub> (J) — leave blank to solve</label>
           <input type="number" id="pe_Ek" class="phys-input" step="any" placeholder="leave blank">
         </div>
       </div>
@@ -1467,27 +1474,27 @@
     <div class="card">
       <div class="phys-formula-note">
         <strong>Transformer equations (ideal):</strong>
-        <span class="phys-formula">V_s / V_p = N_s / N_p</span>
-        <span class="phys-formula">I_p / I_s = N_s / N_p</span>
-        <span class="phys-formula">P_p = P_s</span><br>
-        Step-up: N_s > N_p → voltage increases. Step-down: N_s < N_p → voltage decreases.
+        <span class="phys-formula">V<sub>s</sub> / V<sub>p</sub> = N<sub>s</sub> / N<sub>p</sub></span>
+        <span class="phys-formula">I<sub>p</sub> / I<sub>s</sub> = N<sub>s</sub> / N<sub>p</sub></span>
+        <span class="phys-formula">P<sub>p</sub> = P<sub>s</sub></span><br>
+        Step-up: N<sub>s</sub> &gt; N<sub>p</sub> → voltage increases. Step-down: N<sub>s</sub> &lt; N<sub>p</sub> → voltage decreases.
       </div>
 
       <div class="phys-input-grid">
         <div>
-          <label>Primary voltage V_p (V)</label>
+          <label>Primary voltage V<sub>p</sub> (V)</label>
           <input type="number" id="tr_Vp" class="phys-input" step="any" value="240">
         </div>
         <div>
-          <label>Primary turns N_p</label>
+          <label>Primary turns N<sub>p</sub></label>
           <input type="number" id="tr_Np" class="phys-input" step="any" value="1000">
         </div>
         <div>
-          <label>Secondary turns N_s</label>
+          <label>Secondary turns N<sub>s</sub></label>
           <input type="number" id="tr_Ns" class="phys-input" step="any" value="100">
         </div>
         <div>
-          <label>Secondary voltage V_s (V) — leave blank to solve</label>
+          <label>Secondary voltage V<sub>s</sub> (V) — leave blank to solve</label>
           <input type="number" id="tr_Vs" class="phys-input" step="any" placeholder="leave blank">
         </div>
       </div>
@@ -1515,7 +1522,6 @@
     Free student tools. Made for students.
   </footer>
 </div>
-
 <script src="app.js"></script>
 <script src="sidebar.js"></script>
 <script>
@@ -1574,13 +1580,19 @@ function physSetGrade(g) {
     if (p.id === 'tool-' + currentTool) p.classList.remove('phys-hidden');
     else p.classList.add('phys-hidden');
   });
+  physApplyPillHighlight(g, currentTool);
+}
+
+function physApplyPillHighlight(grade, tool) {
+  document.querySelectorAll('.phys-tool-pill').forEach(p => {
+    const attr = 'data-g' + grade + '-tool';
+    p.classList.toggle('active', p.getAttribute(attr) === tool);
+  });
 }
 
 function physSelectTool10(tool) {
   physCurrentTool10 = tool;
-  document.querySelectorAll('#physGrade10Tools .phys-tool-pill').forEach(p => {
-    p.classList.toggle('active', p.getAttribute('data-g10-tool') === tool);
-  });
+  physApplyPillHighlight(10, tool);
   document.querySelectorAll('[id^="tool-"]').forEach(p => {
     if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
     else p.classList.add('phys-hidden');
@@ -1590,9 +1602,7 @@ function physSelectTool10(tool) {
 
 function physSelectTool11(tool) {
   physCurrentTool11 = tool;
-  document.querySelectorAll('#physGrade11Tools .phys-tool-pill').forEach(p => {
-    p.classList.toggle('active', p.getAttribute('data-g11-tool') === tool);
-  });
+  physApplyPillHighlight(11, tool);
   document.querySelectorAll('[id^="tool-"]').forEach(p => {
     if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
     else p.classList.add('phys-hidden');
@@ -1602,9 +1612,7 @@ function physSelectTool11(tool) {
 
 function physSelectTool12(tool) {
   physCurrentTool12 = tool;
-  document.querySelectorAll('#physGrade12Tools .phys-tool-pill').forEach(p => {
-    p.classList.toggle('active', p.getAttribute('data-g12-tool') === tool);
-  });
+  physApplyPillHighlight(12, tool);
   document.querySelectorAll('[id^="tool-"]').forEach(p => {
     if (p.id === 'tool-' + tool) p.classList.remove('phys-hidden');
     else p.classList.add('phys-hidden');
@@ -1641,82 +1649,82 @@ function physMotion1D() {
 
   if (vf === null && vi !== null && a !== null && t !== null) {
     answer = vi + a * t;
-    steps.push('Use: v_f = v_i + a·Δt');
-    steps.push('v_f = ' + physFmt(vi) + ' + (' + physFmt(a) + ')(' + physFmt(t) + ')');
-    steps.push('v_f = ' + physFmt(answer) + ' m/s');
-    answerHtml = '<div class="phys-answer">v_f = ' + physFmt(answer) + ' m/s</div>';
+    steps.push('Use: v<sub>f</sub> = v<sub>i</sub> + a·Δt');
+    steps.push('v<sub>f</sub> = ' + physFmt(vi) + ' + (' + physFmt(a) + ')(' + physFmt(t) + ')');
+    steps.push('v<sub>f</sub> = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v<sub>f</sub> = ' + physFmt(answer) + ' m/s</div>';
   } else if (vi === null && vf !== null && a !== null && t !== null) {
     answer = vf - a * t;
-    steps.push('Rearrange v_f = v_i + a·Δt → v_i = v_f − a·Δt');
-    steps.push('v_i = ' + physFmt(vf) + ' − (' + physFmt(a) + ')(' + physFmt(t) + ')');
-    steps.push('v_i = ' + physFmt(answer) + ' m/s');
-    answerHtml = '<div class="phys-answer">v_i = ' + physFmt(answer) + ' m/s</div>';
+    steps.push('Rearrange v<sub>f</sub> = v<sub>i</sub> + a·Δt → v<sub>i</sub> = v<sub>f</sub> − a·Δt');
+    steps.push('v<sub>i</sub> = ' + physFmt(vf) + ' − (' + physFmt(a) + ')(' + physFmt(t) + ')');
+    steps.push('v<sub>i</sub> = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v<sub>i</sub> = ' + physFmt(answer) + ' m/s</div>';
   } else if (a === null && vf !== null && vi !== null && t !== null && t !== 0) {
     answer = (vf - vi) / t;
-    steps.push('Rearrange v_f = v_i + a·Δt → a = (v_f − v_i) / Δt');
+    steps.push('Rearrange v<sub>f</sub> = v<sub>i</sub> + a·Δt → a = (v<sub>f</sub> − v<sub>i</sub>) / Δt');
     steps.push('a = (' + physFmt(vf) + ' − ' + physFmt(vi) + ') / ' + physFmt(t));
     steps.push('a = ' + physFmt(answer) + ' m/s²');
     answerHtml = '<div class="phys-answer">a = ' + physFmt(answer) + ' m/s²</div>';
   } else if (t === null && vf !== null && vi !== null && a !== null && a !== 0) {
     answer = (vf - vi) / a;
-    steps.push('Rearrange v_f = v_i + a·Δt → Δt = (v_f − v_i) / a');
+    steps.push('Rearrange v<sub>f</sub> = v<sub>i</sub> + a·Δt → Δt = (v<sub>f</sub> − v<sub>i</sub>) / a');
     steps.push('Δt = (' + physFmt(vf) + ' − ' + physFmt(vi) + ') / ' + physFmt(a));
     steps.push('Δt = ' + physFmt(answer) + ' s');
     answerHtml = '<div class="phys-answer">Δt = ' + physFmt(answer) + ' s</div>';
   } else if (x === null && vi !== null && a !== null && t !== null) {
     answer = vi * t + 0.5 * a * t * t;
-    steps.push('Use: Δx = v_i·Δt + ½a·Δt²');
+    steps.push('Use: Δx = v<sub>i</sub>·Δt + ½a·Δt²');
     steps.push('Δx = (' + physFmt(vi) + ')(' + physFmt(t) + ') + ½(' + physFmt(a) + ')(' + physFmt(t) + ')²');
     steps.push('Δx = ' + physFmt(answer) + ' m');
     answerHtml = '<div class="phys-answer">Δx = ' + physFmt(answer) + ' m</div>';
   } else if (a === null && x !== null && vi !== null && t !== null && t !== 0) {
     answer = 2 * (x - vi * t) / (t * t);
-    steps.push('Rearrange Δx = v_i·Δt + ½a·Δt² → a = 2(Δx − v_i·Δt) / Δt²');
+    steps.push('Rearrange Δx = v<sub>i</sub>·Δt + ½a·Δt² → a = 2(Δx − v<sub>i</sub>·Δt) / Δt²');
     steps.push('a = 2(' + physFmt(x) + ' − (' + physFmt(vi) + ')(' + physFmt(t) + ')) / (' + physFmt(t) + ')²');
     steps.push('a = ' + physFmt(answer) + ' m/s²');
     answerHtml = '<div class="phys-answer">a = ' + physFmt(answer) + ' m/s²</div>';
   } else if (vi === null && x !== null && a !== null && t !== null && t !== 0) {
     answer = (x - 0.5 * a * t * t) / t;
-    steps.push('Rearrange Δx = v_i·Δt + ½a·Δt² → v_i = (Δx − ½a·Δt²) / Δt');
-    steps.push('v_i = (' + physFmt(x) + ' − ½(' + physFmt(a) + ')(' + physFmt(t) + ')²) / ' + physFmt(t));
-    steps.push('v_i = ' + physFmt(answer) + ' m/s');
-    answerHtml = '<div class="phys-answer">v_i = ' + physFmt(answer) + ' m/s</div>';
+    steps.push('Rearrange Δx = v<sub>i</sub>·Δt + ½a·Δt² → v<sub>i</sub> = (Δx − ½a·Δt²) / Δt');
+    steps.push('v<sub>i</sub> = (' + physFmt(x) + ' − ½(' + physFmt(a) + ')(' + physFmt(t) + ')²) / ' + physFmt(t));
+    steps.push('v<sub>i</sub> = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v<sub>i</sub> = ' + physFmt(answer) + ' m/s</div>';
   } else if (x === null && vf !== null && vi !== null && a !== null && a !== 0) {
     answer = (vf * vf - vi * vi) / (2 * a);
-    steps.push('Use: v_f² = v_i² + 2a·Δx');
-    steps.push('Δx = (v_f² − v_i²) / (2a)');
+    steps.push('Use: v<sub>f</sub>² = v<sub>i</sub>² + 2a·Δx');
+    steps.push('Δx = (v<sub>f</sub>² − v<sub>i</sub>²) / (2a)');
     steps.push('Δx = (' + physFmt(vf) + '² − ' + physFmt(vi) + '²) / (2·' + physFmt(a) + ')');
     steps.push('Δx = ' + physFmt(answer) + ' m');
     answerHtml = '<div class="phys-answer">Δx = ' + physFmt(answer) + ' m</div>';
   } else if (a === null && vf !== null && vi !== null && x !== null && x !== 0) {
     answer = (vf * vf - vi * vi) / (2 * x);
-    steps.push('Rearrange v_f² = v_i² + 2a·Δx → a = (v_f² − v_i²) / (2Δx)');
+    steps.push('Rearrange v<sub>f</sub>² = v<sub>i</sub>² + 2a·Δx → a = (v<sub>f</sub>² − v<sub>i</sub>²) / (2Δx)');
     steps.push('a = (' + physFmt(vf) + '² − ' + physFmt(vi) + '²) / (2·' + physFmt(x) + ')');
     steps.push('a = ' + physFmt(answer) + ' m/s²');
     answerHtml = '<div class="phys-answer">a = ' + physFmt(answer) + ' m/s²</div>';
   } else if (vf === null && vi !== null && a !== null && x !== null) {
     const vfSq = vi * vi + 2 * a * x;
     if (vfSq < 0) {
-      physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real solution (v_f² would be negative).</div>');
+      physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real solution (v<sub>f</sub>² would be negative).</div>');
       return;
     }
     answer = Math.sqrt(vfSq);
-    steps.push('Use: v_f² = v_i² + 2a·Δx');
-    steps.push('v_f² = (' + physFmt(vi) + ')² + 2(' + physFmt(a) + ')(' + physFmt(x) + ')');
-    steps.push('v_f² = ' + physFmt(vfSq));
-    steps.push('v_f = ' + physFmt(answer) + ' m/s');
-    answerHtml = '<div class="phys-answer">v_f = ' + physFmt(answer) + ' m/s</div>';
+    steps.push('Use: v<sub>f</sub>² = v<sub>i</sub>² + 2a·Δx');
+    steps.push('v<sub>f</sub>² = (' + physFmt(vi) + ')² + 2(' + physFmt(a) + ')(' + physFmt(x) + ')');
+    steps.push('v<sub>f</sub>² = ' + physFmt(vfSq));
+    steps.push('v<sub>f</sub> = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v<sub>f</sub> = ' + physFmt(answer) + ' m/s</div>';
   } else if (vi === null && vf !== null && a !== null && x !== null) {
     const viSq = vf * vf - 2 * a * x;
     if (viSq < 0) {
-      physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real solution (v_i² would be negative).</div>');
+      physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">No real solution (v<sub>i</sub>² would be negative).</div>');
       return;
     }
     answer = Math.sqrt(viSq);
-    steps.push('Rearrange v_f² = v_i² + 2a·Δx → v_i = √(v_f² − 2a·Δx)');
-    steps.push('v_i² = (' + physFmt(vf) + ')² − 2(' + physFmt(a) + ')(' + physFmt(x) + ')');
-    steps.push('v_i = ' + physFmt(answer) + ' m/s');
-    answerHtml = '<div class="phys-answer">v_i = ' + physFmt(answer) + ' m/s</div>';
+    steps.push('Rearrange v<sub>f</sub>² = v<sub>i</sub>² + 2a·Δx → v<sub>i</sub> = √(v<sub>f</sub>² − 2a·Δx)');
+    steps.push('v<sub>i</sub>² = (' + physFmt(vf) + ')² − 2(' + physFmt(a) + ')(' + physFmt(x) + ')');
+    steps.push('v<sub>i</sub> = ' + physFmt(answer) + ' m/s');
+    answerHtml = '<div class="phys-answer">v<sub>i</sub> = ' + physFmt(answer) + ' m/s</div>';
   } else {
     physResult('m1_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">That combination is not directly solvable with the 3 kinematic equations. Check your inputs.</div>');
     return;
@@ -1806,10 +1814,10 @@ function physVectors() {
   let dir = Math.atan2(ry, rx) * 180 / Math.PI;
   if (dir < 0) dir += 360;
 
-  steps.push('R_x = Σx = ' + physFmt(rx));
-  steps.push('R_y = Σy = ' + physFmt(ry));
-  steps.push('|R| = √(R_x² + R_y²) = √(' + physFmt(rx) + '² + ' + physFmt(ry) + '²) = ' + physFmt(mag));
-  steps.push('θ = tan⁻¹(R_y / R_x) = ' + physFmt(dir) + '° (from positive x-axis)');
+  steps.push('R<sub>x</sub> = Σx = ' + physFmt(rx));
+  steps.push('R<sub>y</sub> = Σy = ' + physFmt(ry));
+  steps.push('|R| = √(R<sub>x</sub>² + R<sub>y</sub>²) = √(' + physFmt(rx) + '² + ' + physFmt(ry) + '²) = ' + physFmt(mag));
+  steps.push('θ = tan⁻¹(R<sub>y</sub> / R<sub>x</sub>) = ' + physFmt(dir) + '° (from positive x-axis)');
 
   let compass = '';
   if (dir < 22.5 || dir >= 337.5) compass = 'East';
@@ -1825,8 +1833,8 @@ function physVectors() {
     '<div class="phys-answer">|R| = ' + physFmt(mag) + '</div>' +
     '<div class="result-sub">Direction: ' + physFmt(dir) + '° (' + compass + ')</div>' +
     '<div class="phys-result-grid">' +
-      '<div class="result-cell"><span class="result-cell-label">R_x</span><span class="result-cell-value">' + physFmt(rx) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">R_y</span><span class="result-cell-value">' + physFmt(ry) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">R<sub>x</sub></span><span class="result-cell-value">' + physFmt(rx) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">R<sub>y</sub></span><span class="result-cell-value">' + physFmt(ry) + '</span></div>' +
     '</div>';
 
   physResult('v_result', html);
@@ -1956,17 +1964,17 @@ function physEnergy() {
   const Em = Ep + Ek;
 
   const steps = [];
-  steps.push('E_p = m·g·h = (' + physFmt(m) + ')(' + physFmt(g) + ')(' + physFmt(h) + ') = ' + physFmt(Ep) + ' J');
-  steps.push('E_k = ½·m·v² = ½(' + physFmt(m) + ')(' + physFmt(v) + ')² = ' + physFmt(Ek) + ' J');
-  steps.push('E_m = E_p + E_k = ' + physFmt(Ep) + ' + ' + physFmt(Ek) + ' = ' + physFmt(Em) + ' J');
-  steps.push('If the object falls freely with no friction, E_m is conserved: (E_p + E_k) top = (E_p + E_k) bottom.');
+  steps.push('E<sub>p</sub> = m·g·h = (' + physFmt(m) + ')(' + physFmt(g) + ')(' + physFmt(h) + ') = ' + physFmt(Ep) + ' J');
+  steps.push('E<sub>k</sub> = ½·m·v² = ½(' + physFmt(m) + ')(' + physFmt(v) + ')² = ' + physFmt(Ek) + ' J');
+  steps.push('E<sub>m</sub> = E<sub>p</sub> + E<sub>k</sub> = ' + physFmt(Ep) + ' + ' + physFmt(Ek) + ' = ' + physFmt(Em) + ' J');
+  steps.push('If the object falls freely with no friction, E<sub>m</sub> is conserved: (E<sub>p</sub> + E<sub>k</sub>) top = (E<sub>p</sub> + E<sub>k</sub>) bottom.');
 
   const html =
-    '<div class="phys-answer">E_m = ' + physFmt(Em) + ' J</div>' +
+    '<div class="phys-answer">E<sub>m</sub> = ' + physFmt(Em) + ' J</div>' +
     '<div class="phys-result-grid">' +
-      '<div class="result-cell"><span class="result-cell-label">E_p (J)</span><span class="result-cell-value">' + physFmt(Ep) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">E_k (J)</span><span class="result-cell-value">' + physFmt(Ek) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">E_m (J)</span><span class="result-cell-value">' + physFmt(Em) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">E<sub>p</sub> (J)</span><span class="result-cell-value">' + physFmt(Ep) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">E<sub>k</sub> (J)</span><span class="result-cell-value">' + physFmt(Ek) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">E<sub>m</sub> (J)</span><span class="result-cell-value">' + physFmt(Em) + '</span></div>' +
     '</div>';
 
   physResult('e_result', html);
@@ -1992,7 +2000,7 @@ function physCharge() {
     }
     const qe = 1.6e-19;
     const Q = n * qe;
-    steps.push('Q = n · q_e');
+    steps.push('Q = n · q<sub>e</sub>');
     steps.push('Q = (' + physFmt(n) + ')(' + physFmt(qe) + ')');
     steps.push('Q = ' + physFmt(Q) + ' C');
     answerHtml = '<div class="phys-answer">Q = ' + physFmt(Q) + ' C</div>';
@@ -2004,11 +2012,11 @@ function physCharge() {
       return;
     }
     const qNew = (q1 + q2) / 2;
-    steps.push('Q_new = (Q₁ + Q₂) / 2');
-    steps.push('Q_new = (' + physFmt(q1) + ' + ' + physFmt(q2) + ') / 2');
-    steps.push('Q_new = ' + physFmt(qNew) + ' C');
+    steps.push('Q<sub>new</sub> = (Q<sub>1</sub> + Q<sub>2</sub>) / 2');
+    steps.push('Q<sub>new</sub> = (' + physFmt(q1) + ' + ' + physFmt(q2) + ') / 2');
+    steps.push('Q<sub>new</sub> = ' + physFmt(qNew) + ' C');
     steps.push('Each sphere ends with ' + physFmt(qNew) + ' C after contact and separation.');
-    answerHtml = '<div class="phys-answer">Q_new = ' + physFmt(qNew) + ' C</div>';
+    answerHtml = '<div class="phys-answer">Q<sub>new</sub> = ' + physFmt(qNew) + ' C</div>';
   }
 
   physResult('q_result', answerHtml);
@@ -2032,25 +2040,25 @@ function physNewton() {
 
   if (F === null && m !== null && a !== null) {
     F = m * a;
-    steps.push('F_net = m·a');
-    steps.push('F_net = (' + physFmt(m) + ')(' + physFmt(a) + ')');
-    steps.push('F_net = ' + physFmt(F) + ' N');
-    answerHtml = '<div class="phys-answer">F_net = ' + physFmt(F) + ' N</div>';
+    steps.push('F<sub>net</sub> = m·a');
+    steps.push('F<sub>net</sub> = (' + physFmt(m) + ')(' + physFmt(a) + ')');
+    steps.push('F<sub>net</sub> = ' + physFmt(F) + ' N');
+    answerHtml = '<div class="phys-answer">F<sub>net</sub> = ' + physFmt(F) + ' N</div>';
   } else if (m === null && F !== null && a !== null && a !== 0) {
     m = F / a;
-    steps.push('Rearrange F_net = m·a → m = F_net / a');
+    steps.push('Rearrange F<sub>net</sub> = m·a → m = F<sub>net</sub> / a');
     steps.push('m = ' + physFmt(F) + ' / ' + physFmt(a) + ' = ' + physFmt(m) + ' kg');
     answerHtml = '<div class="phys-answer">m = ' + physFmt(m) + ' kg</div>';
   } else if (a === null && F !== null && m !== null && m !== 0) {
     a = F / m;
-    steps.push('Rearrange F_net = m·a → a = F_net / m');
+    steps.push('Rearrange F<sub>net</sub> = m·a → a = F<sub>net</sub> / m');
     steps.push('a = ' + physFmt(F) + ' / ' + physFmt(m) + ' = ' + physFmt(a) + ' m/s²');
     answerHtml = '<div class="phys-answer">a = ' + physFmt(a) + ' m/s²</div>';
   } else if (F !== null && m !== null && a !== null) {
-    steps.push('F_net = m·a = (' + physFmt(m) + ')(' + physFmt(a) + ') = ' + physFmt(m * a) + ' N');
-    answerHtml = '<div class="phys-answer">F_net = ' + physFmt(m * a) + ' N (check)</div>';
+    steps.push('F<sub>net</sub> = m·a = (' + physFmt(m) + ')(' + physFmt(a) + ') = ' + physFmt(m * a) + ' N');
+    answerHtml = '<div class="phys-answer">F<sub>net</sub> = ' + physFmt(m * a) + ' N (check)</div>';
   } else {
-    answerHtml = '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Provide two of F_net, m, a.</div>';
+    answerHtml = '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Provide two of F<sub>net</sub>, m, a.</div>';
   }
 
   if (mu !== null && m2 !== null) {
@@ -2104,13 +2112,13 @@ function physWorkEnergy() {
     const Eki = 0.5 * m * vi * vi;
     const Ekf = 0.5 * m * vf * vf;
     const W = Ekf - Eki;
-    steps.push('E_k,i = ½mv_i² = ½(' + physFmt(m) + ')(' + physFmt(vi) + ')² = ' + physFmt(Eki) + ' J');
-    steps.push('E_k,f = ½mv_f² = ½(' + physFmt(m) + ')(' + physFmt(vf) + ')² = ' + physFmt(Ekf) + ' J');
-    steps.push('W_net = ΔE_k = E_k,f − E_k,i = ' + physFmt(Ekf) + ' − ' + physFmt(Eki) + ' = ' + physFmt(W) + ' J');
-    answerHtml = '<div class="phys-answer">W_net = ' + physFmt(W) + ' J</div>' +
+    steps.push('E<sub>k,i</sub> = ½mv<sub>i</sub>² = ½(' + physFmt(m) + ')(' + physFmt(vi) + ')² = ' + physFmt(Eki) + ' J');
+    steps.push('E<sub>k,f</sub> = ½mv<sub>f</sub>² = ½(' + physFmt(m) + ')(' + physFmt(vf) + ')² = ' + physFmt(Ekf) + ' J');
+    steps.push('W<sub>net</sub> = ΔE<sub>k</sub> = E<sub>k,f</sub> − E<sub>k,i</sub> = ' + physFmt(Ekf) + ' − ' + physFmt(Eki) + ' = ' + physFmt(W) + ' J');
+    answerHtml = '<div class="phys-answer">W<sub>net</sub> = ' + physFmt(W) + ' J</div>' +
       '<div class="phys-result-grid">' +
-        '<div class="result-cell"><span class="result-cell-label">E_k,i</span><span class="result-cell-value">' + physFmt(Eki) + ' J</span></div>' +
-        '<div class="result-cell"><span class="result-cell-label">E_k,f</span><span class="result-cell-value">' + physFmt(Ekf) + ' J</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">E<sub>k,i</sub></span><span class="result-cell-value">' + physFmt(Eki) + ' J</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">E<sub>k,f</sub></span><span class="result-cell-value">' + physFmt(Ekf) + ' J</span></div>' +
       '</div>';
   }
 
@@ -2162,7 +2170,7 @@ function physCoulomb() {
   const attractive = (q1 * q2) < 0;
 
   const steps = [];
-  steps.push('F = k·|Q₁·Q₂| / r²');
+  steps.push('F = k·|Q<sub>1</sub>·Q<sub>2</sub>| / r²');
   steps.push('F = (9,0 × 10⁹)(' + physFmt(Math.abs(q1)) + ')(' + physFmt(Math.abs(q2)) + ') / (' + physFmt(r) + ')²');
   steps.push('F = ' + physFmt(F) + ' N');
   steps.push('Charges have ' + (attractive ? 'opposite' : 'like') + ' signs → force is ' + (attractive ? 'attractive' : 'repulsive') + '.');
@@ -2250,9 +2258,9 @@ function physEMF() {
 
   if (i !== null && R !== null) {
     const V = i * R;
-    steps.push('V_terminal = I·R = (' + physFmt(i) + ')(' + physFmt(R) + ') = ' + physFmt(V) + ' V');
+    steps.push('V<sub>terminal</sub> = I·R = (' + physFmt(i) + ')(' + physFmt(R) + ') = ' + physFmt(V) + ' V');
     answerHtml += '<div class="phys-result-grid">' +
-      '<div class="result-cell"><span class="result-cell-label">V_terminal</span><span class="result-cell-value">' + physFmt(V) + ' V</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">V<sub>terminal</sub></span><span class="result-cell-value">' + physFmt(V) + ' V</span></div>' +
     '</div>';
   }
 
@@ -2283,11 +2291,11 @@ function physSnell() {
       return;
     }
     const t2New = Math.asin(sinT2) * 180 / Math.PI;
-    steps.push('n₁·sinθ₁ = n₂·sinθ₂');
-    steps.push('sinθ₂ = (n₁·sinθ₁) / n₂ = (' + physFmt(n1) + '·sin(' + physFmt(t1) + '°)) / ' + physFmt(n2));
-    steps.push('sinθ₂ = ' + physFmt(sinT2));
-    steps.push('θ₂ = ' + physFmt(t2New) + '°');
-    answerHtml = '<div class="phys-answer">θ₂ = ' + physFmt(t2New) + '°</div>';
+    steps.push('n<sub>1</sub>·sinθ<sub>1</sub> = n<sub>2</sub>·sinθ<sub>2</sub>');
+    steps.push('sinθ<sub>2</sub> = (n<sub>1</sub>·sinθ<sub>1</sub>) / n<sub>2</sub> = (' + physFmt(n1) + '·sin(' + physFmt(t1) + '°)) / ' + physFmt(n2));
+    steps.push('sinθ<sub>2</sub> = ' + physFmt(sinT2));
+    steps.push('θ<sub>2</sub> = ' + physFmt(t2New) + '°');
+    answerHtml = '<div class="phys-answer">θ<sub>2</sub> = ' + physFmt(t2New) + '°</div>';
   } else if (t1 === null && t2 !== null) {
     const rad2 = t2 * Math.PI / 180;
     const sinT1 = (n2 * Math.sin(rad2)) / n1;
@@ -2296,9 +2304,9 @@ function physSnell() {
       return;
     }
     const t1New = Math.asin(sinT1) * 180 / Math.PI;
-    steps.push('sinθ₁ = (n₂·sinθ₂) / n₁ = (' + physFmt(n2) + '·sin(' + physFmt(t2) + '°)) / ' + physFmt(n1));
-    steps.push('θ₁ = ' + physFmt(t1New) + '°');
-    answerHtml = '<div class="phys-answer">θ₁ = ' + physFmt(t1New) + '°</div>';
+    steps.push('sinθ<sub>1</sub> = (n<sub>2</sub>·sinθ<sub>2</sub>) / n<sub>1</sub> = (' + physFmt(n2) + '·sin(' + physFmt(t2) + '°)) / ' + physFmt(n1));
+    steps.push('θ<sub>1</sub> = ' + physFmt(t1New) + '°');
+    answerHtml = '<div class="phys-answer">θ<sub>1</sub> = ' + physFmt(t1New) + '°</div>';
   } else {
     physResult('s_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one angle blank.</div>');
     return;
@@ -2306,7 +2314,7 @@ function physSnell() {
 
   if (n1 > n2) {
     const crit = Math.asin(n2 / n1) * 180 / Math.PI;
-    steps.push('Since n₁ > n₂, total internal reflection is possible. Critical angle: θ_c = sin⁻¹(n₂/n₁) = ' + physFmt(crit) + '°');
+    steps.push('Since n<sub>1</sub> &gt; n<sub>2</sub>, total internal reflection is possible. Critical angle: θ<sub>c</sub> = sin⁻¹(n<sub>2</sub>/n<sub>1</sub>) = ' + physFmt(crit) + '°');
     answerHtml += '<div class="phys-result-grid">' +
       '<div class="result-cell"><span class="result-cell-label">Critical angle</span><span class="result-cell-value">' + physFmt(crit) + '°</span></div>' +
     '</div>';
@@ -2434,7 +2442,7 @@ function physMomentum() {
     const dt = document.getElementById('mom_dt').value === '' ? null : parseFloat(document.getElementById('mom_dt').value);
 
     if ([m, vi, vf].some(x => isNaN(x))) {
-      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill in m, v_i, v_f.</div>');
+      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill in m, v<sub>i</sub>, v<sub>f</sub>.</div>');
       return;
     }
 
@@ -2442,21 +2450,21 @@ function physMomentum() {
     const pf = m * vf;
     const dp = pf - pi;
 
-    steps.push('p_i = m·v_i = (' + physFmt(m) + ')(' + physFmt(vi) + ') = ' + physFmt(pi) + ' kg·m/s');
-    steps.push('p_f = m·v_f = (' + physFmt(m) + ')(' + physFmt(vf) + ') = ' + physFmt(pf) + ' kg·m/s');
-    steps.push('Δp = p_f − p_i = ' + physFmt(pf) + ' − ' + physFmt(pi) + ' = ' + physFmt(dp) + ' kg·m/s');
+    steps.push('p<sub>i</sub> = m·v<sub>i</sub> = (' + physFmt(m) + ')(' + physFmt(vi) + ') = ' + physFmt(pi) + ' kg·m/s');
+    steps.push('p<sub>f</sub> = m·v<sub>f</sub> = (' + physFmt(m) + ')(' + physFmt(vf) + ') = ' + physFmt(pf) + ' kg·m/s');
+    steps.push('Δp = p<sub>f</sub> − p<sub>i</sub> = ' + physFmt(pf) + ' − ' + physFmt(pi) + ' = ' + physFmt(dp) + ' kg·m/s');
 
     answerHtml = '<div class="phys-answer">Δp = ' + physFmt(dp) + ' kg·m/s</div>';
 
     if (dt !== null && dt !== 0) {
       const F = dp / dt;
-      steps.push('F_net = Δp / Δt = ' + physFmt(dp) + ' / ' + physFmt(dt) + ' = ' + physFmt(F) + ' N');
-      answerHtml += '<div class="phys-answer multi" style="color:var(--text);">F_net = ' + physFmt(F) + ' N</div>';
+      steps.push('F<sub>net</sub> = Δp / Δt = ' + physFmt(dp) + ' / ' + physFmt(dt) + ' = ' + physFmt(F) + ' N');
+      answerHtml += '<div class="phys-answer multi" style="color:var(--text);">F<sub>net</sub> = ' + physFmt(F) + ' N</div>';
     }
 
     answerHtml += '<div class="phys-result-grid">' +
-      '<div class="result-cell"><span class="result-cell-label">p_i</span><span class="result-cell-value">' + physFmt(pi) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">p_f</span><span class="result-cell-value">' + physFmt(pf) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">p<sub>i</sub></span><span class="result-cell-value">' + physFmt(pi) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">p<sub>f</sub></span><span class="result-cell-value">' + physFmt(pf) + '</span></div>' +
     '</div>';
   } else {
     const m1 = parseFloat(document.getElementById('col_m1').value);
@@ -2467,41 +2475,41 @@ function physMomentum() {
     let v2 = document.getElementById('col_v2').value === '' ? null : parseFloat(document.getElementById('col_v2').value);
 
     if ([m1, u1, m2, u2].some(x => isNaN(x))) {
-      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill m₁, u₁, m₂, u₂.</div>');
+      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill m<sub>1</sub>, u<sub>1</sub>, m<sub>2</sub>, u<sub>2</sub>.</div>');
       return;
     }
 
     const pBefore = m1 * u1 + m2 * u2;
-    steps.push('p_before = m₁u₁ + m₂u₂ = (' + physFmt(m1) + ')(' + physFmt(u1) + ') + (' + physFmt(m2) + ')(' + physFmt(u2) + ') = ' + physFmt(pBefore) + ' kg·m/s');
+    steps.push('p<sub>before</sub> = m<sub>1</sub>u<sub>1</sub> + m<sub>2</sub>u<sub>2</sub> = (' + physFmt(m1) + ')(' + physFmt(u1) + ') + (' + physFmt(m2) + ')(' + physFmt(u2) + ') = ' + physFmt(pBefore) + ' kg·m/s');
 
     if (v1 === null && v2 !== null) {
       v1 = (pBefore - m2 * v2) / m1;
-      steps.push('Conservation: p_after = p_before → m₁v₁ + m₂v₂ = p_before');
-      steps.push('v₁ = (p_before − m₂v₂) / m₁ = (' + physFmt(pBefore) + ' − (' + physFmt(m2) + ')(' + physFmt(v2) + ')) / ' + physFmt(m1));
-      steps.push('v₁ = ' + physFmt(v1) + ' m/s');
-      answerHtml = '<div class="phys-answer">v₁ = ' + physFmt(v1) + ' m/s</div>';
+      steps.push('Conservation: p<sub>after</sub> = p<sub>before</sub> → m<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> = p<sub>before</sub>');
+      steps.push('v<sub>1</sub> = (p<sub>before</sub> − m<sub>2</sub>v<sub>2</sub>) / m<sub>1</sub> = (' + physFmt(pBefore) + ' − (' + physFmt(m2) + ')(' + physFmt(v2) + ')) / ' + physFmt(m1));
+      steps.push('v<sub>1</sub> = ' + physFmt(v1) + ' m/s');
+      answerHtml = '<div class="phys-answer">v<sub>1</sub> = ' + physFmt(v1) + ' m/s</div>';
     } else if (v2 === null && v1 !== null) {
       v2 = (pBefore - m1 * v1) / m2;
-      steps.push('Conservation: m₁v₁ + m₂v₂ = p_before');
-      steps.push('v₂ = (p_before − m₁v₁) / m₂ = (' + physFmt(pBefore) + ' − (' + physFmt(m1) + ')(' + physFmt(v1) + ')) / ' + physFmt(m2));
-      steps.push('v₂ = ' + physFmt(v2) + ' m/s');
-      answerHtml = '<div class="phys-answer">v₂ = ' + physFmt(v2) + ' m/s</div>';
+      steps.push('Conservation: m<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> = p<sub>before</sub>');
+      steps.push('v<sub>2</sub> = (p<sub>before</sub> − m<sub>1</sub>v<sub>1</sub>) / m<sub>2</sub> = (' + physFmt(pBefore) + ' − (' + physFmt(m1) + ')(' + physFmt(v1) + ')) / ' + physFmt(m2));
+      steps.push('v<sub>2</sub> = ' + physFmt(v2) + ' m/s');
+      answerHtml = '<div class="phys-answer">v<sub>2</sub> = ' + physFmt(v2) + ' m/s</div>';
     } else if (v1 !== null && v2 !== null) {
       const pAfter = m1 * v1 + m2 * v2;
-      steps.push('p_after = m₁v₁ + m₂v₂ = (' + physFmt(m1) + ')(' + physFmt(v1) + ') + (' + physFmt(m2) + ')(' + physFmt(v2) + ') = ' + physFmt(pAfter) + ' kg·m/s');
+      steps.push('p<sub>after</sub> = m<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> = (' + physFmt(m1) + ')(' + physFmt(v1) + ') + (' + physFmt(m2) + ')(' + physFmt(v2) + ') = ' + physFmt(pAfter) + ' kg·m/s');
       if (Math.abs(pBefore - pAfter) < 1e-6) {
-        steps.push('p_before = p_after ✓ Momentum is conserved.');
+        steps.push('p<sub>before</sub> = p<sub>after</sub> ✓ Momentum is conserved.');
       } else {
-        steps.push('p_before ≠ p_after. Momentum is NOT conserved with these values.');
+        steps.push('p<sub>before</sub> ≠ p<sub>after</sub>. Momentum is NOT conserved with these values.');
       }
-      answerHtml = '<div class="phys-answer">p_after = ' + physFmt(pAfter) + ' kg·m/s</div>';
+      answerHtml = '<div class="phys-answer">p<sub>after</sub> = ' + physFmt(pAfter) + ' kg·m/s</div>';
     } else {
-      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one of v₁ or v₂ blank.</div>');
+      physResult('mom_result', '<div style="text-align:center; padding:16px; color:var(--warning); font-size:14px;">Leave one of v<sub>1</sub> or v<sub>2</sub> blank.</div>');
       return;
     }
 
     answerHtml += '<div class="phys-result-grid">' +
-      '<div class="result-cell"><span class="result-cell-label">p_before</span><span class="result-cell-value">' + physFmt(pBefore) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">p<sub>before</sub></span><span class="result-cell-value">' + physFmt(pBefore) + '</span></div>' +
     '</div>';
   }
 
@@ -2525,48 +2533,47 @@ function physProjectile() {
     const vi = parseFloat(document.getElementById('proj_vi').value);
     const g = parseFloat(document.getElementById('proj_g').value);
     if ([vi, g].some(x => isNaN(x))) {
-      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill v_i and g.</div>');
+      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill v<sub>i</sub> and g.</div>');
       return;
     }
     const tUp = vi / g;
     const hMax = vi * vi / (2 * g);
     const tTotal = 2 * tUp;
     steps.push('Take up as positive. a = −g = −' + physFmt(g) + ' m/s².');
-    steps.push('At maximum height v = 0. Use v_f = v_i + a·Δt:');
-    steps.push('0 = ' + physFmt(vi) + ' − ' + physFmt(g) + '·t_up → t_up = ' + physFmt(tUp) + ' s');
-    steps.push('Max height: Δy = v_i·t_up − ½g·t_up² = ' + physFmt(hMax) + ' m');
-    steps.push('Total flight time (returns to start): 2·t_up = ' + physFmt(tTotal) + ' s');
-    steps.push('Return velocity: v = −v_i = −' + physFmt(vi) + ' m/s (same magnitude, opposite direction).');
+    steps.push('At maximum height v = 0. Use v<sub>f</sub> = v<sub>i</sub> + a·Δt:');
+    steps.push('0 = ' + physFmt(vi) + ' − ' + physFmt(g) + '·t<sub>up</sub> → t<sub>up</sub> = ' + physFmt(tUp) + ' s');
+    steps.push('Max height: Δy = v<sub>i</sub>·t<sub>up</sub> − ½g·t<sub>up</sub>² = ' + physFmt(hMax) + ' m');
+    steps.push('Total flight time (returns to start): 2·t<sub>up</sub> = ' + physFmt(tTotal) + ' s');
+    steps.push('Return velocity: v = −v<sub>i</sub> = −' + physFmt(vi) + ' m/s (same magnitude, opposite direction).');
 
     answerHtml =
-      '<div class="phys-answer">h_max = ' + physFmt(hMax) + ' m</div>' +
-      '<div class="phys-answer multi" style="color:var(--text);">t_up = ' + physFmt(tUp) + ' s</div>' +
-      '<div class="phys-answer multi" style="color:var(--text);">t_total = ' + physFmt(tTotal) + ' s</div>';
+      '<div class="phys-answer">h<sub>max</sub> = ' + physFmt(hMax) + ' m</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">t<sub>up</sub> = ' + physFmt(tUp) + ' s</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">t<sub>total</sub> = ' + physFmt(tTotal) + ' s</div>';
   } else if (mode === 'down') {
     const h = parseFloat(document.getElementById('proj_h').value);
     const vi = parseFloat(document.getElementById('proj_vi2').value);
     const g = parseFloat(document.getElementById('proj_g2').value);
     if ([h, vi, g].some(x => isNaN(x))) {
-      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill h, v_i, g.</div>');
+      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill h, v<sub>i</sub>, g.</div>');
       return;
     }
-    // Take down as positive
     const vf = Math.sqrt(vi * vi + 2 * g * h);
     const t = (vf - vi) / g;
     steps.push('Take down as positive. Δy = ' + physFmt(h) + ' m, a = +g = ' + physFmt(g) + ' m/s².');
-    steps.push('Use v_f² = v_i² + 2a·Δy: v_f² = (' + physFmt(vi) + ')² + 2(' + physFmt(g) + ')(' + physFmt(h) + ')');
-    steps.push('v_f = ' + physFmt(vf) + ' m/s (downward)');
-    steps.push('Use v_f = v_i + a·Δt: Δt = (v_f − v_i) / g = ' + physFmt(t) + ' s');
+    steps.push('Use v<sub>f</sub>² = v<sub>i</sub>² + 2a·Δy: v<sub>f</sub>² = (' + physFmt(vi) + ')² + 2(' + physFmt(g) + ')(' + physFmt(h) + ')');
+    steps.push('v<sub>f</sub> = ' + physFmt(vf) + ' m/s (downward)');
+    steps.push('Use v<sub>f</sub> = v<sub>i</sub> + a·Δt: Δt = (v<sub>f</sub> − v<sub>i</sub>) / g = ' + physFmt(t) + ' s');
 
     answerHtml =
-      '<div class="phys-answer">v_f = ' + physFmt(vf) + ' m/s</div>' +
+      '<div class="phys-answer">v<sub>f</sub> = ' + physFmt(vf) + ' m/s</div>' +
       '<div class="phys-answer multi" style="color:var(--text);">Δt = ' + physFmt(t) + ' s</div>';
   } else {
     const vx = parseFloat(document.getElementById('proj_vx').value);
     const h = parseFloat(document.getElementById('proj_ch').value);
     const g = parseFloat(document.getElementById('proj_g3').value);
     if ([vx, h, g].some(x => isNaN(x))) {
-      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill v_x, h, g.</div>');
+      physResult('proj_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill v<sub>x</sub>, h, g.</div>');
       return;
     }
     const tFall = Math.sqrt(2 * h / g);
@@ -2575,17 +2582,17 @@ function physProjectile() {
     const vImpact = Math.sqrt(vx * vx + vyImpact * vyImpact);
     const angleImpact = Math.atan2(vyImpact, vx) * 180 / Math.PI;
 
-    steps.push('Horizontal: constant v_x = ' + physFmt(vx) + ' m/s. Vertical: free fall from h = ' + physFmt(h) + ' m.');
+    steps.push('Horizontal: constant v<sub>x</sub> = ' + physFmt(vx) + ' m/s. Vertical: free fall from h = ' + physFmt(h) + ' m.');
     steps.push('Time to fall: h = ½g·t² → t = √(2h/g) = ' + physFmt(tFall) + ' s');
-    steps.push('Horizontal range: x = v_x · t = ' + physFmt(xRange) + ' m');
-    steps.push('Vertical impact velocity: v_y = g·t = ' + physFmt(vyImpact) + ' m/s');
-    steps.push('Resultant impact velocity: v = √(v_x² + v_y²) = ' + physFmt(vImpact) + ' m/s');
-    steps.push('Impact angle below horizontal: θ = tan⁻¹(v_y/v_x) = ' + physFmt(angleImpact) + '°');
+    steps.push('Horizontal range: x = v<sub>x</sub> · t = ' + physFmt(xRange) + ' m');
+    steps.push('Vertical impact velocity: v<sub>y</sub> = g·t = ' + physFmt(vyImpact) + ' m/s');
+    steps.push('Resultant impact velocity: v = √(v<sub>x</sub>² + v<sub>y</sub>²) = ' + physFmt(vImpact) + ' m/s');
+    steps.push('Impact angle below horizontal: θ = tan⁻¹(v<sub>y</sub>/v<sub>x</sub>) = ' + physFmt(angleImpact) + '°');
 
     answerHtml =
-      '<div class="phys-answer">x_range = ' + physFmt(xRange) + ' m</div>' +
-      '<div class="phys-answer multi" style="color:var(--text);">t_fall = ' + physFmt(tFall) + ' s</div>' +
-      '<div class="phys-answer multi" style="color:var(--text);">v_impact = ' + physFmt(vImpact) + ' m/s @ ' + physFmt(angleImpact) + '° below horizontal</div>';
+      '<div class="phys-answer">x<sub>range</sub> = ' + physFmt(xRange) + ' m</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">t<sub>fall</sub> = ' + physFmt(tFall) + ' s</div>' +
+      '<div class="phys-answer multi" style="color:var(--text);">v<sub>impact</sub> = ' + physFmt(vImpact) + ' m/s @ ' + physFmt(angleImpact) + '° below horizontal</div>';
   }
 
   physResult('proj_result', answerHtml);
@@ -2609,11 +2616,11 @@ function physGravitation() {
     const m2 = parseFloat(document.getElementById('gr_m2').value);
     const r = parseFloat(document.getElementById('gr_r').value);
     if ([m1, m2, r].some(x => isNaN(x)) || r === 0) {
-      physResult('gr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill m₁, m₂, r (r ≠ 0).</div>');
+      physResult('gr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill m<sub>1</sub>, m<sub>2</sub>, r (r ≠ 0).</div>');
       return;
     }
     const F = G * m1 * m2 / (r * r);
-    steps.push('F = G·m₁·m₂ / r²');
+    steps.push('F = G·m<sub>1</sub>·m<sub>2</sub> / r²');
     steps.push('F = (6,67 × 10⁻¹¹)(' + physFmt(m1) + ')(' + physFmt(m2) + ') / (' + physFmt(r) + ')²');
     steps.push('F = ' + physFmt(F) + ' N');
     answerHtml = '<div class="phys-answer">F = ' + physFmt(F) + ' N</div>';
@@ -2651,15 +2658,15 @@ function physCircular() {
 
   const steps = [];
   steps.push('v = 2πr / T = 2π(' + physFmt(r) + ') / ' + physFmt(T) + ' = ' + physFmt(v) + ' m/s');
-  steps.push('a_c = v² / r = (' + physFmt(v) + ')² / ' + physFmt(r) + ' = ' + physFmt(ac) + ' m/s²');
-  steps.push('F_c = m·v² / r = (' + physFmt(m) + ')(' + physFmt(v) + ')² / ' + physFmt(r) + ' = ' + physFmt(Fc) + ' N');
+  steps.push('a<sub>c</sub> = v² / r = (' + physFmt(v) + ')² / ' + physFmt(r) + ' = ' + physFmt(ac) + ' m/s²');
+  steps.push('F<sub>c</sub> = m·v² / r = (' + physFmt(m) + ')(' + physFmt(v) + ')² / ' + physFmt(r) + ' = ' + physFmt(Fc) + ' N');
 
   const html =
-    '<div class="phys-answer">F_c = ' + physFmt(Fc) + ' N</div>' +
+    '<div class="phys-answer">F<sub>c</sub> = ' + physFmt(Fc) + ' N</div>' +
     '<div class="phys-result-grid">' +
       '<div class="result-cell"><span class="result-cell-label">v (m/s)</span><span class="result-cell-value">' + physFmt(v) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">a_c (m/s²)</span><span class="result-cell-value">' + physFmt(ac) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">F_c (N)</span><span class="result-cell-value">' + physFmt(Fc) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">a<sub>c</sub> (m/s²)</span><span class="result-cell-value">' + physFmt(ac) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">F<sub>c</sub> (N)</span><span class="result-cell-value">' + physFmt(Fc) + '</span></div>' +
     '</div>';
 
   physResult('ci_result', html);
@@ -2684,31 +2691,31 @@ function physDoppler() {
 
   if (dir === 'toward') {
     fL = (v / (v - vs)) * fs;
-    steps.push('Source moves toward still listener. Use denominator (v − v_s).');
-    steps.push('f_L = v / (v − v_s) · f_s = ' + physFmt(v) + ' / (' + physFmt(v) + ' − ' + physFmt(vs) + ') · ' + physFmt(fs));
+    steps.push('Source moves toward still listener. Use denominator (v − v<sub>s</sub>).');
+    steps.push('f<sub>L</sub> = v / (v − v<sub>s</sub>) · f<sub>s</sub> = ' + physFmt(v) + ' / (' + physFmt(v) + ' − ' + physFmt(vs) + ') · ' + physFmt(fs));
     note = 'Observed frequency is HIGHER (higher pitch).';
   } else if (dir === 'away') {
     fL = (v / (v + vs)) * fs;
-    steps.push('Source moves away from still listener. Use denominator (v + v_s).');
-    steps.push('f_L = v / (v + v_s) · f_s = ' + physFmt(v) + ' / (' + physFmt(v) + ' + ' + physFmt(vs) + ') · ' + physFmt(fs));
+    steps.push('Source moves away from still listener. Use denominator (v + v<sub>s</sub>).');
+    steps.push('f<sub>L</sub> = v / (v + v<sub>s</sub>) · f<sub>s</sub> = ' + physFmt(v) + ' / (' + physFmt(v) + ' + ' + physFmt(vs) + ') · ' + physFmt(fs));
     note = 'Observed frequency is LOWER (lower pitch).';
   } else if (dir === 'listener_toward') {
     fL = ((v + vl) / v) * fs;
-    steps.push('Listener moves toward still source. Use numerator (v + v_L).');
-    steps.push('f_L = (v + v_L) / v · f_s = (' + physFmt(v) + ' + ' + physFmt(vl) + ') / ' + physFmt(v) + ' · ' + physFmt(fs));
+    steps.push('Listener moves toward still source. Use numerator (v + v<sub>L</sub>).');
+    steps.push('f<sub>L</sub> = (v + v<sub>L</sub>) / v · f<sub>s</sub> = (' + physFmt(v) + ' + ' + physFmt(vl) + ') / ' + physFmt(v) + ' · ' + physFmt(fs));
     note = 'Observed frequency is HIGHER.';
   } else {
     fL = ((v - vl) / v) * fs;
-    steps.push('Listener moves away from still source. Use numerator (v − v_L).');
-    steps.push('f_L = (v − v_L) / v · f_s = (' + physFmt(v) + ' − ' + physFmt(vl) + ') / ' + physFmt(v) + ' · ' + physFmt(fs));
+    steps.push('Listener moves away from still source. Use numerator (v − v<sub>L</sub>).');
+    steps.push('f<sub>L</sub> = (v − v<sub>L</sub>) / v · f<sub>s</sub> = (' + physFmt(v) + ' − ' + physFmt(vl) + ') / ' + physFmt(v) + ' · ' + physFmt(fs));
     note = 'Observed frequency is LOWER.';
   }
 
-  steps.push('f_L = ' + physFmt(fL) + ' Hz');
+  steps.push('f<sub>L</sub> = ' + physFmt(fL) + ' Hz');
   steps.push(note);
 
   const html =
-    '<div class="phys-answer">f_L = ' + physFmt(fL) + ' Hz</div>' +
+    '<div class="phys-answer">f<sub>L</sub> = ' + physFmt(fL) + ' Hz</div>' +
     '<div class="result-sub">' + note + '</div>';
 
   physResult('d_result', html);
@@ -2728,33 +2735,33 @@ function physPhoto() {
 
   const steps = [];
   const f0 = W / h;
-  steps.push('Threshold frequency: f₀ = W₀/h = ' + physFmt(W) + ' / (6,63 × 10⁻³⁴) = ' + physFmt(f0) + ' Hz');
+  steps.push('Threshold frequency: f<sub>0</sub> = W<sub>0</sub>/h = ' + physFmt(W) + ' / (6,63 × 10⁻³⁴) = ' + physFmt(f0) + ' Hz');
 
   let answerHtml = '';
 
   if (f < f0) {
-    steps.push('f < f₀, so no photoelectrons are emitted.');
+    steps.push('f &lt; f<sub>0</sub>, so no photoelectrons are emitted.');
     answerHtml = '<div class="phys-answer" style="color:var(--warning);">No emission</div>' +
       '<div class="result-sub">Incident frequency is below the threshold frequency</div>' +
       '<div class="phys-result-grid">' +
-        '<div class="result-cell"><span class="result-cell-label">f₀ (Hz)</span><span class="result-cell-value">' + physFmt(f0) + '</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">f<sub>0</sub> (Hz)</span><span class="result-cell-value">' + physFmt(f0) + '</span></div>' +
       '</div>';
   } else {
     if (Ek === null) {
       Ek = h * f - W;
-      steps.push('E_k(max) = h·f − W₀');
-      steps.push('E_k(max) = (6,63 × 10⁻³⁴)(' + physFmt(f) + ') − ' + physFmt(W));
-      steps.push('E_k(max) = ' + physFmt(Ek) + ' J');
+      steps.push('E<sub>k(max)</sub> = h·f − W<sub>0</sub>');
+      steps.push('E<sub>k(max)</sub> = (6,63 × 10⁻³⁴)(' + physFmt(f) + ') − ' + physFmt(W));
+      steps.push('E<sub>k(max)</sub> = ' + physFmt(Ek) + ' J');
     } else {
-      steps.push('Given E_k(max) = ' + physFmt(Ek) + ' J. Check: h·f − W₀ = ' + physFmt(h * f - W) + ' J');
+      steps.push('Given E<sub>k(max)</sub> = ' + physFmt(Ek) + ' J. Check: h·f − W<sub>0</sub> = ' + physFmt(h * f - W) + ' J');
     }
     const eV = Ek / 1.6e-19;
-    steps.push('E_k(max) in eV = ' + physFmt(eV) + ' eV');
+    steps.push('E<sub>k(max)</sub> in eV = ' + physFmt(eV) + ' eV');
     answerHtml =
-      '<div class="phys-answer">E_k(max) = ' + physFmt(Ek) + ' J</div>' +
+      '<div class="phys-answer">E<sub>k(max)</sub> = ' + physFmt(Ek) + ' J</div>' +
       '<div class="phys-answer multi" style="color:var(--text);">= ' + physFmt(eV) + ' eV</div>' +
       '<div class="phys-result-grid">' +
-        '<div class="result-cell"><span class="result-cell-label">f₀ (Hz)</span><span class="result-cell-value">' + physFmt(f0) + '</span></div>' +
+        '<div class="result-cell"><span class="result-cell-label">f<sub>0</sub> (Hz)</span><span class="result-cell-value">' + physFmt(f0) + '</span></div>' +
       '</div>';
   }
 
@@ -2795,7 +2802,7 @@ function physTransformer() {
   let Vs = document.getElementById('tr_Vs').value === '' ? null : parseFloat(document.getElementById('tr_Vs').value);
 
   if ([Vp, Np, Ns].some(x => isNaN(x)) || Np === 0) {
-    physResult('tr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill V_p, N_p, N_s (N_p ≠ 0).</div>');
+    physResult('tr_result', '<div style="text-align:center; padding:16px; color:var(--danger); font-size:14px;">Fill V<sub>p</sub>, N<sub>p</sub>, N<sub>s</sub> (N<sub>p</sub> ≠ 0).</div>');
     return;
   }
 
@@ -2803,11 +2810,11 @@ function physTransformer() {
 
   if (Vs === null) {
     Vs = Vp * Ns / Np;
-    steps.push('V_s / V_p = N_s / N_p');
-    steps.push('V_s = V_p · N_s / N_p = (' + physFmt(Vp) + ')(' + physFmt(Ns) + ') / ' + physFmt(Np));
-    steps.push('V_s = ' + physFmt(Vs) + ' V');
+    steps.push('V<sub>s</sub> / V<sub>p</sub> = N<sub>s</sub> / N<sub>p</sub>');
+    steps.push('V<sub>s</sub> = V<sub>p</sub> · N<sub>s</sub> / N<sub>p</sub> = (' + physFmt(Vp) + ')(' + physFmt(Ns) + ') / ' + physFmt(Np));
+    steps.push('V<sub>s</sub> = ' + physFmt(Vs) + ' V');
   } else {
-    steps.push('Check: V_s / V_p = ' + physFmt(Vs / Vp) + ', N_s / N_p = ' + physFmt(Ns / Np));
+    steps.push('Check: V<sub>s</sub> / V<sub>p</sub> = ' + physFmt(Vs / Vp) + ', N<sub>s</sub> / N<sub>p</sub> = ' + physFmt(Ns / Np));
   }
 
   const type = Ns > Np ? 'Step-up transformer (voltage increases)' :
@@ -2816,11 +2823,11 @@ function physTransformer() {
   steps.push(type);
 
   const html =
-    '<div class="phys-answer">V_s = ' + physFmt(Vs) + ' V</div>' +
+    '<div class="phys-answer">V<sub>s</sub> = ' + physFmt(Vs) + ' V</div>' +
     '<div class="result-sub">' + type + '</div>' +
     '<div class="phys-result-grid">' +
-      '<div class="result-cell"><span class="result-cell-label">Turns ratio N_s/N_p</span><span class="result-cell-value">' + physFmt(Ns / Np) + '</span></div>' +
-      '<div class="result-cell"><span class="result-cell-label">Voltage ratio V_s/V_p</span><span class="result-cell-value">' + physFmt(Vs / Vp) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Turns ratio N<sub>s</sub>/N<sub>p</sub></span><span class="result-cell-value">' + physFmt(Ns / Np) + '</span></div>' +
+      '<div class="result-cell"><span class="result-cell-label">Voltage ratio V<sub>s</sub>/V<sub>p</sub></span><span class="result-cell-value">' + physFmt(Vs / Vp) + '</span></div>' +
     '</div>';
 
   physResult('tr_result', html);
