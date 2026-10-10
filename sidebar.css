@@ -1,4 +1,43 @@
-/* ===== Sidebar Navigation — v2 (Indigo / Slate) ===== */
+/* ===== Sidebar Navigation — v3 (refined panel, tiles, theme-following) ===== */
+
+/* ------------------------------------------------------------
+   SIDEBAR-SCOPED TOKENS
+   ------------------------------------------------------------
+   These define the sidebar's own look independent of the page
+   glass tokens. Light mode = cool slate panel. Dark mode = deep
+   near-black slate rail. Everything else in this file uses these.
+   ------------------------------------------------------------ */
+:root {
+  --sb-bg: #eef2f7;                    /* cool slate-100 panel */
+  --sb-bg-inner: #e2e8f0;              /* expanded group tint */
+  --sb-bg-hover: rgba(99, 102, 241, 0.10);
+  --sb-bg-active: rgba(99, 102, 241, 0.14);
+  --sb-border: rgba(15, 23, 42, 0.08);
+  --sb-divider: rgba(15, 23, 42, 0.06);
+  --sb-text: #0f172a;                  /* slate-900 */
+  --sb-text-muted: #475569;            /* slate-600 */
+  --sb-text-dim: #64748b;              /* slate-500 — readable on light panel */
+  --sb-icon-tile-bg: rgba(15, 23, 42, 0.05);
+  --sb-icon-tile-hover: rgba(99, 102, 241, 0.18);
+  --sb-shadow: 8px 0 40px rgba(15, 23, 42, 0.14);
+  --sb-radius: 10px;
+  --sb-radius-tile: 8px;
+}
+
+html.dark {
+  --sb-bg: #0b1220;                    /* deep slate near-black */
+  --sb-bg-inner: #0f172a;              /* slightly lighter expanded tint */
+  --sb-bg-hover: rgba(129, 140, 248, 0.14);
+  --sb-bg-active: rgba(129, 140, 248, 0.20);
+  --sb-border: rgba(148, 163, 184, 0.12);
+  --sb-divider: rgba(148, 163, 184, 0.10);
+  --sb-text: #f1f5f9;                  /* slate-100 */
+  --sb-text-muted: #cbd5e1;            /* slate-300 */
+  --sb-text-dim: #94a3b8;              /* slate-400 — soft but readable on dark */
+  --sb-icon-tile-bg: rgba(148, 163, 184, 0.10);
+  --sb-icon-tile-hover: rgba(129, 140, 248, 0.22);
+  --sb-shadow: 8px 0 40px rgba(0, 0, 0, 0.55);
+}
 
 /* ------------------------------------------------------------
    HAMBURGER BUTTON
@@ -51,7 +90,7 @@
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5); /* slate-900 @ 50% */
+  background: rgba(15, 23, 42, 0.5);
   z-index: 90;
   opacity: 0;
   pointer-events: none;
@@ -64,7 +103,7 @@
   pointer-events: auto;
 }
 html.dark .sidebar-overlay {
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.68);
 }
 
 /* ------------------------------------------------------------
@@ -77,68 +116,66 @@ html.dark .sidebar-overlay {
   bottom: 0;
   width: 320px;
   max-width: 85vw;
-  background: var(--glass-strong);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border-right: 1px solid var(--glass-border);
+  background: var(--sb-bg);
+  border-right: 1px solid var(--sb-border);
   z-index: 100;
   transform: translateX(-100%);
-  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), background 0.3s ease, border-color 0.3s ease;
   overflow-y: auto;
-  box-shadow: 8px 0 40px rgba(15, 23, 42, 0.15);
+  box-shadow: var(--sb-shadow);
   display: flex;
   flex-direction: column;
-}
-html.dark .sidebar {
-  box-shadow: 8px 0 40px rgba(0, 0, 0, 0.55);
+  color: var(--sb-text);
 }
 .sidebar.open {
   transform: translateX(0);
 }
 
-/* Custom scrollbar inside sidebar */
+/* Custom scrollbar */
 .sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
 .sidebar::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
+  background: var(--sb-border);
   border-radius: 100px;
 }
 .sidebar::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-soft-strong);
+  background: var(--sb-icon-tile-hover);
 }
 
 /* ------------------------------------------------------------
    SIDEBAR HEADER
    ------------------------------------------------------------ */
 .sidebar-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--glass-border);
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--sb-divider);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
-  background: var(--glass-strong);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--sb-bg);
   z-index: 1;
   flex-shrink: 0;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
-  color: var(--text);
+  color: var(--sb-text);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 16px;
+  font-size: 17px;
   letter-spacing: -0.02em;
+  transition: color 0.2s ease;
 }
 .sidebar-brand .nav-logo {
-  width: 28px;
-  height: 28px;
-  font-size: 13px;
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-accent);
 }
 .sidebar-close {
   width: 32px;
@@ -147,8 +184,8 @@ html.dark .sidebar {
   background: transparent;
   border-radius: 8px;
   cursor: pointer;
-  color: var(--text-muted);
-  font-size: 22px;
+  color: var(--sb-text-muted);
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,7 +195,7 @@ html.dark .sidebar {
   font-family: var(--font-sans);
 }
 .sidebar-close:hover {
-  background: var(--accent-soft);
+  background: var(--sb-bg-hover);
   color: var(--accent);
 }
 .sidebar-close:focus-visible {
@@ -170,35 +207,54 @@ html.dark .sidebar {
    SIDEBAR BODY
    ------------------------------------------------------------ */
 .sidebar-body {
-  padding: 12px;
+  padding: 16px 12px 20px;
   flex: 1;
 }
 
 /* ------------------------------------------------------------
-   GROUP
+   GROUP CONTAINER
    ------------------------------------------------------------ */
 .sidebar-group {
-  margin-bottom: 4px;
-  border-radius: 10px;
+  margin-bottom: 2px;
+  border-radius: var(--sb-radius);
   overflow: hidden;
+  transition: background 0.2s ease, margin 0.2s ease;
 }
+.sidebar-group.open {
+  background: var(--sb-bg-inner);
+  margin-bottom: 10px;
+}
+/* Divider above each group after the first */
+.sidebar-group + .sidebar-group {
+  padding-top: 2px;
+  border-top: 1px solid var(--sb-divider);
+  border-radius: 0 0 var(--sb-radius) var(--sb-radius);
+}
+.sidebar-group + .sidebar-group.open {
+  border-top-color: transparent;
+  border-radius: var(--sb-radius);
+}
+
+/* ------------------------------------------------------------
+   GROUP TOGGLE (section header)
+   ------------------------------------------------------------ */
 .sidebar-group-toggle {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 12px;
+  padding: 14px 14px;
   background: transparent;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--sb-radius);
   cursor: pointer;
   font-family: var(--font-sans);
   text-align: left;
   transition: background 0.15s ease;
 }
 .sidebar-group-toggle:hover {
-  background: var(--accent-soft);
+  background: var(--sb-bg-hover);
 }
 .sidebar-group-toggle:focus-visible {
   outline: 2px solid var(--accent);
@@ -208,10 +264,10 @@ html.dark .sidebar {
   font-family: var(--font-mono);
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
+  letter-spacing: 0.14em;
+  color: var(--sb-text-dim);
   font-weight: 600;
-  transition: color 0.15s;
+  transition: color 0.15s ease;
 }
 .sidebar-group-toggle:hover .sidebar-group-title {
   color: var(--accent);
@@ -220,10 +276,14 @@ html.dark .sidebar {
   color: var(--accent);
   font-weight: 700;
 }
+.sidebar-group.open .sidebar-group-title {
+  color: var(--sb-text);
+  font-weight: 700;
+}
 .sidebar-chevron {
   font-size: 9px;
-  color: var(--text-dim);
-  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), color 0.15s;
+  color: var(--sb-text-dim);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), color 0.15s ease;
   flex-shrink: 0;
 }
 .sidebar-group-toggle:hover .sidebar-chevron {
@@ -231,19 +291,22 @@ html.dark .sidebar {
 }
 .sidebar-group.open .sidebar-chevron {
   transform: rotate(180deg);
+  color: var(--accent);
 }
 
-/* Collapsible body */
+/* ------------------------------------------------------------
+   GROUP BODY (collapsible)
+   ------------------------------------------------------------ */
 .sidebar-group-body {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .sidebar-group.open .sidebar-group-body {
-  max-height: 800px;
+  max-height: 900px;
 }
 .sidebar-group-inner {
-  padding: 4px 0 8px;
+  padding: 4px 8px 10px;
 }
 
 /* ------------------------------------------------------------
@@ -253,20 +316,19 @@ html.dark .sidebar {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 9px 10px;
+  border-radius: var(--sb-radius);
   text-decoration: none;
-  color: var(--text);
+  color: var(--sb-text);
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
   margin-bottom: 2px;
   border: 1px solid transparent;
   position: relative;
 }
 .sidebar-link:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent-soft-strong);
+  background: var(--sb-bg-hover);
   color: var(--accent);
 }
 .sidebar-link:focus-visible {
@@ -274,15 +336,14 @@ html.dark .sidebar {
   outline-offset: 2px;
 }
 .sidebar-link.active {
-  background: var(--accent);
-  color: var(--accent-text);
+  background: var(--sb-bg-active);
+  color: var(--accent);
   font-weight: 700;
-  box-shadow: var(--shadow-accent);
 }
 .sidebar-link.active::before {
   content: '';
   position: absolute;
-  left: -12px;
+  left: -8px;
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
@@ -290,16 +351,29 @@ html.dark .sidebar {
   background: var(--accent);
   border-radius: 0 3px 3px 0;
 }
+
+/* Icon tile: bare emoji by default, tile appears on hover + active */
 .sidebar-link .sidebar-icon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
+  font-size: 17px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  border-radius: var(--sb-radius-tile);
+  background: transparent;
+  transition: background 0.15s ease, transform 0.15s ease;
   line-height: 1;
-  transition: transform 0.15s;
 }
 .sidebar-link:hover .sidebar-icon {
-  transform: scale(1.1);
+  background: var(--sb-icon-tile-hover);
+  transform: scale(1.04);
+}
+.sidebar-link.active .sidebar-icon {
+  background: var(--accent);
+  transform: scale(1.04);
+  filter: drop-shadow(0 2px 6px rgba(99, 102, 241, 0.28));
 }
 .sidebar-link .sidebar-label {
   flex: 1;
@@ -313,15 +387,16 @@ html.dark .sidebar {
    SIDEBAR FOOTER
    ------------------------------------------------------------ */
 .sidebar-footer {
-  padding: 16px 20px;
-  border-top: 1px solid var(--glass-border);
+  padding: 18px 20px;
+  border-top: 1px solid var(--sb-divider);
   font-size: 11px;
-  color: var(--text-dim);
+  color: var(--sb-text-dim);
   text-align: center;
   font-family: var(--font-mono);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   flex-shrink: 0;
   text-transform: uppercase;
+  transition: border-color 0.3s ease, color 0.3s ease;
 }
 
 /* ------------------------------------------------------------
@@ -342,10 +417,13 @@ body.sidebar-open .hamburger-btn {
    ------------------------------------------------------------ */
 @media (max-width: 600px) {
   .sidebar {
-    width: 280px;
+    width: 290px;
   }
   .sidebar-link {
-    padding: 11px 12px;
+    padding: 10px 10px;
     font-size: 14px;
+  }
+  .sidebar-header {
+    padding: 18px 16px;
   }
 }
