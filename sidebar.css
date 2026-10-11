@@ -1,22 +1,18 @@
-/* ===== Sidebar Navigation — v3 (refined panel, tiles, theme-following) ===== */
+/* ===== Sidebar Navigation — v4 (pop-out hover, polished groups) ===== */
 
 /* ------------------------------------------------------------
    SIDEBAR-SCOPED TOKENS
-   ------------------------------------------------------------
-   These define the sidebar's own look independent of the page
-   glass tokens. Light mode = cool slate panel. Dark mode = deep
-   near-black slate rail. Everything else in this file uses these.
    ------------------------------------------------------------ */
 :root {
-  --sb-bg: #eef2f7;                    /* cool slate-100 panel */
-  --sb-bg-inner: #e2e8f0;              /* expanded group tint */
+  --sb-bg: #eef2f7;
+  --sb-bg-inner: #dbe2ec;
   --sb-bg-hover: rgba(99, 102, 241, 0.10);
   --sb-bg-active: rgba(99, 102, 241, 0.14);
   --sb-border: rgba(15, 23, 42, 0.08);
   --sb-divider: rgba(15, 23, 42, 0.06);
-  --sb-text: #0f172a;                  /* slate-900 */
-  --sb-text-muted: #475569;            /* slate-600 */
-  --sb-text-dim: #64748b;              /* slate-500 — readable on light panel */
+  --sb-text: #0f172a;
+  --sb-text-muted: #475569;
+  --sb-text-dim: #64748b;
   --sb-icon-tile-bg: rgba(15, 23, 42, 0.05);
   --sb-icon-tile-hover: rgba(99, 102, 241, 0.18);
   --sb-shadow: 8px 0 40px rgba(15, 23, 42, 0.14);
@@ -25,15 +21,15 @@
 }
 
 html.dark {
-  --sb-bg: #0b1220;                    /* deep slate near-black */
-  --sb-bg-inner: #0f172a;              /* slightly lighter expanded tint */
+  --sb-bg: #0b1220;
+  --sb-bg-inner: #131b2e;
   --sb-bg-hover: rgba(129, 140, 248, 0.14);
   --sb-bg-active: rgba(129, 140, 248, 0.20);
   --sb-border: rgba(148, 163, 184, 0.12);
   --sb-divider: rgba(148, 163, 184, 0.10);
-  --sb-text: #f1f5f9;                  /* slate-100 */
-  --sb-text-muted: #cbd5e1;            /* slate-300 */
-  --sb-text-dim: #94a3b8;              /* slate-400 — soft but readable on dark */
+  --sb-text: #f1f5f9;
+  --sb-text-muted: #cbd5e1;
+  --sb-text-dim: #94a3b8;
   --sb-icon-tile-bg: rgba(148, 163, 184, 0.10);
   --sb-icon-tile-hover: rgba(129, 140, 248, 0.22);
   --sb-shadow: 8px 0 40px rgba(0, 0, 0, 0.55);
@@ -120,7 +116,9 @@ html.dark .sidebar-overlay {
   border-right: 1px solid var(--sb-border);
   z-index: 100;
   transform: translateX(-100%);
-  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), background 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1),
+              background 0.3s ease,
+              border-color 0.3s ease;
   overflow-y: auto;
   box-shadow: var(--sb-shadow);
   display: flex;
@@ -131,7 +129,6 @@ html.dark .sidebar-overlay {
   transform: translateX(0);
 }
 
-/* Custom scrollbar */
 .sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
 .sidebar::-webkit-scrollbar-thumb {
@@ -218,13 +215,18 @@ html.dark .sidebar-overlay {
   margin-bottom: 2px;
   border-radius: var(--sb-radius);
   overflow: hidden;
-  transition: background 0.2s ease, margin 0.2s ease;
+  transition: background 0.2s ease, margin 0.2s ease, box-shadow 0.2s ease;
 }
 .sidebar-group.open {
   background: var(--sb-bg-inner);
   margin-bottom: 10px;
+  box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.04),
+              inset 0 0 0 1px rgba(15, 23, 42, 0.03);
 }
-/* Divider above each group after the first */
+html.dark .sidebar-group.open {
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.06),
+              inset 0 0 0 1px rgba(148, 163, 184, 0.05);
+}
 .sidebar-group + .sidebar-group {
   padding-top: 2px;
   border-top: 1px solid var(--sb-divider);
@@ -236,7 +238,7 @@ html.dark .sidebar-overlay {
 }
 
 /* ------------------------------------------------------------
-   GROUP TOGGLE (section header)
+   GROUP TOGGLE (section header) — pop-out on hover
    ------------------------------------------------------------ */
 .sidebar-group-toggle {
   width: 100%;
@@ -251,10 +253,21 @@ html.dark .sidebar-overlay {
   cursor: pointer;
   font-family: var(--font-sans);
   text-align: left;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease,
+              transform 0.2s ease,
+              box-shadow 0.2s ease;
 }
 .sidebar-group-toggle:hover {
   background: var(--sb-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+html.dark .sidebar-group-toggle:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.30);
+}
+.sidebar-group-toggle:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
 }
 .sidebar-group-toggle:focus-visible {
   outline: 2px solid var(--accent);
@@ -281,10 +294,11 @@ html.dark .sidebar-overlay {
   font-weight: 700;
 }
 .sidebar-chevron {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--sb-text-dim);
   transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), color 0.15s ease;
   flex-shrink: 0;
+  margin-left: 4px;
 }
 .sidebar-group-toggle:hover .sidebar-chevron {
   color: var(--accent);
@@ -295,7 +309,7 @@ html.dark .sidebar-overlay {
 }
 
 /* ------------------------------------------------------------
-   GROUP BODY (collapsible)
+   GROUP BODY (collapsible) + fade-in on expand
    ------------------------------------------------------------ */
 .sidebar-group-body {
   max-height: 0;
@@ -307,10 +321,17 @@ html.dark .sidebar-overlay {
 }
 .sidebar-group-inner {
   padding: 4px 8px 10px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease 0.05s, transform 0.25s ease 0.05s;
+}
+.sidebar-group.open .sidebar-group-inner {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ------------------------------------------------------------
-   TOOL LINK
+   TOOL LINK — pop-out on hover
    ------------------------------------------------------------ */
 .sidebar-link {
   display: flex;
@@ -322,7 +343,10 @@ html.dark .sidebar-overlay {
   color: var(--sb-text);
   font-size: 14px;
   font-weight: 500;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease,
+              color 0.15s ease,
+              transform 0.2s ease,
+              box-shadow 0.2s ease;
   margin-bottom: 2px;
   border: 1px solid transparent;
   position: relative;
@@ -330,6 +354,16 @@ html.dark .sidebar-overlay {
 .sidebar-link:hover {
   background: var(--sb-bg-hover);
   color: var(--accent);
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.22);
+  z-index: 1;
+}
+html.dark .sidebar-link:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.sidebar-link:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.16);
 }
 .sidebar-link:focus-visible {
   outline: 2px solid var(--accent);
@@ -343,16 +377,17 @@ html.dark .sidebar-overlay {
 .sidebar-link.active::before {
   content: '';
   position: absolute;
-  left: -8px;
+  left: -4px;
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
   height: 20px;
   background: var(--accent);
   border-radius: 0 3px 3px 0;
+  z-index: 1;
 }
 
-/* Icon tile: bare emoji by default, tile appears on hover + active */
+/* Icon: bare emoji, tile appears on hover + active (Option B) */
 .sidebar-link .sidebar-icon {
   font-size: 17px;
   width: 32px;
@@ -400,13 +435,11 @@ html.dark .sidebar-overlay {
 }
 
 /* ------------------------------------------------------------
-   BODY SCROLL LOCK WHEN SIDEBAR OPEN
+   BODY SCROLL LOCK
    ------------------------------------------------------------ */
 body.sidebar-open {
   overflow: hidden;
 }
-
-/* Hide hamburger when sidebar is open */
 body.sidebar-open .hamburger-btn {
   opacity: 0;
   pointer-events: none;
