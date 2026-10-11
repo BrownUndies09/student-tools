@@ -5,7 +5,6 @@
    TOKENS
    ------------------------------------------------------------ */
 :root {
-  /* Surfaces */
   --bg: #f8fafc;
   --bg-elevated: #ffffff;
   --glass: rgba(255, 255, 255, 0.55);
@@ -14,12 +13,10 @@
   --glass-subtle: rgba(255, 255, 255, 0.4);
   --border: rgba(15, 23, 42, 0.08);
 
-  /* Text */
   --text: #0f172a;
   --text-muted: #475569;
   --text-dim: #94a3b8;
 
-  /* Brand accent (indigo) */
   --accent: #6366f1;
   --accent-hover: #4f46e5;
   --accent-text: #ffffff;
@@ -27,7 +24,6 @@
   --accent-soft-strong: rgba(99, 102, 241, 0.20);
   --accent-ring: rgba(99, 102, 241, 0.35);
 
-  /* Semantic */
   --success: #059669;
   --success-bg: rgba(5, 150, 105, 0.12);
   --warning: #d97706;
@@ -35,24 +31,20 @@
   --danger: #dc2626;
   --danger-bg: rgba(220, 38, 38, 0.12);
 
-  /* Radius */
   --radius: 16px;
   --radius-sm: 10px;
   --radius-lg: 20px;
 
-  /* Shadows */
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.06);
   --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.10);
   --shadow-accent: 0 8px 24px rgba(99, 102, 241, 0.22);
 
-  /* Fonts */
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Subject accent */
   --accent-subject: var(--accent);
   --accent-subject-soft: var(--accent-soft);
 }
@@ -168,7 +160,7 @@ html.dark .orb-4 { background: #8b5cf6; }
 }
 
 /* ------------------------------------------------------------
-   LAYOUT CONTAINERS
+   LAYOUT
    ------------------------------------------------------------ */
 .container        { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 .container-narrow { max-width: 640px;  margin: 0 auto; padding: 0 20px; }
@@ -265,7 +257,7 @@ html.dark .orb-4 { background: #8b5cf6; }
 }
 
 /* ------------------------------------------------------------
-   TOOL CARDS (homepage grid)
+   TOOL CARDS
    ------------------------------------------------------------ */
 .tools-grid {
   display: grid;
@@ -291,28 +283,11 @@ html.dark .orb-4 { background: #8b5cf6; }
   position: relative;
   overflow: hidden;
 }
-.tool-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius);
-  padding: 1px;
-  background: linear-gradient(135deg, transparent 0%, var(--accent-soft) 100%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.22s;
-  pointer-events: none;
-}
 .tool-card:hover {
   border-color: var(--accent);
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg), var(--shadow-accent);
 }
-.tool-card:hover::after { opacity: 1; }
-
 .tool-card-icon {
   font-size: 30px;
   margin-bottom: 14px;
@@ -326,7 +301,6 @@ html.dark .orb-4 { background: #8b5cf6; }
   transition: transform 0.22s;
 }
 .tool-card:hover .tool-card-icon { transform: scale(1.08) rotate(-4deg); }
-
 .tool-card h3 {
   font-size: 16px;
   font-weight: 700;
@@ -351,24 +325,10 @@ html.dark .orb-4 { background: #8b5cf6; }
   color: var(--text-muted);
   text-decoration: none;
   margin-bottom: 16px;
-  padding: 6px 12px;
-  border-radius: 100px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  transition: color 0.2s ease, background 0.2s ease,
-              border-color 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
+  transition: color 0.2s;
+  background: none; border: none; cursor: pointer; padding: 0;
 }
-.back-link:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  transform: translateX(-2px);
-}
-.back-link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+.back-link:hover { color: var(--accent); }
 .tool-header h1 {
   font-size: 36px;
   font-weight: 700;
@@ -427,21 +387,6 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-ring);
 }
 select { cursor: pointer; }
-
-/* Placeholder contrast — override browser defaults */
-::placeholder {
-  color: var(--text-muted);
-  opacity: 1;
-}
-input::placeholder,
-textarea::placeholder {
-  color: var(--text-muted);
-  opacity: 1;
-}
-html.dark ::placeholder {
-  color: var(--text-muted);
-  opacity: 1;
-}
 
 /* ------------------------------------------------------------
    BUTTONS
@@ -579,12 +524,12 @@ html.dark ::placeholder {
 }
 
 /* ------------------------------------------------------------
-   SUBJECT ROWS (GPA)
+   SUBJECT ROWS
    ------------------------------------------------------------ */
 .subject-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(150px, 1.3fr) minmax(110px, 1fr) 44px;
-  gap: 10px;
+  grid-template-columns: 2fr 1fr 1fr 40px;
+  gap: 8px;
   margin-bottom: 8px;
   align-items: center;
 }
@@ -595,15 +540,6 @@ html.dark ::placeholder {
   color: var(--text-dim);
   letter-spacing: 0.06em;
   margin-bottom: 12px;
-}
-.subject-row input,
-.subject-row select {
-  padding: 10px 12px;
-  font-size: 14px;
-}
-.subject-row .icon-btn {
-  width: 40px;
-  height: 40px;
 }
 .icon-btn {
   width: 40px; height: 40px;
@@ -1267,7 +1203,7 @@ html.dark ::placeholder {
 .pdf-preview-item { padding: 10px 12px; }
 
 /* ------------------------------------------------------------
-   SOLVER / FORMULA COMPATIBILITY
+   SOLVER COMPATIBILITY
    ------------------------------------------------------------ */
 .solver-input,
 .solver-step,
@@ -1277,7 +1213,7 @@ html.dark ::placeholder {
 }
 
 /* ------------------------------------------------------------
-   FOCUS RING — accessibility
+   FOCUS RING
    ------------------------------------------------------------ */
 button:focus-visible,
 a:focus-visible,
@@ -1286,6 +1222,49 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   SCROLL TO TOP BUTTON
+   ------------------------------------------------------------ */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg), var(--shadow-accent);
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+  z-index: 60;
+}
+.scroll-top-btn.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.scroll-top-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px) scale(1.05);
+}
+.scroll-top-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+.scroll-top-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* ------------------------------------------------------------
@@ -1302,192 +1281,12 @@ textarea:focus-visible {
   .week-grid { grid-template-columns: repeat(3, 1fr); }
   .schedule-item { grid-template-columns: 70px 1fr 40px; font-size: 12px; }
   .schedule-item .topic { display: none; }
-}
-
-/* ------------------------------------------------------------
-   RESULT FLOW — Steps first, then answer
-   ------------------------------------------------------------ */
-
-.mth-flow-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
-  margin-bottom: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.mth-flow-label.success {
-  color: var(--success);
-}
-.mth-flow-label.success::before {
-  content: '✓';
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  background: var(--success-bg);
-  border: 1px solid var(--success);
-  border-radius: 50%;
-  font-size: 11px;
-  color: var(--success);
-  flex-shrink: 0;
-}
-
-.mth-step {
-  padding: 16px 18px;
-  background: var(--glass-strong);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-sm);
-  margin-bottom: 10px;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  color: var(--text);
-  line-height: 1.8;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-.mth-step:hover {
-  border-color: var(--accent-subject);
-}
-.mth-step .step-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: var(--accent-subject);
-  color: var(--accent-text);
-  border-radius: 50%;
-  font-size: 12px;
-  text-align: center;
-  font-weight: 700;
-  margin-right: 12px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.22);
-}
-.mth-step .step-row {
-  display: flex;
-  align-items: flex-start;
-}
-
-.mth-answer {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--success);
-  font-family: var(--font-mono);
-  margin: 0 0 6px 0;
-  word-break: break-word;
-  line-height: 1.25;
-}
-.mth-answer.multi {
-  font-size: 18px;
-}
-.mth-answer-wrap {
-  padding: 20px 22px;
-  background: var(--glass-strong);
-  border: 1px solid var(--glass-border);
-  border-top: 3px solid var(--success);
-  border-radius: var(--radius-sm);
-}
-.mth-answer-wrap .result-sub {
-  margin-top: 4px;
-}
-
-/* ------------------------------------------------------------
-   FLOATING SCROLL-TOP BUTTON
-   ------------------------------------------------------------ */
-.scroll-top-btn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--glass-strong);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 60;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(12px);
-  transition: opacity 0.25s ease,
-              transform 0.25s ease,
-              box-shadow 0.2s ease,
-              color 0.2s ease,
-              border-color 0.2s ease,
-              background 0.2s ease;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.10);
-  padding: 0;
-}
-.scroll-top-btn.visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-.scroll-top-btn:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.28);
-}
-.scroll-top-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.22);
-}
-.scroll-top-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-.scroll-top-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-html.dark .scroll-top-btn {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.40);
-}
-html.dark .scroll-top-btn:hover {
-  box-shadow: 0 8px 22px rgba(129, 140, 248, 0.32);
-}
-
-@media (max-width: 640px) {
   .scroll-top-btn {
-    bottom: 16px;
-    right: 16px;
-    width: 44px;
-    height: 44px;
-  }
-  .mth-answer {
-    font-size: 20px;
-  }
-  .mth-answer.multi {
+    bottom: 18px;
+    right: 18px;
+    width: 40px;
+    height: 40px;
     font-size: 16px;
-  }
-  .mth-step {
-    padding: 14px 14px;
-    font-size: 13px;
-    line-height: 1.7;
-  }
-  .mth-step .step-num {
-    width: 24px;
-    height: 24px;
-    font-size: 11px;
-    margin-right: 10px;
   }
 }
 
@@ -1496,8 +1295,7 @@ html.dark .scroll-top-btn:hover {
    ------------------------------------------------------------ */
 @media print {
   .nav, .orbs, .sidebar, .sidebar-overlay, .footer,
-  .btn, .btn-row, .import-tabs, .fc-controls,
-  .scroll-top-btn {
+  .btn, .btn-row, .import-tabs, .fc-controls, .scroll-top-btn {
     display: none !important;
   }
   body { background: #fff !important; color: #000 !important; }
