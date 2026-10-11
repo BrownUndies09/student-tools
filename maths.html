@@ -387,7 +387,7 @@
     <div class="card">
       <div class="mth-formula-note">
         <strong>Nature of roots:</strong> <span class="mth-formula">Δ = b<sup>2</sup> − 4ac</span><br>
-        Δ > 0: two real unequal · Δ = 0: two equal real · Δ &lt; 0: non-real
+        Δ &gt; 0: two real unequal · Δ = 0: two equal real · Δ &lt; 0: non-real
       </div>
       <div style="margin-bottom:10px;">
         <label>Mode</label>
@@ -555,8 +555,8 @@
         <label>Mode</label>
         <select id="pr11_mode" class="mth-input" onchange="mthProbability11ModeChange()">
           <option value="fact">Factorial n!</option>
-          <option value="perm">Permutations nPr</option>
-          <option value="comb">Combinations nCr</option>
+          <option value="perm">Permutations <sup>n</sup>P<sub>r</sub></option>
+          <option value="comb">Combinations <sup>n</sup>C<sub>r</sub></option>
         </select>
       </div>
       <div class="mth-input-grid">
@@ -1048,13 +1048,9 @@
     Free student tools. Made for students.
   </footer>
 </div>
-
 <script src="app.js"></script>
 <script src="sidebar.js"></script>
 <script>
-/* ============================================================
-   SHARED HELPERS
-   ============================================================ */
 function mthFmt(n) {
   if (!isFinite(n)) return '—';
   if (n === 0) return '0';
@@ -1121,9 +1117,6 @@ function solveQuadratic(a, b, c) {
   return { type: 'complex', real: -b / (2 * a), imag: Math.sqrt(-disc) / (2 * a), disc: disc };
 }
 
-/* ============================================================
-   GRADE / TOOL STATE
-   ============================================================ */
 let mthGrade = 10;
 let mthTool10 = 'algebra10';
 let mthTool11 = 'algebra11';
@@ -1144,22 +1137,6 @@ function mthSetGrade(g) {
   mthApplyPillHighlight(g, current);
 }
 
-function mthSelectTool10(t) {
-  mthTool10 = t;
-  mthSetGrade(10);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function mthSelectTool11(t) {
-  mthTool11 = t;
-  mthSetGrade(11);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function mthSelectTool12(t) {
-  mthTool12 = t;
-  mthSetGrade(12);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
 function mthApplyPillHighlight(grade, tool) {
   document.querySelectorAll('.mth-tool-pill').forEach(p => {
     const attr = 'data-g' + grade + '-tool';
@@ -1167,38 +1144,35 @@ function mthApplyPillHighlight(grade, tool) {
   });
 }
 
-/* ============================================================
-   GRADE 10 TOOLS
-   ============================================================ */
+function mthSelectTool10(t) { mthTool10 = t; mthSetGrade(10); window.scrollTo({top:0,behavior:'smooth'}); }
+function mthSelectTool11(t) { mthTool11 = t; mthSetGrade(11); window.scrollTo({top:0,behavior:'smooth'}); }
+function mthSelectTool12(t) { mthTool12 = t; mthSetGrade(12); window.scrollTo({top:0,behavior:'smooth'}); }
 
 function mthAlgebra10() {
   const a = parseFloat(document.getElementById('a10_a').value);
   const b = parseFloat(document.getElementById('a10_b').value);
   const c = parseFloat(document.getElementById('a10_c').value);
-  if ([a, b, c].some(v => isNaN(v)) || a === 0) {
-    mthResult('a10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid coefficients (a ≠ 0).</div>');
-    return;
-  }
+  if ([a,b,c].some(v => isNaN(v)) || a === 0) { mthResult('a10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid coefficients (a ≠ 0).</div>'); return; }
   const steps = [];
   steps.push('Equation: ' + mthFmt(a) + 'x² + ' + mthFmt(b) + 'x + ' + mthFmt(c) + ' = 0');
-  const disc = b * b - 4 * a * c;
+  const disc = b*b - 4*a*c;
   steps.push('Δ = b² − 4ac = ' + mthFmt(disc));
   let html = '';
   if (disc > 0) {
-    const x1 = (-b + Math.sqrt(disc)) / (2 * a);
-    const x2 = (-b - Math.sqrt(disc)) / (2 * a);
+    const x1 = (-b + Math.sqrt(disc)) / (2*a);
+    const x2 = (-b - Math.sqrt(disc)) / (2*a);
     steps.push('Δ > 0 → two real roots');
-    steps.push('x = (' + mthFmt(-b) + ' ± √' + mthFmt(disc) + ') / ' + mthFmt(2 * a));
+    steps.push('x = (' + mthFmt(-b) + ' ± √' + mthFmt(disc) + ') / ' + mthFmt(2*a));
     steps.push('x₁ = ' + mthFmt(x1));
     steps.push('x₂ = ' + mthFmt(x2));
     html = '<div class="mth-answer">x₁ = ' + mthFmt(x1) + '</div><div class="mth-answer multi" style="color:var(--text);">x₂ = ' + mthFmt(x2) + '</div>';
   } else if (disc === 0) {
-    const x = -b / (2 * a);
+    const x = -b / (2*a);
     steps.push('Δ = 0 → one repeated root x = ' + mthFmt(x));
     html = '<div class="mth-answer">x = ' + mthFmt(x) + ' (double)</div>';
   } else {
-    const real = -b / (2 * a);
-    const imag = Math.sqrt(-disc) / (2 * a);
+    const real = -b / (2*a);
+    const imag = Math.sqrt(-disc) / (2*a);
     steps.push('Δ < 0 → non-real roots');
     html = '<div class="mth-answer multi">x = ' + mthFmt(real) + ' ± ' + mthFmt(imag) + 'i</div>';
   }
@@ -1258,19 +1232,16 @@ function mthSequences10() {
   const a = parseFloat(document.getElementById('s10_a').value);
   const d = parseFloat(document.getElementById('s10_d').value);
   const n = parseFloat(document.getElementById('s10_n').value);
-  if ([a, d, n].some(v => isNaN(v))) {
-    mthResult('s10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields.</div>');
-    return;
-  }
+  if ([a,d,n].some(v => isNaN(v))) { mthResult('s10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields.</div>'); return; }
   const steps = [];
   let tn, sn;
   if (type === 'arith') {
     tn = a + (n - 1) * d;
-    sn = (n / 2) * (2 * a + (n - 1) * d);
+    sn = (n/2) * (2*a + (n-1)*d);
     steps.push('T_n = a + (n−1)d = ' + mthFmt(tn));
     steps.push('S_n = n/2[2a + (n−1)d] = ' + mthFmt(sn));
   } else {
-    tn = a * Math.pow(d, n - 1);
+    tn = a * Math.pow(d, n-1);
     sn = d === 1 ? n * a : a * (Math.pow(d, n) - 1) / (d - 1);
     steps.push('T_n = a·r^(n−1) = ' + mthFmt(tn));
     steps.push('S_n = a(r^n − 1)/(r − 1) = ' + mthFmt(sn));
@@ -1284,16 +1255,13 @@ function mthFinance10() {
   const P = parseFloat(document.getElementById('fi10_P').value);
   const i = parseFloat(document.getElementById('fi10_i').value);
   const n = parseFloat(document.getElementById('fi10_n').value);
-  if ([P, i, n].some(v => isNaN(v))) {
-    mthResult('fi10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields.</div>');
-    return;
-  }
+  if ([P,i,n].some(v => isNaN(v))) { mthResult('fi10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all fields.</div>'); return; }
   let A, formula;
   const steps = [];
-  if (type === 'simple') { A = P * (1 + n * i); formula = 'A = P(1 + ni)'; }
-  else if (type === 'compound') { A = P * Math.pow(1 + i, n); formula = 'A = P(1 + i)^n'; }
-  else if (type === 'dep_sl') { A = P * (1 - n * i); formula = 'A = P(1 − ni)'; }
-  else { A = P * Math.pow(1 - i, n); formula = 'A = P(1 − i)^n'; }
+  if (type === 'simple') { A = P * (1 + n*i); formula = 'A = P(1 + ni)'; }
+  else if (type === 'compound') { A = P * Math.pow(1+i, n); formula = 'A = P(1 + i)^n'; }
+  else if (type === 'dep_sl') { A = P * (1 - n*i); formula = 'A = P(1 − ni)'; }
+  else { A = P * Math.pow(1-i, n); formula = 'A = P(1 − i)^n'; }
   steps.push(formula + ' = ' + mthFmt(A));
   mthResult('fi10_result', '<div class="mth-answer">A = ' + mthFmt(A) + '</div>');
   mthShowSteps('fi10_steps', 'fi10_steps_card', steps);
@@ -1304,17 +1272,14 @@ function mthProbability10() {
   const pb = parseFloat(document.getElementById('pr10_pb').value);
   const pabInput = document.getElementById('pr10_pab').value;
   const pab = pabInput === '' ? 0 : parseFloat(pabInput);
-  if ([pa, pb].some(v => isNaN(v))) {
-    mthResult('pr10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill P(A) and P(B).</div>');
-    return;
-  }
+  if ([pa,pb].some(v => isNaN(v))) { mthResult('pr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill P(A) and P(B).</div>'); return; }
   const pOR = pa + pb - pab;
   const pNotA = 1 - pa;
   const steps = [];
   steps.push('P(A or B) = ' + mthFmt(pa) + ' + ' + mthFmt(pb) + ' − ' + mthFmt(pab) + ' = ' + mthFmt(pOR));
   steps.push('P(not A) = ' + mthFmt(pNotA));
   if (pab === 0) steps.push('Mutually exclusive');
-  else if (Math.abs(pab - pa * pb) < 1e-9) steps.push('Independent');
+  else if (Math.abs(pab - pa*pb) < 1e-9) steps.push('Independent');
   else steps.push('Neither independent nor mutually exclusive');
   mthResult('pr10_result', '<div class="mth-answer">P(A ∪ B) = ' + mthFmt(pOR) + '</div>' +
     '<div class="mth-result-grid">' +
@@ -1327,21 +1292,18 @@ function mthProbability10() {
 function mthStatistics10() {
   const raw = document.getElementById('st10_data').value.trim();
   const nums = raw.split(/[,\s]+/).map(s => parseFloat(s)).filter(n => !isNaN(n));
-  if (nums.length === 0) {
-    mthResult('st10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter some numbers.</div>');
-    return;
-  }
-  const sorted = [...nums].sort((a, b) => a - b);
+  if (nums.length === 0) { mthResult('st10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter some numbers.</div>'); return; }
+  const sorted = [...nums].sort((a,b) => a-b);
   const n = nums.length;
-  const mean = nums.reduce((s, v) => s + v, 0) / n;
-  const median = n % 2 === 0 ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2 : sorted[Math.floor(n / 2)];
+  const mean = nums.reduce((s,v) => s+v, 0) / n;
+  const median = n % 2 === 0 ? (sorted[n/2 - 1] + sorted[n/2]) / 2 : sorted[Math.floor(n/2)];
   const freq = {};
   nums.forEach(v => freq[v] = (freq[v] || 0) + 1);
   const maxFreq = Math.max(...Object.values(freq));
   const modes = maxFreq === 1 ? 'None' : Object.keys(freq).filter(k => freq[k] === maxFreq).join(', ');
-  const range = sorted[n - 1] - sorted[0];
-  const q1 = sorted[Math.floor((n - 1) * 0.25)];
-  const q3 = sorted[Math.floor((n - 1) * 0.75)];
+  const range = sorted[n-1] - sorted[0];
+  const q1 = sorted[Math.floor((n-1) * 0.25)];
+  const q3 = sorted[Math.floor((n-1) * 0.75)];
   const iqr = q3 - q1;
   mthResult('st10_result', '<div class="mth-answer">mean = ' + mthFmt(mean) + '</div>' +
     '<div class="mth-result-grid">' +
@@ -1359,21 +1321,18 @@ function mthAnalytical10() {
   const y1 = parseFloat(document.getElementById('an10_y1').value);
   const x2 = parseFloat(document.getElementById('an10_x2').value);
   const y2 = parseFloat(document.getElementById('an10_y2').value);
-  if ([x1, y1, x2, y2].some(v => isNaN(v))) {
-    mthResult('an10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all four fields.</div>');
-    return;
-  }
-  const d = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-  const dx = x2 - x1;
+  if ([x1,y1,x2,y2].some(v => isNaN(v))) { mthResult('an10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all four fields.</div>'); return; }
+  const d = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+  const mx = (x1+x2)/2, my = (y1+y2)/2;
+  const dx = x2-x1;
   const steps = [];
   steps.push('d = √((x₂−x₁)² + (y₂−y₁)²) = ' + mthFmt(d));
   steps.push('Midpoint (' + mthFmt(mx) + ', ' + mthFmt(my) + ')');
   let m, eq;
   if (dx === 0) { m = Infinity; eq = 'x = ' + mthFmt(x1); }
   else {
-    m = (y2 - y1) / dx;
-    const c = y1 - m * x1;
+    m = (y2-y1)/dx;
+    const c = y1 - m*x1;
     eq = 'y = ' + mthFmt(m) + 'x + ' + mthFmt(c);
     steps.push('Gradient m = ' + mthFmt(m));
     steps.push('Equation: ' + eq);
@@ -1391,36 +1350,27 @@ function mthTrig10() {
   const mode = document.getElementById('tr10_mode').value;
   const s1 = parseFloat(document.getElementById('tr10_s1').value);
   const s2 = parseFloat(document.getElementById('tr10_s2').value);
-  if ([s1, s2].some(v => isNaN(v))) {
-    mthResult('tr10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both sides.</div>');
-    return;
-  }
+  if ([s1,s2].some(v => isNaN(v))) { mthResult('tr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both sides.</div>'); return; }
   const steps = [];
   let hyp, opp, adj, angle;
   if (mode === 'opp_adj') {
     opp = s1; adj = s2;
-    hyp = Math.sqrt(opp * opp + adj * adj);
+    hyp = Math.sqrt(opp*opp + adj*adj);
     angle = Math.atan2(opp, adj) * 180 / Math.PI;
     steps.push('hyp = √(opp² + adj²) = ' + mthFmt(hyp));
     steps.push('θ = tan⁻¹(opp/adj) = ' + mthFmt(angle) + '°');
   } else if (mode === 'opp_hyp') {
     opp = s1; hyp = s2;
-    if (hyp <= opp) {
-      mthResult('tr10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Hyp must exceed opp.</div>');
-      return;
-    }
-    adj = Math.sqrt(hyp * hyp - opp * opp);
-    angle = Math.asin(opp / hyp) * 180 / Math.PI;
+    if (hyp <= opp) { mthResult('tr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Hyp must exceed opp.</div>'); return; }
+    adj = Math.sqrt(hyp*hyp - opp*opp);
+    angle = Math.asin(opp/hyp) * 180 / Math.PI;
     steps.push('adj = √(hyp² − opp²) = ' + mthFmt(adj));
     steps.push('θ = sin⁻¹(opp/hyp) = ' + mthFmt(angle) + '°');
   } else {
     adj = s1; hyp = s2;
-    if (hyp <= adj) {
-      mthResult('tr10_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Hyp must exceed adj.</div>');
-      return;
-    }
-    opp = Math.sqrt(hyp * hyp - adj * adj);
-    angle = Math.acos(adj / hyp) * 180 / Math.PI;
+    if (hyp <= adj) { mthResult('tr10_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Hyp must exceed adj.</div>'); return; }
+    opp = Math.sqrt(hyp*hyp - adj*adj);
+    angle = Math.acos(adj/hyp) * 180 / Math.PI;
     steps.push('opp = √(hyp² − adj²) = ' + mthFmt(opp));
     steps.push('θ = cos⁻¹(adj/hyp) = ' + mthFmt(angle) + '°');
   }
@@ -1433,10 +1383,6 @@ function mthTrig10() {
   mthShowSteps('tr10_steps', 'tr10_steps_card', steps);
 }
 
-/* ============================================================
-   GRADE 11 TOOLS
-   ============================================================ */
-
 function mthAlgebra11ModeChange() {
   document.getElementById('a11_ineq_row').classList.toggle('mth-hidden', document.getElementById('a11_mode').value !== 'inequality');
 }
@@ -1445,11 +1391,8 @@ function mthAlgebra11() {
   const b = parseFloat(document.getElementById('a11_b').value);
   const c = parseFloat(document.getElementById('a11_c').value);
   const mode = document.getElementById('a11_mode').value;
-  if ([a, b, c].some(v => isNaN(v)) || a === 0) {
-    mthResult('a11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid a≠0, b, c.</div>');
-    return;
-  }
-  const disc = b * b - 4 * a * c;
+  if ([a,b,c].some(v => isNaN(v)) || a === 0) { mthResult('a11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid a≠0, b, c.</div>'); return; }
+  const disc = b*b - 4*a*c;
   const steps = [];
   steps.push('Δ = b² − 4ac = ' + mthFmt(disc));
   let html = '';
@@ -1458,11 +1401,8 @@ function mthAlgebra11() {
     else if (disc === 0) { steps.push('Δ = 0 → two equal real roots'); html = '<div class="mth-answer multi">Two equal real roots</div>'; }
     else { steps.push('Δ < 0 → non-real roots'); html = '<div class="mth-answer multi">Non-real roots</div>'; }
   } else {
-    const roots = solveQuadratic(a, b, c);
-    if (roots.type === 'complex') {
-      mthResult('a11_result', '<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">Δ &lt; 0 → no real critical values.</div>');
-      return;
-    }
+    const roots = solveQuadratic(a,b,c);
+    if (roots.type === 'complex') { mthResult('a11_result','<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">Δ &lt; 0 → no real critical values.</div>'); return; }
     let r1, r2;
     if (roots.type === 'two') { r1 = roots.x1; r2 = roots.x2; }
     else { r1 = r2 = roots.x; }
@@ -1515,14 +1455,8 @@ function mthSequences11() {
   if (mode === 'sum') {
     const a = parseFloat(document.getElementById('s11_a').value);
     const r = parseFloat(document.getElementById('s11_r').value);
-    if ([a, r].some(v => isNaN(v))) {
-      mthResult('s11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both.</div>');
-      return;
-    }
-    if (Math.abs(r) >= 1) {
-      mthResult('s11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|r| must be < 1.</div>');
-      return;
-    }
+    if ([a,r].some(v => isNaN(v))) { mthResult('s11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both.</div>'); return; }
+    if (Math.abs(r) >= 1) { mthResult('s11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|r| must be < 1.</div>'); return; }
     const s = a / (1 - r);
     steps.push('S_∞ = a / (1 − r) = ' + mthFmt(s));
     html = '<div class="mth-answer">S_∞ = ' + mthFmt(s) + '</div>';
@@ -1531,12 +1465,9 @@ function mthSequences11() {
     const d = parseFloat(document.getElementById('s11_sd').value);
     const n = parseFloat(document.getElementById('s11_sn').value);
     const type = document.getElementById('s11_stype').value;
-    if ([a, d, n].some(v => isNaN(v))) {
-      mthResult('s11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all.</div>');
-      return;
-    }
+    if ([a,d,n].some(v => isNaN(v))) { mthResult('s11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all.</div>'); return; }
     let sum;
-    if (type === 'arith') sum = (n / 2) * (2 * a + (n - 1) * d);
+    if (type === 'arith') sum = (n/2) * (2*a + (n-1)*d);
     else sum = d === 1 ? n * a : a * (Math.pow(d, n) - 1) / (d - 1);
     steps.push('Σ = ' + mthFmt(sum));
     html = '<div class="mth-answer">Σ = ' + mthFmt(sum) + '</div>';
@@ -1559,34 +1490,25 @@ function mthFinance11() {
     const x = parseFloat(document.getElementById('fi11_x').value);
     const i = parseFloat(document.getElementById('fi11_i').value);
     const n = parseFloat(document.getElementById('fi11_n').value);
-    if ([x, i, n].some(v => isNaN(v)) || i === 0) {
-      mthResult('fi11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all (i≠0).</div>');
-      return;
-    }
-    const F = x * (Math.pow(1 + i, n) - 1) / i;
+    if ([x,i,n].some(v => isNaN(v)) || i === 0) { mthResult('fi11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all (i≠0).</div>'); return; }
+    const F = x * (Math.pow(1+i, n) - 1) / i;
     steps.push('F = x[(1+i)^n − 1]/i = ' + mthFmt(F));
     html = '<div class="mth-answer">F = ' + mthFmt(F) + '</div>';
   } else if (mode === 'pv') {
     const x = parseFloat(document.getElementById('fi11_px').value);
     const i = parseFloat(document.getElementById('fi11_pi').value);
     const n = parseFloat(document.getElementById('fi11_pn').value);
-    if ([x, i, n].some(v => isNaN(v)) || i === 0) {
-      mthResult('fi11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all (i≠0).</div>');
-      return;
-    }
-    const P = x * (1 - Math.pow(1 + i, -n)) / i;
+    if ([x,i,n].some(v => isNaN(v)) || i === 0) { mthResult('fi11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all (i≠0).</div>'); return; }
+    const P = x * (1 - Math.pow(1+i, -n)) / i;
     steps.push('P = x[1 − (1+i)^(−n)]/i = ' + mthFmt(P));
     html = '<div class="mth-answer">P = ' + mthFmt(P) + '</div>';
   } else {
     const inom = parseFloat(document.getElementById('fi11_inom').value);
     const m = parseFloat(document.getElementById('fi11_m').value);
-    if ([inom, m].some(v => isNaN(v)) || m === 0) {
-      mthResult('fi11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both (m≠0).</div>');
-      return;
-    }
-    const ieff = Math.pow(1 + inom / m, m) - 1;
-    steps.push('i_eff = ' + mthFmt(ieff) + ' = ' + mthFmt(ieff * 100) + '%');
-    html = '<div class="mth-answer">i_eff = ' + mthFmt(ieff * 100) + '%</div>';
+    if ([inom, m].some(v => isNaN(v)) || m === 0) { mthResult('fi11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill both (m≠0).</div>'); return; }
+    const ieff = Math.pow(1 + inom/m, m) - 1;
+    steps.push('i_eff = ' + mthFmt(ieff) + ' = ' + mthFmt(ieff*100) + '%');
+    html = '<div class="mth-answer">i_eff = ' + mthFmt(ieff*100) + '%</div>';
   }
   mthResult('fi11_result', html);
   mthShowSteps('fi11_steps', 'fi11_steps_card', steps);
@@ -1601,23 +1523,14 @@ function mthProbability11() {
   const r = parseInt(document.getElementById('pr11_r').value);
   const steps = [];
   const fact = (k) => { let f = 1; for (let i = 2; i <= k; i++) f *= i; return f; };
-  if (isNaN(n) || n < 0) {
-    mthResult('pr11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid n.</div>');
-    return;
-  }
+  if (isNaN(n) || n < 0) { mthResult('pr11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid n.</div>'); return; }
   let result, label;
   if (mode === 'fact') { result = fact(n); label = n + '!'; }
   else if (mode === 'perm') {
-    if (isNaN(r) || r > n || r < 0) {
-      mthResult('pr11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">0 ≤ r ≤ n needed.</div>');
-      return;
-    }
+    if (isNaN(r) || r > n || r < 0) { mthResult('pr11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">0 ≤ r ≤ n needed.</div>'); return; }
     result = fact(n) / fact(n - r); label = n + 'P' + r;
   } else {
-    if (isNaN(r) || r > n || r < 0) {
-      mthResult('pr11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">0 ≤ r ≤ n needed.</div>');
-      return;
-    }
+    if (isNaN(r) || r > n || r < 0) { mthResult('pr11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">0 ≤ r ≤ n needed.</div>'); return; }
     result = fact(n) / (fact(r) * fact(n - r)); label = n + 'C' + r;
   }
   steps.push(label + ' = ' + result);
@@ -1630,20 +1543,17 @@ function mthStatistics11() {
   const rawY = document.getElementById('st11_y').value.trim();
   const X = rawX.split(/[,\s]+/).map(s => parseFloat(s)).filter(n => !isNaN(n));
   const Y = rawY.split(/[,\s]+/).map(s => parseFloat(s)).filter(n => !isNaN(n));
-  if (X.length === 0 || X.length !== Y.length) {
-    mthResult('st11_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">X and Y must have equal length.</div>');
-    return;
-  }
+  if (X.length === 0 || X.length !== Y.length) { mthResult('st11_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">X and Y must have equal length.</div>'); return; }
   const n = X.length;
-  const mx = X.reduce((a, b) => a + b, 0) / n;
-  const my = Y.reduce((a, b) => a + b, 0) / n;
-  let sxx = 0, syy = 0, sxy = 0;
-  for (let i = 0; i < n; i++) { const dx = X[i] - mx, dy = Y[i] - my; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; }
-  const b = sxy / sxx;
-  const a = my - b * mx;
+  const mx = X.reduce((a,b)=>a+b,0)/n;
+  const my = Y.reduce((a,b)=>a+b,0)/n;
+  let sxx=0, syy=0, sxy=0;
+  for (let i=0;i<n;i++) { const dx=X[i]-mx, dy=Y[i]-my; sxx += dx*dx; syy += dy*dy; sxy += dx*dy; }
+  const b = sxy/sxx;
+  const a = my - b*mx;
   const r = sxy / Math.sqrt(sxx * syy);
-  const sx = Math.sqrt(sxx / (n - 1));
-  const sy = Math.sqrt(syy / (n - 1));
+  const sx = Math.sqrt(sxx/(n-1));
+  const sy = Math.sqrt(syy/(n-1));
   const steps = [];
   steps.push('x̄ = ' + mthFmt(mx) + ', ȳ = ' + mthFmt(my));
   steps.push('b = Sxy/Sxx = ' + mthFmt(b));
@@ -1676,7 +1586,7 @@ function mthAnalytical11() {
     steps.push('m = tan(' + mthFmt(theta) + '°) = ' + mthFmt(m));
     html = '<div class="mth-answer">m = ' + mthFmt(m) + '</div>';
   } else {
-    mthResult('an11_result', '<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">Leave one field blank.</div>');
+    mthResult('an11_result','<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">Leave one field blank.</div>');
     return;
   }
   mthResult('an11_result', html);
@@ -1711,9 +1621,9 @@ function mthTrig11() {
     const A = parseFloat(document.getElementById('tr11_sA').value);
     const bInput = document.getElementById('tr11_sb').value;
     const B = parseFloat(document.getElementById('tr11_sB').value);
-    if (bInput !== '') { steps.push('Check: a/sinA = ' + mthFmt(a / Math.sin(A * Math.PI / 180))); }
+    if (bInput !== '') { steps.push('Check: a/sinA = ' + mthFmt(a/Math.sin(A*Math.PI/180))); }
     else {
-      const b = a * Math.sin(B * Math.PI / 180) / Math.sin(A * Math.PI / 180);
+      const b = a * Math.sin(B*Math.PI/180) / Math.sin(A*Math.PI/180);
       steps.push('b = a·sinB/sinA = ' + mthFmt(b));
       html = '<div class="mth-answer">b = ' + mthFmt(b) + '</div>';
     }
@@ -1721,7 +1631,7 @@ function mthTrig11() {
     const b = parseFloat(document.getElementById('tr11_cb').value);
     const c = parseFloat(document.getElementById('tr11_cc').value);
     const A = parseFloat(document.getElementById('tr11_cA').value);
-    const a2 = b * b + c * c - 2 * b * c * Math.cos(A * Math.PI / 180);
+    const a2 = b*b + c*c - 2*b*c*Math.cos(A*Math.PI/180);
     const a = Math.sqrt(a2);
     steps.push('a² = ' + mthFmt(a2) + ', a = ' + mthFmt(a));
     html = '<div class="mth-answer">a = ' + mthFmt(a) + '</div>';
@@ -1729,7 +1639,7 @@ function mthTrig11() {
     const a = parseFloat(document.getElementById('tr11_aa').value);
     const b = parseFloat(document.getElementById('tr11_ab').value);
     const C = parseFloat(document.getElementById('tr11_aC').value);
-    const area = 0.5 * a * b * Math.sin(C * Math.PI / 180);
+    const area = 0.5 * a * b * Math.sin(C*Math.PI/180);
     steps.push('Area = ½ab·sinC = ' + mthFmt(area));
     html = '<div class="mth-answer">Area = ' + mthFmt(area) + '</div>';
   }
@@ -1756,10 +1666,6 @@ function mthEuclidean11() {
   mthResult('eu11_result', html);
 }
 
-/* ============================================================
-   GRADE 12 TOOLS
-   ============================================================ */
-
 function mthCalcSub(sub) {
   document.querySelectorAll('.mth-subpill').forEach(p => p.classList.toggle('active', p.getAttribute('data-calc') === sub));
   document.querySelectorAll('.calc-subpanel').forEach(p => p.classList.add('mth-hidden'));
@@ -1771,17 +1677,14 @@ function mthFirstPrinciples() {
   const a = parseFloat(document.getElementById('fp_a').value);
   const b = parseFloat(document.getElementById('fp_b').value);
   const c = parseFloat(document.getElementById('fp_c').value);
-  if ([a, b, c].some(v => isNaN(v))) {
-    mthResult('fp_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all.</div>');
-    return;
-  }
+  if ([a,b,c].some(v => isNaN(v))) { mthResult('fp_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Fill all.</div>'); return; }
   const steps = [];
   steps.push('f(x) = ' + mthFmt(a) + 'x² + ' + mthFmt(b) + 'x + ' + mthFmt(c));
   steps.push('f(x+h) = ' + mthFmt(a) + '(x+h)² + ' + mthFmt(b) + '(x+h) + ' + mthFmt(c));
   steps.push('f(x+h) − f(x) = ' + mthFmt(a) + '(2xh + h²) + ' + mthFmt(b) + 'h');
-  steps.push('[f(x+h) − f(x)] / h = ' + mthFmt(2 * a) + 'x + ' + mthFmt(a) + 'h + ' + mthFmt(b));
-  steps.push('As h → 0: f\'(x) = ' + mthFmt(2 * a) + 'x + ' + mthFmt(b));
-  mthResult('fp_result', '<div class="mth-answer">f\'(x) = ' + mthFmt(2 * a) + 'x + ' + mthFmt(b) + '</div>');
+  steps.push('[f(x+h) − f(x)] / h = ' + mthFmt(2*a) + 'x + ' + mthFmt(a) + 'h + ' + mthFmt(b));
+  steps.push('As h → 0: f\'(x) = ' + mthFmt(2*a) + 'x + ' + mthFmt(b));
+  mthResult('fp_result', '<div class="mth-answer">f\'(x) = ' + mthFmt(2*a) + 'x + ' + mthFmt(b) + '</div>');
   mthShowSteps('fp_steps', 'fp_steps_card', steps);
 }
 
@@ -1814,7 +1717,7 @@ function mthTangent() {
     steps.push('Tangent: ' + tEq);
     let nEq = 'undefined';
     if (m !== 0) {
-      const mn = -1 / m;
+      const mn = -1/m;
       const cn = fa - mn * a;
       nEq = 'y = ' + mthFmt(mn) + 'x + ' + mthFmt(cn);
       steps.push('Normal: ' + nEq);
@@ -1841,10 +1744,7 @@ function mthStationary() {
     let pointList = [];
     if (roots.type === 'two') pointList = [roots.x1, roots.x2];
     else if (roots.type === 'one') pointList = [roots.x];
-    else {
-      mthResult('sp_result', '<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">No real solutions.</div>');
-      return;
-    }
+    else { mthResult('sp_result','<div style="text-align:center;padding:16px;color:var(--warning);font-size:14px;">No real solutions.</div>'); return; }
     let html = '';
     pointList.forEach(x => {
       const y = polyEval(poly, x);
@@ -1865,11 +1765,8 @@ function mthCubicSketch() {
   const b = parseFloat(document.getElementById('cb_b').value);
   const c = parseFloat(document.getElementById('cb_c').value);
   const d = parseFloat(document.getElementById('cb_d').value);
-  if ([a, b, c, d].some(v => isNaN(v)) || a === 0) {
-    mthResult('cb_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid a≠0, b, c, d.</div>');
-    return;
-  }
-  const f = [{ coeff: a, exp: 3 }, { coeff: b, exp: 2 }, { coeff: c, exp: 1 }, { coeff: d, exp: 0 }];
+  if ([a,b,c,d].some(v => isNaN(v)) || a === 0) { mthResult('cb_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid a≠0, b, c, d.</div>'); return; }
+  const f = [{coeff:a,exp:3},{coeff:b,exp:2},{coeff:c,exp:1},{coeff:d,exp:0}];
   const d1 = polyDerivative(f);
   const d2 = polyDerivative(d1);
   const steps = [];
@@ -1877,7 +1774,7 @@ function mthCubicSketch() {
   steps.push('f\'(x) = ' + polyToString(d1));
   steps.push('f\'\'(x) = ' + polyToString(d2));
   steps.push('y-intercept: (0, ' + mthFmt(d) + ')');
-  const inflectX = -b / (3 * a);
+  const inflectX = -b / (3*a);
   const inflectY = polyEval(f, inflectX);
   steps.push('Inflection: (' + mthFmt(inflectX) + ', ' + mthFmt(inflectY) + ')');
   mthResult('cb_result', '<div class="mth-answer multi">y-int (0, ' + mthFmt(d) + ') · Inflection (' + mthFmt(inflectX) + ', ' + mthFmt(inflectY) + ')</div>');
@@ -1886,25 +1783,19 @@ function mthCubicSketch() {
 
 function mthOptimise() {
   const L = parseFloat(document.getElementById('op_L').value);
-  if (isNaN(L) || L <= 0) {
-    mthResult('op_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid L.</div>');
-    return;
-  }
-  const A = 12, B = -8 * L, C = L * L;
-  const disc = B * B - 4 * A * C;
-  if (disc < 0) {
-    mthResult('op_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">No real critical points.</div>');
-    return;
-  }
-  const x1 = (-B + Math.sqrt(disc)) / (2 * A);
-  const x2 = (-B - Math.sqrt(disc)) / (2 * A);
-  const valid = [x1, x2].filter(x => x > 0 && x < L / 2);
+  if (isNaN(L) || L <= 0) { mthResult('op_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid L.</div>'); return; }
+  const A = 12, B = -8*L, C = L*L;
+  const disc = B*B - 4*A*C;
+  if (disc < 0) { mthResult('op_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">No real critical points.</div>'); return; }
+  const x1 = (-B + Math.sqrt(disc)) / (2*A);
+  const x2 = (-B - Math.sqrt(disc)) / (2*A);
+  const valid = [x1, x2].filter(x => x > 0 && x < L/2);
   const steps = [];
   steps.push('V(x) = x(L − 2x)² with L = ' + mthFmt(L));
-  steps.push('V\'(x) = 12x² − ' + mthFmt(8 * L) + 'x + ' + mthFmt(L * L));
+  steps.push('V\'(x) = 12x² − ' + mthFmt(8*L) + 'x + ' + mthFmt(L*L));
   let html = '';
   valid.forEach(x => {
-    const V = x * Math.pow(L - 2 * x, 2);
+    const V = x * Math.pow(L - 2*x, 2);
     steps.push('x = ' + mthFmt(x) + ' → V = ' + mthFmt(V));
     html += '<div class="mth-answer multi">x = ' + mthFmt(x) + ' → V_max = ' + mthFmt(V) + '</div>';
   });
@@ -1940,7 +1831,7 @@ function mthFunctions12() {
   const steps = [];
   let eq = '';
   if (t === 'linear') {
-    const mInv = 1 / a, cInv = -b / a;
+    const mInv = 1/a, cInv = -b/a;
     steps.push('Swap x and y, solve for y');
     eq = 'y = ' + mthFmt(mInv) + 'x + ' + mthFmt(cInv);
   } else if (t === 'parabola') {
@@ -1971,24 +1862,15 @@ function mthTrig12() {
   if (mode === 'gen') {
     const ratio = document.getElementById('tr12_ratio').value;
     const k = parseFloat(document.getElementById('tr12_k').value);
-    if (isNaN(k)) {
-      mthResult('tr12_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter k.</div>');
-      return;
-    }
+    if (isNaN(k)) { mthResult('tr12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter k.</div>'); return; }
     let base;
     let general = '';
     if (ratio === 'sin') {
-      if (Math.abs(k) > 1) {
-        mthResult('tr12_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|k| ≤ 1.</div>');
-        return;
-      }
+      if (Math.abs(k) > 1) { mthResult('tr12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|k| ≤ 1.</div>'); return; }
       base = Math.asin(k) * 180 / Math.PI;
       general = 'θ = ' + mthFmt(base) + '° + 360°k OR θ = ' + mthFmt(180 - base) + '° + 360°k';
     } else if (ratio === 'cos') {
-      if (Math.abs(k) > 1) {
-        mthResult('tr12_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|k| ≤ 1.</div>');
-        return;
-      }
+      if (Math.abs(k) > 1) { mthResult('tr12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">|k| ≤ 1.</div>'); return; }
       base = Math.acos(k) * 180 / Math.PI;
       general = 'θ = ±' + mthFmt(base) + '° + 360°k';
     } else {
@@ -2041,19 +1923,16 @@ function mthAnalytical12() {
     const a = parseFloat(document.getElementById('an12_a').value);
     const b = parseFloat(document.getElementById('an12_b').value);
     const r = parseFloat(document.getElementById('an12_r').value);
-    steps.push('(x − ' + mthFmt(a) + ')² + (y − ' + mthFmt(b) + ')² = ' + mthFmt(r * r));
-    html = '<div class="mth-answer multi">(x − ' + mthFmt(a) + ')² + (y − ' + mthFmt(b) + ')² = ' + mthFmt(r * r) + '</div>' +
+    steps.push('(x − ' + mthFmt(a) + ')² + (y − ' + mthFmt(b) + ')² = ' + mthFmt(r*r));
+    html = '<div class="mth-answer multi">(x − ' + mthFmt(a) + ')² + (y − ' + mthFmt(b) + ')² = ' + mthFmt(r*r) + '</div>' +
       '<div class="result-sub">Centre (' + mthFmt(a) + ', ' + mthFmt(b) + '), r = ' + mthFmt(r) + '</div>';
   } else if (mode === 'general') {
     const D = parseFloat(document.getElementById('an12_D').value);
     const E = parseFloat(document.getElementById('an12_E').value);
     const F = parseFloat(document.getElementById('an12_F').value);
-    const a = -D / 2, b = -E / 2;
-    const r2 = a * a + b * b - F;
-    if (r2 < 0) {
-      mthResult('an12_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">r² < 0.</div>');
-      return;
-    }
+    const a = -D/2, b = -E/2;
+    const r2 = a*a + b*b - F;
+    if (r2 < 0) { mthResult('an12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">r² < 0.</div>'); return; }
     const r = Math.sqrt(r2);
     steps.push('Centre (' + mthFmt(a) + ', ' + mthFmt(b) + '), r = ' + mthFmt(r));
     html = '<div class="mth-answer multi">Centre (' + mthFmt(a) + ', ' + mthFmt(b) + '), r = ' + mthFmt(r) + '</div>';
@@ -2081,14 +1960,11 @@ function mthStatistics12() {
   const mu = parseFloat(document.getElementById('st12_mu').value);
   const sigma = parseFloat(document.getElementById('st12_sigma').value);
   const x = parseFloat(document.getElementById('st12_x').value);
-  if ([mu, sigma, x].some(v => isNaN(v)) || sigma <= 0) {
-    mthResult('st12_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid (σ > 0).</div>');
-    return;
-  }
+  if ([mu,sigma,x].some(v => isNaN(v)) || sigma <= 0) { mthResult('st12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Enter valid (σ > 0).</div>'); return; }
   const z = (x - mu) / sigma;
   function erf(z) {
     const t = 1 / (1 + 0.3275911 * Math.abs(z));
-    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z);
+    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z*z);
     return z >= 0 ? y : -y;
   }
   const pctBelow = 0.5 * (1 + erf(z / Math.SQRT2)) * 100;
@@ -2098,7 +1974,7 @@ function mthStatistics12() {
   mthResult('st12_result', '<div class="mth-answer">z = ' + mthFmt(z) + '</div>' +
     '<div class="mth-result-grid">' +
     '<div class="result-cell"><span class="result-cell-label">Below x</span><span class="result-cell-value">' + mthFmt(pctBelow) + '%</span></div>' +
-    '<div class="result-cell"><span class="result-cell-label">Above x</span><span class="result-cell-value">' + mthFmt(100 - pctBelow) + '%</span></div>' +
+    '<div class="result-cell"><span class="result-cell-label">Above x</span><span class="result-cell-value">' + mthFmt(100-pctBelow) + '%</span></div>' +
     '</div>');
   mthShowSteps('st12_steps', 'st12_steps_card', steps);
 }
@@ -2113,10 +1989,7 @@ function mthProbability12() {
   const abc = parseFloat(document.getElementById('pb12_abc').value) || 0;
   const none = parseFloat(document.getElementById('pb12_none').value) || 0;
   const total = a + b + c + ab + ac + bc + abc + none;
-  if (total === 0) {
-    mthResult('pb12_result', '<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Total must be non-zero.</div>');
-    return;
-  }
+  if (total === 0) { mthResult('pb12_result','<div style="text-align:center;padding:16px;color:var(--danger);font-size:14px;">Total must be non-zero.</div>'); return; }
   const PA = (a + ab + ac + abc) / total;
   const PB = (b + ab + bc + abc) / total;
   const PC = (c + ac + bc + abc) / total;
