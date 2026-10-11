@@ -596,7 +596,6 @@ html.dark ::placeholder {
   letter-spacing: 0.06em;
   margin-bottom: 12px;
 }
-/* Trim vertical padding inside subject-row inputs so rows sit lighter */
 .subject-row input,
 .subject-row select {
   padding: 10px 12px;
@@ -1306,11 +1305,199 @@ textarea:focus-visible {
 }
 
 /* ------------------------------------------------------------
+   RESULT FLOW — Steps first, then answer
+   ------------------------------------------------------------ */
+
+.mth-flow-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mth-flow-label.success {
+  color: var(--success);
+}
+.mth-flow-label.success::before {
+  content: '✓';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: 50%;
+  font-size: 11px;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.mth-step {
+  padding: 16px 18px;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.8;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.mth-step:hover {
+  border-color: var(--accent-subject);
+}
+.mth-step .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--accent-subject);
+  color: var(--accent-text);
+  border-radius: 50%;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 700;
+  margin-right: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.22);
+}
+.mth-step .step-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.mth-answer {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--success);
+  font-family: var(--font-mono);
+  margin: 0 0 6px 0;
+  word-break: break-word;
+  line-height: 1.25;
+}
+.mth-answer.multi {
+  font-size: 18px;
+}
+.mth-answer-wrap {
+  padding: 20px 22px;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  border-top: 3px solid var(--success);
+  border-radius: var(--radius-sm);
+}
+.mth-answer-wrap .result-sub {
+  margin-top: 4px;
+}
+
+/* ------------------------------------------------------------
+   FLOATING SCROLL-TOP BUTTON
+   ------------------------------------------------------------ */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease,
+              transform 0.25s ease,
+              box-shadow 0.2s ease,
+              color 0.2s ease,
+              border-color 0.2s ease,
+              background 0.2s ease;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.10);
+  padding: 0;
+}
+.scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.scroll-top-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.28);
+}
+.scroll-top-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.22);
+}
+.scroll-top-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.scroll-top-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+html.dark .scroll-top-btn {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.40);
+}
+html.dark .scroll-top-btn:hover {
+  box-shadow: 0 8px 22px rgba(129, 140, 248, 0.32);
+}
+
+@media (max-width: 640px) {
+  .scroll-top-btn {
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+  }
+  .mth-answer {
+    font-size: 20px;
+  }
+  .mth-answer.multi {
+    font-size: 16px;
+  }
+  .mth-step {
+    padding: 14px 14px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .mth-step .step-num {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+    margin-right: 10px;
+  }
+}
+
+/* ------------------------------------------------------------
    PRINT
    ------------------------------------------------------------ */
 @media print {
   .nav, .orbs, .sidebar, .sidebar-overlay, .footer,
-  .btn, .btn-row, .import-tabs, .fc-controls {
+  .btn, .btn-row, .import-tabs, .fc-controls,
+  .scroll-top-btn {
     display: none !important;
   }
   body { background: #fff !important; color: #000 !important; }
