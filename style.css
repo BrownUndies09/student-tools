@@ -6,22 +6,22 @@
    ------------------------------------------------------------ */
 :root {
   /* Surfaces */
-  --bg: #f8fafc;                          /* slate-50 */
-  --bg-elevated: #ffffff;                 /* pure white for solid cards */
+  --bg: #f8fafc;
+  --bg-elevated: #ffffff;
   --glass: rgba(255, 255, 255, 0.55);
   --glass-strong: rgba(255, 255, 255, 0.78);
-  --glass-border: rgba(15, 23, 42, 0.08); /* slate-900 @ 8% */
+  --glass-border: rgba(15, 23, 42, 0.08);
   --glass-subtle: rgba(255, 255, 255, 0.4);
   --border: rgba(15, 23, 42, 0.08);
 
   /* Text */
-  --text: #0f172a;                        /* slate-900 */
-  --text-muted: #475569;                  /* slate-600 */
-  --text-dim: #94a3b8;                    /* slate-400 */
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #94a3b8;
 
   /* Brand accent (indigo) */
-  --accent: #6366f1;                      /* indigo-500 */
-  --accent-hover: #4f46e5;                /* indigo-600 */
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
   --accent-text: #ffffff;
   --accent-soft: rgba(99, 102, 241, 0.12);
   --accent-soft-strong: rgba(99, 102, 241, 0.20);
@@ -40,7 +40,7 @@
   --radius-sm: 10px;
   --radius-lg: 20px;
 
-  /* Shadows — soft, layered */
+  /* Shadows */
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.06);
@@ -52,12 +52,11 @@
   --font-display: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Subject accent — defaults to indigo, overridden per-page */
+  /* Subject accent */
   --accent-subject: var(--accent);
   --accent-subject-soft: var(--accent-soft);
 }
 
-/* Per-subject accent overrides — set data-subject on <body> */
 body[data-subject="maths"]        { --accent-subject: #3b82f6; --accent-subject-soft: rgba(59, 130, 246, 0.14); }
 body[data-subject="physics"]      { --accent-subject: #f97316; --accent-subject-soft: rgba(249, 115, 22, 0.14); }
 body[data-subject="chemistry"]    { --accent-subject: #10b981; --accent-subject-soft: rgba(16, 185, 129, 0.14); }
@@ -69,21 +68,21 @@ body[data-subject="accounting"]   { --accent-subject: #0d9488; --accent-subject-
    DARK MODE
    ------------------------------------------------------------ */
 html.dark {
-  --bg: #0b1120;                          /* deep slate-indigo */
+  --bg: #0b1120;
   --bg-elevated: #111827;
-  --glass: rgba(30, 41, 59, 0.55);        /* slate-800 @ 55% */
+  --glass: rgba(30, 41, 59, 0.55);
   --glass-strong: rgba(30, 41, 59, 0.85);
-  --glass-border: rgba(148, 163, 184, 0.14); /* slate-400 @ 14% */
+  --glass-border: rgba(148, 163, 184, 0.14);
   --glass-subtle: rgba(30, 41, 59, 0.35);
   --border: rgba(148, 163, 184, 0.12);
 
-  --text: #f1f5f9;                        /* slate-100 */
-  --text-muted: #cbd5e1;                  /* slate-300 */
-  --text-dim: #94a3b8;                    /* slate-400 */
+  --text: #f1f5f9;
+  --text-muted: #cbd5e1;
+  --text-dim: #94a3b8;
 
-  --accent: #818cf8;                      /* indigo-400 — brighter for dark bg */
-  --accent-hover: #a5b4fc;                /* indigo-300 */
-  --accent-text: #0f172a;                 /* dark text on light accent */
+  --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --accent-text: #0f172a;
   --accent-soft: rgba(129, 140, 248, 0.18);
   --accent-soft-strong: rgba(129, 140, 248, 0.28);
   --accent-ring: rgba(129, 140, 248, 0.45);
@@ -102,7 +101,6 @@ html.dark {
   --shadow-accent: 0 8px 24px rgba(129, 140, 248, 0.28);
 }
 
-/* Per-subject accents in dark mode — brighter variants */
 html.dark body[data-subject="maths"]        { --accent-subject: #60a5fa; --accent-subject-soft: rgba(96, 165, 250, 0.18); }
 html.dark body[data-subject="physics"]      { --accent-subject: #fb923c; --accent-subject-soft: rgba(251, 146, 60, 0.18); }
 html.dark body[data-subject="chemistry"]    { --accent-subject: #34d399; --accent-subject-soft: rgba(52, 211, 153, 0.18); }
@@ -134,7 +132,6 @@ body {
   color: var(--text);
 }
 
-/* Headings use Space Grotesk */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   letter-spacing: -0.02em;
@@ -143,7 +140,7 @@ h1, h2, h3, h4 {
 }
 
 /* ------------------------------------------------------------
-   BACKGROUND ORBS — single indigo/violet family
+   BACKGROUND ORBS
    ------------------------------------------------------------ */
 .orbs { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .orb {
@@ -354,10 +351,24 @@ html.dark .orb-4 { background: #8b5cf6; }
   color: var(--text-muted);
   text-decoration: none;
   margin-bottom: 16px;
-  transition: color 0.2s;
-  background: none; border: none; cursor: pointer; padding: 0;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  transition: color 0.2s ease, background 0.2s ease,
+              border-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
-.back-link:hover { color: var(--accent); }
+.back-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateX(-2px);
+}
+.back-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 .tool-header h1 {
   font-size: 36px;
   font-weight: 700;
@@ -416,6 +427,21 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-ring);
 }
 select { cursor: pointer; }
+
+/* Placeholder contrast — override browser defaults */
+::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+html.dark ::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
 
 /* ------------------------------------------------------------
    BUTTONS
@@ -557,8 +583,8 @@ select { cursor: pointer; }
    ------------------------------------------------------------ */
 .subject-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 40px;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.8fr) minmax(150px, 1.3fr) minmax(110px, 1fr) 44px;
+  gap: 10px;
   margin-bottom: 8px;
   align-items: center;
 }
@@ -569,6 +595,16 @@ select { cursor: pointer; }
   color: var(--text-dim);
   letter-spacing: 0.06em;
   margin-bottom: 12px;
+}
+/* Trim vertical padding inside subject-row inputs so rows sit lighter */
+.subject-row input,
+.subject-row select {
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.subject-row .icon-btn {
+  width: 40px;
+  height: 40px;
 }
 .icon-btn {
   width: 40px; height: 40px;
@@ -632,7 +668,7 @@ select { cursor: pointer; }
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: var(--accent); /* fallback */
+  color: var(--accent);
 }
 .timer-status {
   font-family: var(--font-mono);
